@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
+*.log
+.cache/
+.turbo/
+.next/
+out/
+coverage/
+.portfolio-tracker/
+
+# 사용자 개별 설정/생성물
+config.json
+portfolio-report.*
