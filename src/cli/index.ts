@@ -50,18 +50,48 @@ program
   .command("scan")
   .description("프로젝트 디렉토리 스캔")
   .option("--no-save", "스캔 결과를 파일로 저장하지 않음")
-  .action(async (options: { save?: boolean }) => {
+  .option("--incremental", "변경된 프로젝트만 재스캔 (캐시 없으면 전체 스캔)")
+  .action(async (options: { save?: boolean; incremental?: boolean }) => {
     const configManager = new ConfigManager();
     const config = await configManager.load();
-
-    console.log(chalk.blue("🔍 프로젝트 스캔 중..."));
-
     const scanner = new Scanner(config);
-    const result = await scanner.scan();
+    const store = new ScanStore();
 
-    console.log(
-      chalk.green(`✓ ${result.projects.length}개의 프로젝트를 찾았습니다!\n`),
-    );
+    let result;
+    let rescanned = 0;
+    let reused = 0;
+
+    if (options.incremental) {
+      const lastResult = await store.load();
+      if (lastResult) {
+        const daysSince = Math.floor(
+          (Date.now() - lastResult.scannedAt.getTime()) / 86_400_000,
+        );
+        console.log(
+          chalk.blue(`🔍 증분 스캔 중... (마지막 스캔: ${daysSince}일 전)`),
+        );
+        ({ result, rescanned, reused } = await scanner.scanIncremental(lastResult));
+      } else {
+        console.log(chalk.yellow("⚠ 저장된 스캔 없음, 전체 스캔으로 진행합니다."));
+        console.log(chalk.blue("🔍 프로젝트 스캔 중..."));
+        result = await scanner.scan();
+      }
+    } else {
+      console.log(chalk.blue("🔍 프로젝트 스캔 중..."));
+      result = await scanner.scan();
+    }
+
+    if (options.incremental && reused > 0) {
+      console.log(
+        chalk.green(
+          `✓ ${result.projects.length}개 프로젝트 (${rescanned}개 재스캔, ${reused}개 캐시)\n`,
+        ),
+      );
+    } else {
+      console.log(
+        chalk.green(`✓ ${result.projects.length}개의 프로젝트를 찾았습니다!\n`),
+      );
+    }
 
     result.projects.forEach((project) => {
       console.log(chalk.cyan(project.name));
@@ -75,7 +105,6 @@ program
     });
 
     if (options.save !== false) {
-      const store = new ScanStore();
       await store.save(result);
       console.log(chalk.gray(`스캔 결과 저장: ${store.path}`));
     }
