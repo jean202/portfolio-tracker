@@ -87,12 +87,15 @@ export class Scanner {
   private static readonly WATCHED_FILES = [
     "README.md", "readme.md",
     "CLAUDE.md",
+    "AGENTS.md",
     "PROJECT_PLAN.md",
     "TODO.md", "TODO.txt",
     "package.json",
     "pubspec.yaml",
+    "pom.xml",
     "build.gradle", "build.gradle.kts",
     "requirements.txt",
+    "setup.py",
     "go.mod",
     "Cargo.toml",
   ];
@@ -112,7 +115,9 @@ export class Scanner {
         const git = simpleGit(candidate.path);
         const log = await git.log({ maxCount: 1 });
         if (!log.latest) return true; // 커밋 없음 → 변경됨으로 간주
-        return new Date(log.latest.date) > lastScannedAt;
+        const commitDate = new Date(log.latest.date);
+        if (isNaN(commitDate.getTime())) return true; // unparseable date → rescan
+        return commitDate > lastScannedAt;
       } catch {
         return true; // 오류 → 안전하게 재스캔
       }

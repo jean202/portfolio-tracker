@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import simpleGit from "simple-git";
 import { Scanner } from "./Scanner.js";
 
 let tempRoot: string;
@@ -140,5 +141,33 @@ describe("Scanner.isProjectChanged", () => {
 
     const changed = await scanner.isProjectChanged(candidate, lastScannedAt);
     expect(changed).toBe(false);
+  });
+
+  it("git 프로젝트에서 최근 커밋이 있으면 변경됨으로 판단한다", async () => {
+    const projectDir = path.join(tempRoot, "git-project");
+    await fs.mkdir(projectDir);
+
+    // real git repo with one commit
+    const git = simpleGit(projectDir);
+    await git.init();
+    await git.addConfig("user.email", "test@test.com");
+    await git.addConfig("user.name", "Test User");
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Git Project");
+    await git.add(".");
+    await git.commit("initial commit");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const candidate = {
+      name: "git-project",
+      path: projectDir,
+      hasReadme: true,
+      hasClaude: false,
+      hasGit: true,
+    };
+    // lastScannedAt은 커밋 이전 시각
+    const lastScannedAt = new Date(Date.now() - 10_000);
+
+    const changed = await scanner.isProjectChanged(candidate, lastScannedAt);
+    expect(changed).toBe(true);
   });
 });
