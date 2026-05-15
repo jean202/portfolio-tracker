@@ -62,10 +62,11 @@ export class Scanner {
     const projects = await Promise.all(
       candidates.map((candidate) => this.analyzeProject(candidate)),
     );
-    const summary = this.buildSummary(projects);
+    const sortedProjects = this.sortProjects(projects);
+    const summary = this.buildSummary(sortedProjects);
 
     return {
-      projects: this.sortProjects(projects),
+      projects: sortedProjects,
       scannedAt: new Date(),
       summary,
     };

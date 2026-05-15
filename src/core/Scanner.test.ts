@@ -170,6 +170,33 @@ describe("Scanner.isProjectChanged", () => {
     const changed = await scanner.isProjectChanged(candidate, lastScannedAt);
     expect(changed).toBe(true);
   });
+
+  it("git 프로젝트에서 커밋이 lastScannedAt보다 오래됐으면 변경 없음으로 판단한다", async () => {
+    const projectDir = path.join(tempRoot, "git-old-project");
+    await fs.mkdir(projectDir);
+
+    const git = simpleGit(projectDir);
+    await git.init();
+    await git.addConfig("user.email", "test@test.com");
+    await git.addConfig("user.name", "Test User");
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Old Git Project");
+    await git.add(".");
+    await git.commit("initial commit");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const candidate = {
+      name: "git-old-project",
+      path: projectDir,
+      hasReadme: true,
+      hasClaude: false,
+      hasGit: true,
+    };
+    // lastScannedAt이 미래 → 커밋이 오래된 것으로 간주
+    const lastScannedAt = new Date(Date.now() + 60_000);
+
+    const changed = await scanner.isProjectChanged(candidate, lastScannedAt);
+    expect(changed).toBe(false);
+  });
 });
 
 describe("Scanner.scanIncremental", () => {

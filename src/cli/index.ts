@@ -82,7 +82,7 @@ program
       result = await scanner.scan();
     }
 
-    if (options.incremental && reused > 0) {
+    if (options.incremental && (rescanned > 0 || reused > 0)) {
       console.log(
         chalk.green(
           `✓ ${result.projects.length}개 프로젝트 (${rescanned}개 재스캔, ${reused}개 캐시)\n`,
@@ -119,7 +119,7 @@ program
   .description("프로젝트 진행 리포트 출력")
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 표시")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
-  .option("--incremental", "증분 스캔으로 새로고침 (--refresh와 함께 사용)")
+  .option("--incremental", "변경된 프로젝트만 재스캔 (--refresh 없이도 동작)")
   .action(async (options: { all?: boolean; refresh?: boolean; incremental?: boolean }) => {
     console.log(chalk.blue("프로젝트 리포트 생성 중..."));
     const { result, fromCache } = await loadScanResult({
@@ -199,7 +199,7 @@ program
   .option("-o, --output <file>", "출력 파일")
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 포함")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
-  .option("--incremental", "증분 스캔으로 새로고침 (--refresh와 함께 사용)")
+  .option("--incremental", "변경된 프로젝트만 재스캔 (--refresh 없이도 동작)")
   .action(
     async (options: {
       format: string;
