@@ -136,6 +136,64 @@ export class Scanner {
   }
 
   /**
+   * 증분 스캔: lastResult 기준으로 변경된 프로젝트만 재분석.
+   * - 변경됨 또는 새 프로젝트 → analyzeProject()
+   * - 변경 없음 → lastResult 캐시 재사용
+   * - 삭제된 프로젝트 → 결과에서 제거
+   */
+  async scanIncremental(
+    lastResult: ScanResult,
+  ): Promise<{ result: ScanResult; rescanned: number; reused: number }> {
+    const candidates = await this.scanProjectDirs();
+    const lastScannedAt = lastResult.scannedAt;
+
+    // 캐시를 id로 빠르게 조회할 수 있도록 Map 생성
+    const cachedById = new Map(
+      lastResult.projects.map((p) => [p.id, p]),
+    );
+
+    let rescanned = 0;
+    let reused = 0;
+
+    const projects = await Promise.all(
+      candidates.map(async (candidate) => {
+        const id = this.slug(candidate.path);
+        const cached = cachedById.get(id);
+
+        if (cached) {
+          const changed = await this.isProjectChanged(candidate, lastScannedAt);
+          if (!changed) {
+            reused++;
+            return cached;
+          }
+        }
+
+        rescanned++;
+        return this.analyzeProject(candidate);
+      }),
+    );
+
+    const sortedProjects = projects.sort((a, b) => {
+      const priorityOrder: Record<Priority, number> = {
+        CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3,
+      };
+      const priorityDiff =
+        priorityOrder[a.priority ?? "LOW"] -
+        priorityOrder[b.priority ?? "LOW"];
+      if (priorityDiff !== 0) return priorityDiff;
+      return b.activity.daysSinceLastCommit - a.activity.daysSinceLastCommit;
+    });
+
+    const result: ScanResult = {
+      projects: sortedProjects,
+      scannedAt: new Date(),
+      summary: this.buildSummary(sortedProjects),
+    };
+
+    return { result, rescanned, reused };
+  }
+
+  /**
    * 특정 디렉토리 내의 프로젝트 찾기
    * - 1단계: README.md 또는 package.json 등의 존재 확인
    * - 2단계: git 저장소 또는 메타데이터 확인

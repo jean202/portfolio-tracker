@@ -171,3 +171,82 @@ describe("Scanner.isProjectChanged", () => {
     expect(changed).toBe(true);
   });
 });
+
+describe("Scanner.scanIncremental", () => {
+  it("변경 없는 프로젝트는 캐시 데이터를 그대로 반환한다", async () => {
+    const projectDir = path.join(tempRoot, "stable");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(
+      path.join(projectDir, "README.md"),
+      "# Stable\n\n진행률: 50%",
+    );
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const firstResult = await scanner.scan();
+
+    // lastScannedAt을 미래로 설정 → 변경 없음
+    const fakeLastResult = { ...firstResult, scannedAt: new Date(Date.now() + 60_000) };
+    const { result, rescanned, reused } = await scanner.scanIncremental(fakeLastResult);
+
+    expect(result.projects).toHaveLength(1);
+    expect(result.projects[0].name).toBe("stable");
+    expect(rescanned).toBe(0);
+    expect(reused).toBe(1);
+  });
+
+  it("변경된 프로젝트는 재분석해서 최신 진행률을 반영한다", async () => {
+    const projectDir = path.join(tempRoot, "changing");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Changing");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const firstResult = await scanner.scan();
+    expect(firstResult.projects[0].progress.percentage).toBeNull();
+
+    // 파일 수정 (진행률 추가)
+    await fs.writeFile(
+      path.join(projectDir, "README.md"),
+      "# Changing\n\n진행률: 80%",
+    );
+
+    // lastScannedAt을 과거로 → 변경됨으로 감지
+    const oldResult = { ...firstResult, scannedAt: new Date(Date.now() - 10_000) };
+    const { result, rescanned } = await scanner.scanIncremental(oldResult);
+
+    expect(result.projects[0].progress.percentage).toBe(80);
+    expect(rescanned).toBe(1);
+  });
+
+  it("삭제된 프로젝트는 결과에서 제거된다", async () => {
+    const projectDir = path.join(tempRoot, "to-delete");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# ToDelete");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const firstResult = await scanner.scan();
+    expect(firstResult.projects).toHaveLength(1);
+
+    // 프로젝트 폴더 삭제
+    await fs.rm(projectDir, { recursive: true });
+
+    const { result } = await scanner.scanIncremental(firstResult);
+    expect(result.projects).toHaveLength(0);
+  });
+
+  it("새 프로젝트는 캐시에 없어도 자동으로 스캔된다", async () => {
+    // 먼저 빈 스캔 결과 생성
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const emptyResult = await scanner.scan();
+    expect(emptyResult.projects).toHaveLength(0);
+
+    // 새 프로젝트 추가
+    const projectDir = path.join(tempRoot, "brand-new");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# New");
+
+    const { result, rescanned } = await scanner.scanIncremental(emptyResult);
+    expect(result.projects).toHaveLength(1);
+    expect(result.projects[0].name).toBe("brand-new");
+    expect(rescanned).toBe(1);
+  });
+});
