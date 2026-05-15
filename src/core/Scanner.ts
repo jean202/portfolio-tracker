@@ -65,19 +65,7 @@ export class Scanner {
     const summary = this.buildSummary(projects);
 
     return {
-      projects: projects.sort((a, b) => {
-        const priorityOrder: Record<Priority, number> = {
-          CRITICAL: 0,
-          HIGH: 1,
-          MEDIUM: 2,
-          LOW: 3,
-        };
-        const priorityDiff =
-          priorityOrder[a.priority ?? "LOW"] -
-          priorityOrder[b.priority ?? "LOW"];
-        if (priorityDiff !== 0) return priorityDiff;
-        return b.activity.daysSinceLastCommit - a.activity.daysSinceLastCommit;
-      }),
+      projects: this.sortProjects(projects),
       scannedAt: new Date(),
       summary,
     };
@@ -152,10 +140,7 @@ export class Scanner {
       lastResult.projects.map((p) => [p.id, p]),
     );
 
-    let rescanned = 0;
-    let reused = 0;
-
-    const projects = await Promise.all(
+    const outcomes = await Promise.all(
       candidates.map(async (candidate) => {
         const id = this.slug(candidate.path);
         const cached = cachedById.get(id);
@@ -163,26 +148,19 @@ export class Scanner {
         if (cached) {
           const changed = await this.isProjectChanged(candidate, lastScannedAt);
           if (!changed) {
-            reused++;
-            return cached;
+            return { project: cached, wasReused: true };
           }
         }
 
-        rescanned++;
-        return this.analyzeProject(candidate);
+        return { project: await this.analyzeProject(candidate), wasReused: false };
       }),
     );
 
-    const sortedProjects = projects.sort((a, b) => {
-      const priorityOrder: Record<Priority, number> = {
-        CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3,
-      };
-      const priorityDiff =
-        priorityOrder[a.priority ?? "LOW"] -
-        priorityOrder[b.priority ?? "LOW"];
-      if (priorityDiff !== 0) return priorityDiff;
-      return b.activity.daysSinceLastCommit - a.activity.daysSinceLastCommit;
-    });
+    const projects = outcomes.map((o) => o.project);
+    const reused = outcomes.filter((o) => o.wasReused).length;
+    const rescanned = outcomes.filter((o) => !o.wasReused).length;
+
+    const sortedProjects = this.sortProjects(projects);
 
     const result: ScanResult = {
       projects: sortedProjects,
@@ -537,6 +515,22 @@ export class Scanner {
       byPriority,
       byType,
     };
+  }
+
+  private sortProjects(projects: Project[]): Project[] {
+    const priorityOrder: Record<Priority, number> = {
+      CRITICAL: 0,
+      HIGH: 1,
+      MEDIUM: 2,
+      LOW: 3,
+    };
+    return [...projects].sort((a, b) => {
+      const diff =
+        priorityOrder[a.priority ?? "LOW"] -
+        priorityOrder[b.priority ?? "LOW"];
+      if (diff !== 0) return diff;
+      return b.activity.daysSinceLastCommit - a.activity.daysSinceLastCommit;
+    });
   }
 
   private calculateReadiness(
