@@ -100,3 +100,45 @@ describe("Scanner", () => {
     expect(result.projects[0].issues).toContain("진행률 판단 불가");
   });
 });
+
+describe("Scanner.isProjectChanged", () => {
+  it("non-git 프로젝트에서 최근 파일이 있으면 변경됨으로 판단한다", async () => {
+    const projectDir = path.join(tempRoot, "no-git-new");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Hello");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const candidate = {
+      name: "no-git-new",
+      path: projectDir,
+      hasReadme: true,
+      hasClaude: false,
+      hasGit: false,
+    };
+    // lastScannedAt은 파일 생성 이전 시각
+    const lastScannedAt = new Date(Date.now() - 10_000);
+
+    const changed = await scanner.isProjectChanged(candidate, lastScannedAt);
+    expect(changed).toBe(true);
+  });
+
+  it("non-git 프로젝트에서 미래 시각 기준이면 변경 없음으로 판단한다", async () => {
+    const projectDir = path.join(tempRoot, "no-git-old");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Stable");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const candidate = {
+      name: "no-git-old",
+      path: projectDir,
+      hasReadme: true,
+      hasClaude: false,
+      hasGit: false,
+    };
+    // lastScannedAt이 미래 → 모든 파일이 오래된 것으로 간주
+    const lastScannedAt = new Date(Date.now() + 60_000);
+
+    const changed = await scanner.isProjectChanged(candidate, lastScannedAt);
+    expect(changed).toBe(false);
+  });
+});

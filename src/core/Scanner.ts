@@ -83,6 +83,53 @@ export class Scanner {
     };
   }
 
+  // 변경 감지 대상 파일 목록 (non-git 프로젝트용)
+  private static readonly WATCHED_FILES = [
+    "README.md", "readme.md",
+    "CLAUDE.md",
+    "PROJECT_PLAN.md",
+    "TODO.md", "TODO.txt",
+    "package.json",
+    "pubspec.yaml",
+    "build.gradle", "build.gradle.kts",
+    "requirements.txt",
+    "go.mod",
+    "Cargo.toml",
+  ];
+
+  /**
+   * 프로젝트가 lastScannedAt 이후 변경됐는지 판단.
+   * - git 있음: 마지막 커밋 날짜 비교
+   * - git 없음: 주요 파일 mtime 비교
+   * 판단 불가(오류)시 true 반환(안전한 방향).
+   */
+  public async isProjectChanged(
+    candidate: ProjectCandidate,
+    lastScannedAt: Date,
+  ): Promise<boolean> {
+    if (candidate.hasGit) {
+      try {
+        const git = simpleGit(candidate.path);
+        const log = await git.log({ maxCount: 1 });
+        if (!log.latest) return true; // 커밋 없음 → 변경됨으로 간주
+        return new Date(log.latest.date) > lastScannedAt;
+      } catch {
+        return true; // 오류 → 안전하게 재스캔
+      }
+    }
+
+    // non-git: 주요 파일의 mtime 비교
+    for (const fileName of Scanner.WATCHED_FILES) {
+      try {
+        const stat = await fs.stat(path.join(candidate.path, fileName));
+        if (stat.mtimeMs > lastScannedAt.getTime()) return true;
+      } catch {
+        // 파일 없으면 건너뜀
+      }
+    }
+    return false;
+  }
+
   /**
    * 특정 디렉토리 내의 프로젝트 찾기
    * - 1단계: README.md 또는 package.json 등의 존재 확인
