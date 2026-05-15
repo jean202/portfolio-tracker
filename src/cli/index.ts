@@ -119,10 +119,12 @@ program
   .description("프로젝트 진행 리포트 출력")
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 표시")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
-  .action(async (options: { all?: boolean; refresh?: boolean }) => {
+  .option("--incremental", "증분 스캔으로 새로고침 (--refresh와 함께 사용)")
+  .action(async (options: { all?: boolean; refresh?: boolean; incremental?: boolean }) => {
     console.log(chalk.blue("프로젝트 리포트 생성 중..."));
     const { result, fromCache } = await loadScanResult({
       refresh: options.refresh,
+      incremental: options.incremental,
     });
     const projects = options.all
       ? result.projects
@@ -197,15 +199,18 @@ program
   .option("-o, --output <file>", "출력 파일")
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 포함")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
+  .option("--incremental", "증분 스캔으로 새로고침 (--refresh와 함께 사용)")
   .action(
     async (options: {
       format: string;
       output?: string;
       all?: boolean;
       refresh?: boolean;
+      incremental?: boolean;
     }) => {
       const { result, fromCache } = await loadScanResult({
         refresh: options.refresh,
+        incremental: options.incremental,
       });
       const format = normalizeExportFormat(options.format);
       const outputPath = path.resolve(
@@ -1111,22 +1116,36 @@ function formatChange(value: number, suffix = ""): string {
   return chalk.red(`▼ ${value}${suffix}`);
 }
 
-async function loadScanResult(options: { refresh?: boolean }) {
+async function loadScanResult(options: {
+  refresh?: boolean;
+  incremental?: boolean;
+}) {
   const configManager = new ConfigManager();
   const config = await configManager.load();
   const scanner = new Scanner(config);
   const store = new ScanStore();
-  const cached = options.refresh ? null : await store.load();
-  const result = cached ?? (await scanner.scan());
 
-  if (!cached) {
-    await store.save(result);
+  // refresh 없음: 캐시 그대로 사용
+  if (!options.refresh) {
+    const cached = await store.load();
+    if (cached) return { result: cached, fromCache: true };
   }
 
-  return {
-    result,
-    fromCache: Boolean(cached),
-  };
+  // 증분 스캔: 마지막 결과를 베이스로 사용
+  if (options.incremental) {
+    const lastResult = await store.load();
+    if (lastResult) {
+      const { result } = await scanner.scanIncremental(lastResult);
+      await store.save(result);
+      return { result, fromCache: false };
+    }
+    console.log(chalk.yellow("⚠ 저장된 스캔 없음, 전체 스캔으로 진행합니다."));
+  }
+
+  // 전체 스캔 (기본)
+  const result = await scanner.scan();
+  await store.save(result);
+  return { result, fromCache: false };
 }
 
 type ExportFormat = "markdown" | "html" | "json";
