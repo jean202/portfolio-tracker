@@ -8,6 +8,7 @@ import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
 import { Scanner } from "../core/Scanner.js";
 import { TrendAnalyzer } from "../core/TrendAnalyzer.js";
+import type { ScanResult } from "../core/ProjectModel.js";
 import { renderHtmlReport } from "../report/HtmlReport.js";
 import { renderJsonReport } from "../report/JsonReport.js";
 import { renderMarkdownReport } from "../report/MarkdownReport.js";
@@ -57,7 +58,7 @@ program
     const scanner = new Scanner(config);
     const store = new ScanStore();
 
-    let result;
+    let result: ScanResult;
     let rescanned = 0;
     let reused = 0;
 
