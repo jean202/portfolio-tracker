@@ -1125,8 +1125,8 @@ async function loadScanResult(options: {
   const scanner = new Scanner(config);
   const store = new ScanStore();
 
-  // refresh 없음: 캐시 그대로 사용
-  if (!options.refresh) {
+  // refresh 없음 (그리고 incremental도 없음): 캐시 그대로 사용
+  if (!options.refresh && !options.incremental) {
     const cached = await store.load();
     if (cached) return { result: cached, fromCache: true };
   }
