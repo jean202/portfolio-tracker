@@ -20,7 +20,6 @@ describe("createLaunchAgentPlist", () => {
     expect(plist).toContain("<string>--interval</string>");
     expect(plist).toContain("<string>30m</string>");
     expect(plist).toContain("<key>RunAtLoad</key>");
-    expect(plist).toContain("<key>KeepAlive</key>");
     expect(plist).toContain("<string>/repo</string>");
   });
 

@@ -167,8 +167,6 @@ ${programArguments.map((arg) => `    <string>${escapeXml(arg)}</string>`).join("
   <string>${escapeXml(options.workingDirectory)}</string>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
   <key>StandardOutPath</key>
   <string>${escapeXml(options.logPath)}</string>
   <key>StandardErrorPath</key>
