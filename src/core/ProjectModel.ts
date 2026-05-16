@@ -83,4 +83,5 @@ export interface Config {
   projectDirs: string[];
   scanInterval?: number;
   excludePatterns?: string[];
+  webhookUrl?: string;
 }

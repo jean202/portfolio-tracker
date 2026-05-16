@@ -11,6 +11,7 @@ import { formatDuration, parseDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
 import { Scanner } from "../core/Scanner.js";
 import { TrendAnalyzer } from "../core/TrendAnalyzer.js";
+import { WebhookNotifier } from "../core/WebhookNotifier.js";
 import type { ScanResult } from "../core/ProjectModel.js";
 import { renderHtmlReport } from "../report/HtmlReport.js";
 import { renderJsonReport } from "../report/JsonReport.js";
@@ -167,6 +168,28 @@ program
               `  평균 진행률: ${formatProgress(result.summary.avgProgress)}, 준비도: ${result.summary.avgReadiness}%`,
             ),
           );
+
+          // webhook 알림
+          if (config.webhookUrl) {
+            try {
+              const historyStore = new HistoryStore();
+              const recentResults = await historyStore.loadRecent(2);
+              if (recentResults.length >= 2) {
+                const diff = TrendAnalyzer.diff(recentResults[1], recentResults[0]);
+                if (WebhookNotifier.shouldNotify(diff)) {
+                  const notifier = new WebhookNotifier(config.webhookUrl);
+                  await notifier.notify(WebhookNotifier.buildPayload(diff, result));
+                  console.log(chalk.gray("  [webhook] 변경 알림 전송 완료"));
+                }
+              }
+            } catch (webhookError) {
+              console.warn(
+                chalk.yellow(
+                  `⚠ Webhook 전송 실패: ${webhookError instanceof Error ? webhookError.message : webhookError}`,
+                ),
+              );
+            }
+          }
         } catch (error) {
           console.error(chalk.red("자동 스캔 실패:"), error);
         } finally {
