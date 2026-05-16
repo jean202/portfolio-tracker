@@ -181,6 +181,8 @@ program
                   await notifier.notify(WebhookNotifier.buildPayload(diff, result));
                   console.log(chalk.gray("  [webhook] 변경 알림 전송 완료"));
                 }
+              } else {
+                console.log(chalk.gray("  [webhook] 히스토리 부족 – 다음 스캔부터 알림"));
               }
             } catch (webhookError) {
               console.warn(
