@@ -107,4 +107,69 @@ describe("WebhookNotifier.notify", () => {
       }),
     ).rejects.toThrow("network error");
   });
+
+  it("HTTP 오류 응답이면 오류를 throw한다", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: false, status: 503, statusText: "Service Unavailable" }),
+    );
+
+    const notifier = new WebhookNotifier("https://example.com/hook");
+    await expect(
+      notifier.notify({
+        scannedAt: "2026-01-01T00:00:00.000Z",
+        summary: { total: 0, active: 0, avgProgress: null, avgReadiness: 0 },
+        changes: { added: [], removed: [], changed: [] },
+      }),
+    ).rejects.toThrow("Webhook failed: 503 Service Unavailable");
+  });
+});
+
+describe("WebhookNotifier.buildPayload", () => {
+  it("diff와 scan 결과로 올바른 payload를 생성한다", () => {
+    const after: ScanResult = {
+      projects: [],
+      scannedAt: new Date("2026-01-02T00:00:00.000Z"),
+      summary: {
+        total: 3, active: 2, avgProgress: 60, avgReadiness: 70,
+        byPriority: { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 0 },
+        byType: { node: 2, python: 1, dart: 0, java: 0, kotlin: 0, go: 0, rust: 0, unknown: 0 },
+      },
+    };
+
+    const diff = makeDiff({
+      projects: [
+        { name: "new-proj", before: null, after: {} as any,
+          status: "new", progressChange: null, readinessChange: 50, activityChange: 0 },
+        { name: "gone-proj", before: {} as any, after: null,
+          status: "removed", progressChange: null, readinessChange: -30, activityChange: 0 },
+        {
+          name: "big-change",
+          before: { progress: { percentage: 40 }, readiness: 50 } as any,
+          after: { progress: { percentage: 80 }, readiness: 80 } as any,
+          status: "changed", progressChange: 40, readinessChange: 30, activityChange: 0,
+        },
+        {
+          name: "small-change",
+          before: { progress: { percentage: 50 }, readiness: 60 } as any,
+          after: { progress: { percentage: 53 }, readiness: 62 } as any,
+          status: "changed", progressChange: 3, readinessChange: 2, activityChange: 0,
+        },
+      ],
+    });
+
+    const payload = WebhookNotifier.buildPayload(diff, after);
+
+    expect(payload.scannedAt).toBe("2026-01-02T00:00:00.000Z");
+    expect(payload.summary).toEqual({ total: 3, active: 2, avgProgress: 60, avgReadiness: 70 });
+    expect(payload.changes.added).toEqual(["new-proj"]);
+    expect(payload.changes.removed).toEqual(["gone-proj"]);
+    // big-change (40%p) is included; small-change (3%p) is below threshold
+    expect(payload.changes.changed).toHaveLength(1);
+    expect(payload.changes.changed[0]).toMatchObject({
+      name: "big-change",
+      progressBefore: 40,
+      progressAfter: 80,
+    });
+  });
 });

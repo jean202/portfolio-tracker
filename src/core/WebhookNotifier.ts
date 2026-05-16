@@ -76,10 +76,13 @@ export class WebhookNotifier {
   }
 
   async notify(payload: WebhookPayload): Promise<void> {
-    await fetch(this.url, {
+    const res = await fetch(this.url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+    if (!res.ok) {
+      throw new Error(`Webhook failed: ${res.status} ${res.statusText}`);
+    }
   }
 }
