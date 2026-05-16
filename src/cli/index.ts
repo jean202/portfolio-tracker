@@ -297,6 +297,11 @@ service
   .description("현재 실행 중인 자동 스캔 서비스를 중지")
   .action(async () => {
     const agent = new LaunchAgent();
+    const running = await agent.isRunning().catch(() => false);
+    if (!running) {
+      console.log(chalk.gray("실행 중인 서비스가 없습니다."));
+      return;
+    }
     await agent.stop({ ignoreErrors: true });
     console.log(chalk.green("✓ 자동 스캔 서비스를 중지했습니다."));
     console.log(chalk.gray("다음 로그인 때는 다시 시작됩니다."));

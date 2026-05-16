@@ -380,13 +380,19 @@ portfolio-tracker export -f markdown --all
 {
   "projectDirs": [
     "~/portfolio/projects",
-    "~/IdeaProjects",
-    "~/my-projects"
+    "~/IdeaProjects"
   ],
   "scanInterval": 86400000,
-  "excludePatterns": ["node_modules", ".git", ".next", "dist", "build"]
+  "excludePatterns": ["node_modules", ".git", ".next", "dist", "build"],
+  "webhookUrl": "https://hooks.slack.com/services/..."
 }
 ```
+
+**설정값:**
+- `projectDirs` (필수): 스캔할 프로젝트 디렉토리 경로 배열
+- `scanInterval` (선택): 자동 스캔 주기 (ms 단위, 기본값: 86400000 = 24시간)
+- `excludePatterns` (선택): 스캔 제외 패턴 배열
+- `webhookUrl` (선택): `watch` 실행 중 새 프로젝트 추가/삭제 또는 진행률이 5%p 이상 변화하면 해당 URL로 POST 알림을 전송합니다.
 
 ## 진행률 감지 방식
 
