@@ -2,10 +2,13 @@
 
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from "url";
 import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
+import { formatDuration, parseDuration } from "../core/Interval.js";
+import { LaunchAgent } from "../core/LaunchAgent.js";
 import { Scanner } from "../core/Scanner.js";
 import { TrendAnalyzer } from "../core/TrendAnalyzer.js";
 import type { ScanResult } from "../core/ProjectModel.js";
@@ -43,7 +46,9 @@ program
     console.log();
     console.log(chalk.blue("다음 단계:"));
     console.log(chalk.blue("  portfolio-tracker config list     # 설정 확인"));
-    console.log(chalk.blue("  portfolio-tracker report --refresh # 스캔 & 리포트"));
+    console.log(
+      chalk.blue("  portfolio-tracker report --refresh # 스캔 & 리포트"),
+    );
   });
 
 // scan 커맨드 (구현 진행 중)
@@ -101,7 +106,7 @@ program
       console.log(`  CLAUDE.md: ${project.metadata.hasClaude ? "✓" : "✗"}`);
       console.log(`  Git: ${project.metadata.hasGit ? "✓" : "✗"}`);
       console.log(`  타입: ${project.type}`);
-      console.log(`  진행률: ${project.progress.percentage}%`);
+      console.log(`  진행률: ${formatProgress(project.progress.percentage)}`);
       console.log();
     });
 
@@ -111,6 +116,232 @@ program
     }
 
     console.log(chalk.gray("다음 단계: portfolio-tracker report"));
+  });
+
+// watch 커맨드
+program
+  .command("watch")
+  .description("설정된 주기로 프로젝트를 자동 스캔")
+  .option("-i, --interval <duration>", "스캔 주기 (예: 30m, 2h, 1d)")
+  .option("--no-initial", "시작 직후 스캔하지 않음")
+  .option("--once", "한 번만 스캔하고 종료 (테스트/자동화용)")
+  .action(
+    async (options: {
+      interval?: string;
+      initial?: boolean;
+      once?: boolean;
+    }) => {
+      const configManager = new ConfigManager();
+      const config = await configManager.load();
+      const intervalMs = options.interval
+        ? parseDuration(options.interval)
+        : (config.scanInterval ?? 24 * 60 * 60 * 1000);
+
+      console.log(chalk.cyan("자동 스캔을 시작합니다."));
+      console.log(chalk.gray(`  주기: ${formatDuration(intervalMs)}`));
+      console.log(chalk.gray(`  저장 위치: ${new ScanStore().path}`));
+      console.log(chalk.gray("  종료: Ctrl+C"));
+      console.log();
+
+      let running = false;
+      const run = async () => {
+        if (running) {
+          console.log(
+            chalk.gray(
+              `[${formatDateTime(new Date())}] 이전 스캔이 아직 실행 중이라 건너뜁니다.`,
+            ),
+          );
+          return;
+        }
+
+        running = true;
+        try {
+          const result = await runAndSaveScan();
+          console.log(
+            chalk.green(
+              `[${formatDateTime(result.scannedAt)}] ${result.projects.length}개 프로젝트 스캔 완료`,
+            ),
+          );
+          console.log(
+            chalk.gray(
+              `  평균 진행률: ${formatProgress(result.summary.avgProgress)}, 준비도: ${result.summary.avgReadiness}%`,
+            ),
+          );
+        } catch (error) {
+          console.error(chalk.red("자동 스캔 실패:"), error);
+        } finally {
+          running = false;
+        }
+      };
+
+      if (options.initial !== false || options.once) {
+        await run();
+      }
+
+      if (options.once) {
+        return;
+      }
+
+      const timer = setInterval(() => {
+        void run();
+      }, intervalMs);
+
+      const stop = () => {
+        clearInterval(timer);
+        console.log();
+        console.log(chalk.gray("자동 스캔을 종료합니다."));
+        process.exit(0);
+      };
+
+      process.once("SIGINT", stop);
+      process.once("SIGTERM", stop);
+    },
+  );
+
+// service 커맨드
+const service = program
+  .command("service")
+  .description("macOS 로그인 자동 실행 서비스 관리");
+
+service
+  .command("install")
+  .description("로그인 시 자동 스캔이 시작되도록 등록")
+  .option("-i, --interval <duration>", "스캔 주기 (예: 30m, 2h, 1d)")
+  .option("--no-initial", "서비스 시작 직후 스캔하지 않음")
+  .option("--no-start", "등록만 하고 바로 시작하지 않음")
+  .action(
+    async (options: {
+      interval?: string;
+      initial?: boolean;
+      start?: boolean;
+    }) => {
+      const intervalMs = options.interval
+        ? parseDuration(options.interval)
+        : undefined;
+      const agent = new LaunchAgent();
+
+      await agent.install({
+        nodePath: await resolveNodePath(),
+        cliPath: fileURLToPath(import.meta.url),
+        workingDirectory: process.cwd(),
+        interval: options.interval,
+        initial: options.initial,
+      });
+
+      if (options.start !== false) {
+        await agent.start();
+      }
+
+      console.log(chalk.green("✓ 자동 실행 서비스가 등록되었습니다."));
+      console.log(chalk.gray(`  Label: ${agent.label}`));
+      console.log(chalk.gray(`  Plist: ${agent.paths.plistPath}`));
+      console.log(chalk.gray(`  Log: ${agent.paths.logPath}`));
+      console.log(
+        chalk.gray(
+          `  주기: ${intervalMs ? formatDuration(intervalMs) : "config.json scanInterval"}`,
+        ),
+      );
+      console.log();
+      console.log(chalk.blue("끄기: portfolio-tracker service stop"));
+      console.log(
+        chalk.blue("자동 실행 제거: portfolio-tracker service uninstall"),
+      );
+    },
+  );
+
+service
+  .command("start")
+  .description("등록된 자동 스캔 서비스를 시작")
+  .action(async () => {
+    const agent = new LaunchAgent();
+    if (!(await agent.isInstalled())) {
+      console.log(
+        chalk.yellow(
+          "등록된 서비스가 없습니다. 먼저 service install을 실행하세요.",
+        ),
+      );
+      return;
+    }
+
+    await agent.start();
+    console.log(chalk.green("✓ 자동 스캔 서비스를 시작했습니다."));
+  });
+
+service
+  .command("stop")
+  .description("현재 실행 중인 자동 스캔 서비스를 중지")
+  .action(async () => {
+    const agent = new LaunchAgent();
+    await agent.stop({ ignoreErrors: true });
+    console.log(chalk.green("✓ 자동 스캔 서비스를 중지했습니다."));
+    console.log(chalk.gray("다음 로그인 때는 다시 시작됩니다."));
+    console.log(
+      chalk.gray("자동 실행까지 끄려면 service uninstall을 실행하세요."),
+    );
+  });
+
+service
+  .command("restart")
+  .description("자동 스캔 서비스를 재시작")
+  .action(async () => {
+    const agent = new LaunchAgent();
+    if (!(await agent.isInstalled())) {
+      console.log(
+        chalk.yellow(
+          "등록된 서비스가 없습니다. 먼저 service install을 실행하세요.",
+        ),
+      );
+      return;
+    }
+
+    await agent.start();
+    console.log(chalk.green("✓ 자동 스캔 서비스를 재시작했습니다."));
+  });
+
+service
+  .command("uninstall")
+  .description("자동 스캔 서비스를 중지하고 로그인 자동 실행 등록을 제거")
+  .action(async () => {
+    const agent = new LaunchAgent();
+    await agent.uninstall();
+    console.log(chalk.green("✓ 자동 실행 서비스가 제거되었습니다."));
+  });
+
+service
+  .command("status")
+  .description("자동 스캔 서비스 상태 확인")
+  .action(async () => {
+    const agent = new LaunchAgent();
+    const [installed, running] = await Promise.all([
+      agent.isInstalled(),
+      agent.isRunning(),
+    ]);
+
+    console.log(chalk.cyan("자동 스캔 서비스 상태"));
+    console.log(`  등록됨: ${installed ? "✓" : "✗"}`);
+    console.log(`  실행 중: ${running ? "✓" : "✗"}`);
+    console.log(chalk.gray(`  Plist: ${agent.paths.plistPath}`));
+    console.log(chalk.gray(`  Log: ${agent.paths.logPath}`));
+  });
+
+service
+  .command("logs")
+  .description("자동 스캔 서비스 로그 확인")
+  .option("-n, --lines <count>", "출력할 마지막 줄 수", "80")
+  .option("--error", "에러 로그 확인")
+  .action(async (options: { lines?: string; error?: boolean }) => {
+    const agent = new LaunchAgent();
+    const logPath = options.error
+      ? agent.paths.errorLogPath
+      : agent.paths.logPath;
+    const lines = Number.parseInt(options.lines ?? "80", 10);
+    const content = await readLastLines(
+      logPath,
+      Number.isFinite(lines) ? lines : 80,
+    );
+
+    console.log(chalk.gray(logPath));
+    console.log(content || chalk.gray("(로그 없음)"));
   });
 
 // report 커맨드
@@ -153,7 +384,15 @@ program
     }
 
     const table = new Table({
-      head: ["우선순위", "프로젝트", "타입", "진행률", "준비도", "최근 활동", "이슈"],
+      head: [
+        "우선순위",
+        "프로젝트",
+        "타입",
+        "진행률",
+        "준비도",
+        "최근 활동",
+        "이슈",
+      ],
       wordWrap: true,
       colWidths: [12, 24, 12, 10, 8, 16, 36],
     });
@@ -247,11 +486,7 @@ program
     );
 
     if (!project) {
-      console.log(
-        chalk.red(
-          `✗ 프로젝트를 찾을 수 없습니다: ${projectName}`,
-        ),
-      );
+      console.log(chalk.red(`✗ 프로젝트를 찾을 수 없습니다: ${projectName}`));
       console.log();
       console.log(chalk.gray("등록된 프로젝트:"));
       result.projects.forEach((p) => console.log(chalk.gray(`  - ${p.name}`)));
@@ -267,9 +502,7 @@ program
     console.log(chalk.cyan("기본 정보"));
     console.log(`  타입: ${chalk.yellow(project.type)}`);
     console.log(
-      `  우선순위: ${chalk.bold(
-        formatPriority(project.priority ?? "LOW"),
-      )}`,
+      `  우선순위: ${chalk.bold(formatPriority(project.priority ?? "LOW"))}`,
     );
     console.log(
       `  설명: ${project.metadata.description || chalk.gray("없음")}`,
@@ -389,7 +622,9 @@ program
     console.log(
       `  평균 진행률: ${chalk.bold(formatProgress(result.summary.avgProgress))}`,
     );
-    console.log(`  포트폴리오 준비도: ${chalk.bold(`${result.summary.avgReadiness}%`)}`);
+    console.log(
+      `  포트폴리오 준비도: ${chalk.bold(`${result.summary.avgReadiness}%`)}`,
+    );
     console.log();
 
     // 우선순위별 분포
@@ -400,7 +635,9 @@ program
     });
     (["CRITICAL", "HIGH", "MEDIUM", "LOW"] as const).forEach((priority) => {
       const count = result.summary.byPriority[priority];
-      const ratio = Math.round((count / Math.max(result.summary.total, 1)) * 100);
+      const ratio = Math.round(
+        (count / Math.max(result.summary.total, 1)) * 100,
+      );
       priorityTable.push([
         formatPriority(priority),
         count.toString(),
@@ -420,7 +657,9 @@ program
       .filter(([, count]) => count > 0)
       .sort(([, a], [, b]) => b - a)
       .forEach(([type, count]) => {
-        const ratio = Math.round((count / Math.max(result.summary.total, 1)) * 100);
+        const ratio = Math.round(
+          (count / Math.max(result.summary.total, 1)) * 100,
+        );
         typeTable.push([type, count.toString(), `${ratio}%`]);
       });
     console.log(typeTable.toString());
@@ -469,29 +708,29 @@ program
     const activityRanges = [
       {
         label: "이번 주 (0-7일)",
-        check: (p: typeof projects[0]) => p.activity.daysSinceLastCommit <= 7,
+        check: (p: (typeof projects)[0]) => p.activity.daysSinceLastCommit <= 7,
       },
       {
         label: "최근 (8-30일)",
-        check: (p: typeof projects[0]) =>
+        check: (p: (typeof projects)[0]) =>
           p.activity.daysSinceLastCommit > 7 &&
           p.activity.daysSinceLastCommit <= 30,
       },
       {
         label: "오래됨 (31-90일)",
-        check: (p: typeof projects[0]) =>
+        check: (p: (typeof projects)[0]) =>
           p.activity.daysSinceLastCommit > 30 &&
           p.activity.daysSinceLastCommit <= 90,
       },
       {
         label: "잊혀짐 (90일+)",
-        check: (p: typeof projects[0]) =>
+        check: (p: (typeof projects)[0]) =>
           p.activity.daysSinceLastCommit > 90 &&
           p.activity.daysSinceLastCommit < Number.MAX_SAFE_INTEGER,
       },
       {
         label: "Git 없음",
-        check: (p: typeof projects[0]) =>
+        check: (p: (typeof projects)[0]) =>
           p.activity.daysSinceLastCommit === Number.MAX_SAFE_INTEGER,
       },
     ];
@@ -743,98 +982,102 @@ program
   .argument("[project]", "특정 프로젝트의 히스토리 (선택)")
   .description("스캔 히스토리 보기")
   .option("-n, --count <count>", "표시할 항목 수", "10")
-  .action(async (projectName: string | undefined, options: { count: string }) => {
-    const historyStore = new HistoryStore();
-    const count = parseInt(options.count, 10) || 10;
-    const results = await historyStore.loadRecent(count);
+  .action(
+    async (projectName: string | undefined, options: { count: string }) => {
+      const historyStore = new HistoryStore();
+      const count = parseInt(options.count, 10) || 10;
+      const results = await historyStore.loadRecent(count);
 
-    if (results.length === 0) {
-      console.log(chalk.gray("히스토리가 없습니다. 먼저 스캔을 실행하세요."));
-      console.log(chalk.gray("  portfolio-tracker scan"));
-      return;
-    }
-
-    console.log();
-    if (projectName) {
-      // 특정 프로젝트 히스토리
-      const trend = TrendAnalyzer.buildProjectTrend(results, projectName);
-
-      if (trend.length === 0) {
-        console.log(
-          chalk.red(`✗ 히스토리에서 프로젝트를 찾을 수 없습니다: ${projectName}`),
-        );
+      if (results.length === 0) {
+        console.log(chalk.gray("히스토리가 없습니다. 먼저 스캔을 실행하세요."));
+        console.log(chalk.gray("  portfolio-tracker scan"));
         return;
       }
 
-      console.log(chalk.cyan.bold(`📈 ${projectName} - 진행 추이`));
       console.log();
+      if (projectName) {
+        // 특정 프로젝트 히스토리
+        const trend = TrendAnalyzer.buildProjectTrend(results, projectName);
 
-      const table = new Table({
-        head: ["시각", "진행률", "신뢰도", "준비도", "마지막 활동"],
-        colWidths: [22, 10, 10, 10, 14],
-      });
-
-      // 오래된 순
-      [...trend].reverse().forEach((point) => {
-        table.push([
-          formatDateTime(point.scannedAt),
-          formatProgress(point.percentage),
-          point.confidence,
-          `${point.readiness}%`,
-          formatActivity(point.daysSinceLastCommit),
-        ]);
-      });
-
-      console.log(table.toString());
-      console.log();
-
-      // 변화 요약
-      if (trend.length >= 2) {
-        const oldest = trend[trend.length - 1];
-        const newest = trend[0];
-        const progressChange =
-          oldest.percentage !== null && newest.percentage !== null
-            ? newest.percentage - oldest.percentage
-            : null;
-        const readinessChange = newest.readiness - oldest.readiness;
-
-        console.log(chalk.cyan("변화 요약"));
-        if (progressChange !== null) {
+        if (trend.length === 0) {
           console.log(
-            `  진행률: ${formatChange(progressChange, "%p")}`,
+            chalk.red(
+              `✗ 히스토리에서 프로젝트를 찾을 수 없습니다: ${projectName}`,
+            ),
           );
+          return;
         }
-        console.log(`  준비도: ${formatChange(readinessChange, "%p")}`);
+
+        console.log(chalk.cyan.bold(`📈 ${projectName} - 진행 추이`));
+        console.log();
+
+        const table = new Table({
+          head: ["시각", "진행률", "신뢰도", "준비도", "마지막 활동"],
+          colWidths: [22, 10, 10, 10, 14],
+        });
+
+        // 오래된 순
+        [...trend].reverse().forEach((point) => {
+          table.push([
+            formatDateTime(point.scannedAt),
+            formatProgress(point.percentage),
+            point.confidence,
+            `${point.readiness}%`,
+            formatActivity(point.daysSinceLastCommit),
+          ]);
+        });
+
+        console.log(table.toString());
+        console.log();
+
+        // 변화 요약
+        if (trend.length >= 2) {
+          const oldest = trend[trend.length - 1];
+          const newest = trend[0];
+          const progressChange =
+            oldest.percentage !== null && newest.percentage !== null
+              ? newest.percentage - oldest.percentage
+              : null;
+          const readinessChange = newest.readiness - oldest.readiness;
+
+          console.log(chalk.cyan("변화 요약"));
+          if (progressChange !== null) {
+            console.log(`  진행률: ${formatChange(progressChange, "%p")}`);
+          }
+          console.log(`  준비도: ${formatChange(readinessChange, "%p")}`);
+          console.log();
+        }
+      } else {
+        // 전체 히스토리
+        console.log(chalk.cyan.bold("📅 스캔 히스토리"));
+        console.log();
+
+        const table = new Table({
+          head: ["시각", "전체", "활성", "평균진행률", "준비도"],
+          colWidths: [22, 8, 8, 14, 12],
+        });
+
+        results.forEach((result) => {
+          table.push([
+            formatDateTime(result.scannedAt),
+            result.summary.total.toString(),
+            result.summary.active.toString(),
+            formatProgress(result.summary.avgProgress),
+            `${result.summary.avgReadiness}%`,
+          ]);
+        });
+
+        console.log(table.toString());
+        console.log();
+        console.log(
+          chalk.gray(
+            `총 ${results.length}개의 스캔 기록 (저장 위치: ${historyStore.dir})`,
+          ),
+        );
         console.log();
       }
-    } else {
-      // 전체 히스토리
-      console.log(chalk.cyan.bold("📅 스캔 히스토리"));
-      console.log();
-
-      const table = new Table({
-        head: ["시각", "전체", "활성", "평균진행률", "준비도"],
-        colWidths: [22, 8, 8, 14, 12],
-      });
-
-      results.forEach((result) => {
-        table.push([
-          formatDateTime(result.scannedAt),
-          result.summary.total.toString(),
-          result.summary.active.toString(),
-          formatProgress(result.summary.avgProgress),
-          `${result.summary.avgReadiness}%`,
-        ]);
-      });
-
-      console.log(table.toString());
-      console.log();
-      console.log(
-        chalk.gray(`총 ${results.length}개의 스캔 기록 (저장 위치: ${historyStore.dir})`),
-      );
-      console.log();
-    }
-  });
+    },
+  );
 
 // diff 커맨드
 program
@@ -904,7 +1147,9 @@ program
     // 사라진 프로젝트
     const removedProjects = diff.projects.filter((p) => p.status === "removed");
     if (removedProjects.length > 0) {
-      console.log(chalk.cyan(`💀 사라진 프로젝트 (${removedProjects.length}개)`));
+      console.log(
+        chalk.cyan(`💀 사라진 프로젝트 (${removedProjects.length}개)`),
+      );
       removedProjects.forEach((p) => {
         console.log(`  ${chalk.red("-")} ${p.name}`);
       });
@@ -939,7 +1184,9 @@ program
     }
 
     // 변화 없음 통계
-    const unchanged = diff.projects.filter((p) => p.status === "unchanged").length;
+    const unchanged = diff.projects.filter(
+      (p) => p.status === "unchanged",
+    ).length;
     const changed = diff.projects.filter((p) => p.status === "changed").length;
     console.log(
       chalk.gray(
@@ -960,7 +1207,9 @@ program
     const results = await historyStore.loadRecent(count);
 
     if (results.length < 2) {
-      console.log(chalk.gray("트렌드를 분석하려면 최소 2번의 스캔이 필요합니다."));
+      console.log(
+        chalk.gray("트렌드를 분석하려면 최소 2번의 스캔이 필요합니다."),
+      );
       console.log(chalk.gray(`현재 히스토리: ${results.length}개`));
       return;
     }
@@ -1146,6 +1395,40 @@ async function loadScanResult(options: {
   const result = await scanner.scan();
   await store.save(result);
   return { result, fromCache: false };
+}
+
+async function runAndSaveScan() {
+  const configManager = new ConfigManager();
+  const config = await configManager.load();
+  const scanner = new Scanner(config);
+  const store = new ScanStore();
+  const result = await scanner.scan();
+  await store.save(result);
+  return result;
+}
+
+async function readLastLines(filePath: string, count: number): Promise<string> {
+  try {
+    const content = await fs.readFile(filePath, "utf-8");
+    return content.split(/\r?\n/).slice(-count).join("\n").trim();
+  } catch {
+    return "";
+  }
+}
+
+async function resolveNodePath(): Promise<string> {
+  const stableNodePaths = ["/opt/homebrew/bin/node", "/usr/local/bin/node"];
+
+  for (const nodePath of stableNodePaths) {
+    try {
+      await fs.access(nodePath);
+      return nodePath;
+    } catch {
+      // 다음 후보를 확인합니다.
+    }
+  }
+
+  return process.execPath;
 }
 
 type ExportFormat = "markdown" | "html" | "json";

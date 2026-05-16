@@ -11,6 +11,7 @@
 - 📝 **다양한 출력**: Console, Markdown, HTML, JSON
 - 🏷️ **우선순위 자동 분류**: CRITICAL/HIGH/MEDIUM/LOW 자동 지정
 - 🔄 **캐시 지원**: 스캔 결과 저장 & 빠른 조회
+- ⏱️ **주기적 스캔**: `watch` 명령으로 일정 주기마다 자동 스캔
 
 ## 설치
 
@@ -45,6 +46,9 @@ portfolio-tracker report --refresh
 
 # 4. HTML로 내보내기
 portfolio-tracker export -f html -o report.html
+
+# 5. 자동 스캔 시작
+portfolio-tracker watch
 ```
 
 ## 커맨드
@@ -97,6 +101,61 @@ portfolio-tracker stats
 - 기술 타입별 분포
 - 진행률 분포 (0-25%, 25-50%, ..., 100%, 판단불가)
 - 활동성 분포 (이번 주/최근/오래됨/잊혀짐/Git 없음)
+
+### watch - 주기적 자동 스캔
+
+터미널에서 프로세스를 계속 띄워두고 설정된 주기마다 스캔합니다. 결과는 `.portfolio-tracker/scan-result.json`과 `.portfolio-tracker/history/`에 저장됩니다.
+
+```bash
+# config.json의 scanInterval 사용 (기본 24시간)
+portfolio-tracker watch
+
+# 30분마다 스캔
+portfolio-tracker watch --interval 30m
+
+# 시작 직후 스캔하지 않고 다음 주기부터 실행
+portfolio-tracker watch --no-initial
+
+# 한 번만 스캔하고 종료
+portfolio-tracker watch --once
+```
+
+지원하는 시간 단위는 `ms`, `s`, `m`, `h`, `d`입니다.
+
+```bash
+portfolio-tracker watch --interval 15m
+portfolio-tracker watch --interval 2h
+portfolio-tracker watch --interval 1d
+```
+
+### service - macOS 로그인 자동 실행
+
+macOS `launchd`에 등록해서 맥 로그인 시 자동 스캔을 시작합니다. 끄거나 제거할 때도 CLI로 처리할 수 있습니다.
+
+```bash
+# 로그인 자동 실행 등록 + 즉시 시작
+portfolio-tracker service install
+
+# 30분마다 스캔하도록 등록
+portfolio-tracker service install --interval 30m
+
+# 현재 실행 중인 서비스만 중지 (다음 로그인 때 다시 시작)
+portfolio-tracker service stop
+
+# 다시 시작
+portfolio-tracker service start
+
+# 상태 확인
+portfolio-tracker service status
+
+# 로그 확인
+portfolio-tracker service logs
+
+# 자동 실행 등록까지 완전히 제거
+portfolio-tracker service uninstall
+```
+
+서비스 로그는 `~/Library/Logs/portfolio-tracker/watch.log`와 `watch.error.log`에 저장됩니다.
 
 ### recommend - 작업 추천
 

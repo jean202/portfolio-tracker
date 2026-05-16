@@ -76,7 +76,9 @@ export class ConfigManager {
           name: "customDirs",
           message:
             "포트폴리오 디렉토리를 입력하세요 (쉼표로 구분, 예: ~/projects, ~/work):",
-          validate: (input: string) => input.trim().length > 0 || "최소 하나의 디렉토리를 입력해야 합니다.",
+          validate: (input: string) =>
+            input.trim().length > 0 ||
+            "최소 하나의 디렉토리를 입력해야 합니다.",
           filter: (input: string) =>
             input
               .split(",")
@@ -104,7 +106,8 @@ export class ConfigManager {
             type: "input",
             name: "dir",
             message: "디렉토리를 입력하세요:",
-            validate: (input) => input.trim().length > 0 || "디렉토리를 입력해야 합니다.",
+            validate: (input) =>
+              input.trim().length > 0 || "디렉토리를 입력해야 합니다.",
           },
         ]);
         projectDirs.push(moreAnswers.dir.trim());
