@@ -1,0 +1,681 @@
+{
+  "projects": [
+    {
+      "id": "users-jean325-portfolio-projects-threadkeeper",
+      "name": "threadkeeper",
+      "path": "/Users/jean325/portfolio/projects/threadkeeper",
+      "type": "unknown",
+      "progress": {
+        "percentage": 20,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Early-stage wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.895Z"
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": null,
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 9007199254740991
+      },
+      "metadata": {
+        "description": "ThreadKeeper",
+        "stack": [
+          "Next.js",
+          "Node.js",
+          "Spring",
+          "Docker"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": false
+      },
+      "readiness": 14,
+      "nextActions": [],
+      "issues": [
+        "Git 저장소 없음"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.896Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-discord-kakao-translator",
+      "name": "discord-kakao-translator",
+      "path": "/Users/jean325/portfolio/projects/discord-kakao-translator",
+      "type": "node",
+      "progress": {
+        "percentage": 85,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 85% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.885Z"
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": "2026-04-09T10:08:44.000Z",
+        "lastCommitMessage": "Initial commit: Discord-to-KakaoTalk translator bridge",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 37
+      },
+      "metadata": {
+        "description": "Discord -> Korean -> KakaoTalk",
+        "stack": [
+          "node",
+          "Node.js"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 77,
+      "nextActions": [
+        "장기 실행 안정성 로그 정리",
+        "설치/운영 체크리스트 보강",
+        "실제 운영 중 발생하는 에러 유형과 재시작/토큰 갱신 절차를 문서화하기",
+        "장기 실행 안정성 로그 정리",
+        "설치/운영 체크리스트 보강"
+      ],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.886Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-cleanera",
+      "name": "Cleanera",
+      "path": "/Users/jean325/portfolio/projects/Cleanera",
+      "type": "dart",
+      "progress": {
+        "percentage": 70,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 70% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.904Z"
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": "2026-05-02T23:53:03.000Z",
+        "lastCommitMessage": "Merge pull request #90 from ZayaMK/gianna",
+        "commitsInLastWeek": 0,
+        "isActive": true,
+        "daysSinceLastCommit": 14
+      },
+      "metadata": {
+        "description": "Cleanera",
+        "stack": [
+          "dart",
+          "Flutter"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "readiness": 94,
+      "nextActions": [
+        "End-to-end usage screenshots or demo flow",
+        "Test coverage summary for portfolio review",
+        "Deployment/setup notes for reviewers",
+        "포트폴리오에서 검토할 수 있도록 데모 화면, 테스트 범위, Supabase 설정 흐름을 정리하기",
+        "End-to-end usage screenshots or demo flow"
+      ],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.904Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-slotops",
+      "name": "slotops",
+      "path": "/Users/jean325/portfolio/projects/slotops",
+      "type": "unknown",
+      "progress": {
+        "percentage": 45,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Early-stage wording found",
+          "In-progress wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.899Z"
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": "2026-05-03T10:58:13.000Z",
+        "lastCommitMessage": "feat: implement Phase 2 - Location & Resource CRUD modules",
+        "commitsInLastWeek": 0,
+        "isActive": true,
+        "daysSinceLastCommit": 13
+      },
+      "metadata": {
+        "description": "SlotOps",
+        "stack": [
+          "Spring"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "readiness": 59,
+      "nextActions": [],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.899Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-asset-radar",
+      "name": "asset-radar",
+      "path": "/Users/jean325/portfolio/projects/asset-radar",
+      "type": "kotlin",
+      "progress": {
+        "percentage": 90,
+        "source": "project_plan",
+        "confidence": "high",
+        "signals": [
+          "79/88 checklist items completed",
+          "PROJECT_PLAN.md: checklist",
+          "README.md: checklist",
+          "docs/architecture.md: checklist",
+          "docs/data-sources.md: checklist"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.902Z",
+        "breakdown": {
+          "completed": 79,
+          "total": 88
+        }
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": "2026-05-04T14:27:54.000Z",
+        "lastCommitMessage": "feat: 포트폴리오 추천/전략화 로직 구현",
+        "commitsInLastWeek": 0,
+        "isActive": true,
+        "daysSinceLastCommit": 12
+      },
+      "metadata": {
+        "description": "asset-radar",
+        "stack": [
+          "kotlin",
+          "React",
+          "Spring",
+          "Docker"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "readiness": 98,
+      "nextActions": [
+        "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정",
+        "Swagger 예시 응답 추가 정리",
+        "Grafana 운영 스크린샷과 장애 진단 runbook 보강",
+        "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정",
+        "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정"
+      ],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.902Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-heic-jpg",
+      "name": "heic-jpg",
+      "path": "/Users/jean325/portfolio/projects/heic-jpg",
+      "type": "unknown",
+      "progress": {
+        "percentage": 80,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 80% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.888Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-04-09T10:00:49.000Z",
+        "lastCommitMessage": "Initial commit: macOS HEIC-to-JPEG CLI tool",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 37
+      },
+      "metadata": {
+        "description": "heic-jpg",
+        "stack": [],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 56,
+      "nextActions": [
+        "Homebrew 또는 설치 스크립트 정리",
+        "SwiftUI macOS/iOS 앱 확장",
+        "변환 전후 스크린샷 추가",
+        "Java CLI를 설치 가능한 형태로 정리한 뒤 SwiftUI 앱 확장 범위를 별도 문서로 분리하기",
+        "Homebrew 또는 설치 스크립트 정리"
+      ],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.889Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-webhook-notify",
+      "name": "webhook-notify",
+      "path": "/Users/jean325/portfolio/projects/webhook-notify",
+      "type": "kotlin",
+      "progress": {
+        "percentage": 85,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Deployment/release completion mentioned",
+          "Early-stage wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.903Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-04-09T12:02:31.000Z",
+        "lastCommitMessage": "docs: update README with Discord channel and Spring AOP status",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 37
+      },
+      "metadata": {
+        "description": "webhook-notify",
+        "stack": [
+          "kotlin",
+          "Spring"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 67,
+      "nextActions": [],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.903Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-card-mizer",
+      "name": "card-mizer",
+      "path": "/Users/jean325/portfolio/projects/card-mizer",
+      "type": "kotlin",
+      "progress": {
+        "percentage": 60,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Testing remains",
+          "Early-stage wording found",
+          "In-progress wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.908Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-04-18T12:46:16.000Z",
+        "lastCommitMessage": "build: add CI and harden validation coverage",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 28
+      },
+      "metadata": {
+        "description": "card-mizer",
+        "stack": [
+          "kotlin",
+          "Spring",
+          "Docker"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 62,
+      "nextActions": [],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.909Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-video-trans",
+      "name": "video-trans",
+      "path": "/Users/jean325/portfolio/projects/video-trans",
+      "type": "python",
+      "progress": {
+        "percentage": 20,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Early-stage wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.901Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-04-25T01:24:10.000Z",
+        "lastCommitMessage": "docs: 포트폴리오용 README 업그레이드 및 .gitignore 보강",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 22
+      },
+      "metadata": {
+        "description": "videoTrans",
+        "stack": [
+          "python"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 54,
+      "nextActions": [],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.901Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-signalmate",
+      "name": "signalmate",
+      "path": "/Users/jean325/portfolio/projects/signalmate",
+      "type": "unknown",
+      "progress": {
+        "percentage": 20,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Early-stage wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.907Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-05-15T04:19:52.000Z",
+        "lastCommitMessage": "test: cover API route success paths",
+        "commitsInLastWeek": 5,
+        "isActive": true,
+        "daysSinceLastCommit": 1
+      },
+      "metadata": {
+        "description": "SignalMate",
+        "stack": [
+          "Next.js",
+          "TypeScript"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 44,
+      "nextActions": [],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.907Z"
+    },
+    {
+      "id": "users-jean325-jsprojects-nest-seed",
+      "name": "nest-seed",
+      "path": "/Users/jean325/JsProjects/nest-seed",
+      "type": "node",
+      "progress": {
+        "percentage": null,
+        "source": "unknown",
+        "confidence": "low",
+        "signals": [
+          "No reliable progress signal found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.906Z"
+      },
+      "priority": "MEDIUM",
+      "activity": {
+        "lastCommitDate": "2026-05-05T09:18:11.000Z",
+        "lastCommitMessage": "test(overlap-race): cut INNER_ITERATIONS 500 -> 300 for headroom",
+        "commitsInLastWeek": 0,
+        "isActive": true,
+        "daysSinceLastCommit": 11
+      },
+      "metadata": {
+        "description": "nest-seed",
+        "stack": [
+          "node",
+          "Docker"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 60,
+      "nextActions": [],
+      "issues": [
+        "진행률 판단 불가"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.907Z"
+    },
+    {
+      "id": "users-jean325-pycharmprojects-google-drive-api-controller",
+      "name": "google-drive-api-controller",
+      "path": "/Users/jean325/PycharmProjects/google-drive-api-controller",
+      "type": "python",
+      "progress": {
+        "percentage": 20,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 20% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.903Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": null,
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 9007199254740991
+      },
+      "metadata": {
+        "description": "google-drive-api-controller",
+        "stack": [
+          "python"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 49,
+      "nextActions": [
+        "실제 서비스 계정 설정 문서화",
+        "폴더 ID/인증 파일 경로를 환경변수 또는 CLI 인자로 분리",
+        "하위 폴더 재귀 집계",
+        "에러 처리와 테스트 추가",
+        "포트폴리오용 사용 사례 정리"
+      ],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.903Z"
+    },
+    {
+      "id": "users-jean325-pycharmprojects-til",
+      "name": "til",
+      "path": "/Users/jean325/PycharmProjects/til",
+      "type": "unknown",
+      "progress": {
+        "percentage": 35,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 35% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.911Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": "2024-10-27T00:20:35.000Z",
+        "lastCommitMessage": "add x-ray data",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 567
+      },
+      "metadata": {
+        "description": "til",
+        "stack": [],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 32,
+      "nextActions": [
+        "주제별 목차 정리",
+        "오래된 외부 링크 확인",
+        "포트폴리오에 연결할 대표 학습 기록 선별",
+        "이미지 경로와 문서 렌더링 상태 점검",
+        "학습 노트 저장소로 유지하되, 포트폴리오에는 대표 문서만 선별해서 연결하기"
+      ],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.911Z"
+    },
+    {
+      "id": "users-jean325-portfolio-projects-blog-to-shorts",
+      "name": "blog-to-shorts",
+      "path": "/Users/jean325/portfolio/projects/blog-to-shorts",
+      "type": "unknown",
+      "progress": {
+        "percentage": 75,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 75% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.883Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": "2026-04-09T10:17:47.000Z",
+        "lastCommitMessage": "Initial commit: Naver blog to YouTube Shorts pipeline",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 37
+      },
+      "metadata": {
+        "description": "blog-to-shorts",
+        "stack": [
+          "FastAPI"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 55,
+      "nextActions": [
+        "OAuth 설정 절차 검증 문서 보강",
+        "샘플 입력/출력 영상 정리",
+        "실패 케이스 재시도와 운영 로그 정리",
+        "테스트 자동화 보강",
+        "실제 샘플 블로그 글에서 생성된 영상과 업로드 결과를 정리하고, OAuth/환경변수 설정 과정을 검증 가능한 체크리스트로 보강하기"
+      ],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-05-17T02:13:14.884Z"
+    },
+    {
+      "id": "users-jean325-pycharmprojects-ramen-demand-forecast",
+      "name": "ramen-demand-forecast",
+      "path": "/Users/jean325/PycharmProjects/ramen-demand-forecast",
+      "type": "python",
+      "progress": {
+        "percentage": 95,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 95% progress"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.908Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": "2026-04-26T02:03:16.000Z",
+        "lastCommitMessage": "feat: Claude API 기반 AI 해설 생성 기능 추가",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 21
+      },
+      "metadata": {
+        "description": "라면류 수요예측 파이프라인",
+        "stack": [
+          "python"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 79,
+      "nextActions": [
+        "공개 샘플 데이터셋 추가",
+        "원본 거래 데이터 없이도 파이프라인 구조를 실행해볼 수 있는 작은 샘플 데이터셋 추가하기",
+        "공개 샘플 데이터셋 추가",
+        "원본 거래 데이터 없이도 파이프라인 구조를 실행해볼 수 있는 작은 샘플 데이터셋 추가하기"
+      ],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.908Z"
+    },
+    {
+      "id": "users-jean325-jsprojects-haera",
+      "name": "haera",
+      "path": "/Users/jean325/JsProjects/haera",
+      "type": "unknown",
+      "progress": {
+        "percentage": 45,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "In-progress wording found"
+        ],
+        "lastUpdated": "2026-05-17T02:13:14.906Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": "2026-04-28T19:57:42.000Z",
+        "lastCommitMessage": ".",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 18
+      },
+      "metadata": {
+        "description": "Haera",
+        "stack": [],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "readiness": 39,
+      "nextActions": [],
+      "issues": [],
+      "scannedAt": "2026-05-17T02:13:14.906Z"
+    }
+  ],
+  "scannedAt": "2026-05-17T02:13:14.912Z",
+  "summary": {
+    "total": 16,
+    "active": 5,
+    "avgProgress": 56,
+    "avgReadiness": 59,
+    "byPriority": {
+      "CRITICAL": 5,
+      "HIGH": 5,
+      "MEDIUM": 1,
+      "LOW": 5
+    },
+    "byType": {
+      "node": 2,
+      "python": 3,
+      "dart": 1,
+      "java": 0,
+      "kotlin": 3,
+      "go": 0,
+      "rust": 0,
+      "unknown": 7
+    }
+  }
+}
