@@ -1,0 +1,40 @@
+name: Deploy Portfolio Report
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .portfolio-tracker/scan-result.json
+
+permissions:
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install and build
+        run: npm ci && npm run build
+
+      - name: Generate HTML report
+        run: node dist/cli/index.js export -f html -o _site/index.html --all
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
