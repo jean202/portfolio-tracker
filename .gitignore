@@ -9,7 +9,8 @@ dist/
 .next/
 out/
 coverage/
-.portfolio-tracker/
+.portfolio-tracker/*
+!.portfolio-tracker/scan-result.json
 
 # 사용자 개별 설정/생성물
 config.json
