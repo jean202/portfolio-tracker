@@ -1,18 +1,32 @@
 #!/usr/bin/env node
 
+import { execFile } from "child_process";
+import crypto from "crypto";
 import fs from "fs/promises";
+import http from "http";
 import path from "path";
+import { promisify } from "util";
 import { fileURLToPath } from "url";
 import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
+import {
+  KakaoNotifier,
+  shouldNotifyKakao,
+} from "../core/KakaoNotifier.js";
 import { formatDuration, parseDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
 import { Scanner } from "../core/Scanner.js";
+import {
+  buildScanNotification,
+  shouldNotifySubAgent,
+  SubAgentClient,
+} from "../core/SubAgentClient.js";
 import { TrendAnalyzer } from "../core/TrendAnalyzer.js";
 import { WebhookNotifier } from "../core/WebhookNotifier.js";
-import type { ScanResult } from "../core/ProjectModel.js";
+import type { Config, ScanResult } from "../core/ProjectModel.js";
+import type { ScanDiff } from "../core/TrendAnalyzer.js";
 import { renderHtmlReport } from "../report/HtmlReport.js";
 import { renderJsonReport } from "../report/JsonReport.js";
 import { renderMarkdownReport } from "../report/MarkdownReport.js";
@@ -20,6 +34,7 @@ import { HistoryStore } from "../storage/HistoryStore.js";
 import { ScanStore } from "../storage/ScanStore.js";
 
 const program = new Command();
+const execFileAsync = promisify(execFile);
 
 program
   .name("portfolio-tracker")
@@ -169,29 +184,10 @@ program
             ),
           );
 
-          // webhook 알림
-          if (config.webhookUrl) {
-            try {
-              const historyStore = new HistoryStore();
-              const recentResults = await historyStore.loadRecent(2);
-              if (recentResults.length >= 2) {
-                const diff = TrendAnalyzer.diff(recentResults[1], recentResults[0]);
-                if (WebhookNotifier.shouldNotify(diff)) {
-                  const notifier = new WebhookNotifier(config.webhookUrl);
-                  await notifier.notify(WebhookNotifier.buildPayload(diff, result));
-                  console.log(chalk.gray("  [webhook] 변경 알림 전송 완료"));
-                }
-              } else {
-                console.log(chalk.gray("  [webhook] 히스토리 부족 – 다음 스캔부터 알림"));
-              }
-            } catch (webhookError) {
-              console.warn(
-                chalk.yellow(
-                  `⚠ Webhook 전송 실패: ${webhookError instanceof Error ? webhookError.message : webhookError}`,
-                ),
-              );
-            }
-          }
+          const diff = await loadLatestDiff();
+          await notifyWebhookAfterScan(config, result, diff);
+          await notifySubAgentAfterScan(config, result, diff);
+          await notifyKakaoAfterScan(config, result, diff);
         } catch (error) {
           console.error(chalk.red("자동 스캔 실패:"), error);
         } finally {
@@ -372,6 +368,178 @@ service
 
     console.log(chalk.gray(logPath));
     console.log(content || chalk.gray("(로그 없음)"));
+  });
+
+// agent 커맨드
+const agent = program
+  .command("agent")
+  .description("local-mac-sub-agent 연결 관리");
+
+agent
+  .command("status")
+  .description("sub-agent 연결 상태 확인")
+  .action(async () => {
+    const config = await new ConfigManager().load();
+    const client = SubAgentClient.fromConfig(config.subAgent);
+
+    if (!client) {
+      console.log(chalk.yellow("sub-agent 연결이 비활성화되어 있습니다."));
+      console.log(chalk.gray("config.json의 subAgent.enabled를 true로 설정하세요."));
+      return;
+    }
+
+    const health = await client.health();
+    console.log(chalk.green("✓ sub-agent 연결됨"));
+    console.log(JSON.stringify(health, null, 2));
+  });
+
+agent
+  .command("test")
+  .description("sub-agent로 테스트 알림 전송")
+  .action(async () => {
+    const client = await requireSubAgentClient();
+    const task = await client.notify(
+      "Portfolio Tracker",
+      "sub-agent 연결 테스트가 완료되었습니다.",
+    );
+
+    console.log(chalk.green(`✓ 테스트 알림 전송 완료 (${task.id})`));
+  });
+
+agent
+  .command("open-report")
+  .description("HTML 리포트를 생성하고 sub-agent로 열기")
+  .option("-o, --output <file>", "출력 파일", "portfolio-report.html")
+  .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
+  .option("--incremental", "변경된 프로젝트만 재스캔")
+  .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 포함")
+  .action(
+    async (options: {
+      output: string;
+      refresh?: boolean;
+      incremental?: boolean;
+      all?: boolean;
+    }) => {
+      const client = await requireSubAgentClient();
+      const { result, fromCache } = await loadScanResult({
+        refresh: options.refresh,
+        incremental: options.incremental,
+      });
+      const outputPath = path.resolve(process.cwd(), options.output);
+      const content = renderHtmlReport(result, {
+        includeLowPriority: options.all,
+      });
+
+      await fs.mkdir(path.dirname(outputPath), { recursive: true });
+      await fs.writeFile(outputPath, content, "utf-8");
+      const task = await client.openFile(outputPath);
+
+      console.log(chalk.green(`✓ HTML 리포트 열기 요청 완료 (${task.id})`));
+      console.log(chalk.gray(`  파일: ${outputPath}`));
+      console.log(chalk.gray(`  데이터: ${fromCache ? "저장된 결과" : "새 스캔 결과"}`));
+    },
+  );
+
+// kakao 커맨드
+const kakao = program
+  .command("kakao")
+  .description("카카오톡 나에게 보내기 연동");
+
+kakao
+  .command("auth")
+  .description("Kakao Login으로 talk_message 토큰 저장")
+  .option("--rest-api-key <key>", "Kakao Developers REST API 키")
+  .option("--client-secret <secret>", "Kakao Login client secret")
+  .option("--redirect-uri <uri>", "등록된 Redirect URI")
+  .option("--code <code>", "이미 받은 authorization code로 토큰 발급")
+  .option("--no-open", "인증 URL을 브라우저로 자동 열지 않음")
+  .action(
+    async (options: {
+      restApiKey?: string;
+      clientSecret?: string;
+      redirectUri?: string;
+      code?: string;
+      open?: boolean;
+    }) => {
+      const config = await new ConfigManager().load();
+      const notifier = KakaoNotifier.configured({
+        ...config.kakao,
+        restApiKey: options.restApiKey ?? config.kakao?.restApiKey,
+        clientSecret: options.clientSecret ?? config.kakao?.clientSecret,
+        redirectUri: options.redirectUri ?? config.kakao?.redirectUri,
+      });
+
+      if (options.code) {
+        await notifier.exchangeCode(options.code);
+      } else {
+        const state = crypto.randomBytes(16).toString("hex");
+        const authUrl = notifier.getAuthorizationUrl(state);
+        const codePromise = waitForKakaoAuthCode(
+          notifier.redirectUri,
+          state,
+        );
+
+        console.log(chalk.cyan("아래 URL에서 카카오 로그인을 승인하세요."));
+        console.log(authUrl);
+        console.log();
+        console.log(
+          chalk.gray(
+            `Redirect URI: ${notifier.redirectUri} (Kakao Developers에 등록되어 있어야 합니다.)`,
+          ),
+        );
+
+        if (options.open !== false) {
+          await openBrowser(authUrl).catch((error) => {
+            console.log(
+              chalk.yellow(
+                `브라우저 자동 열기 실패: ${error instanceof Error ? error.message : error}`,
+              ),
+            );
+          });
+        }
+
+        await notifier.exchangeCode(await codePromise);
+      }
+
+      console.log(chalk.green("✓ 카카오 토큰 저장 완료"));
+      console.log(chalk.gray(`  Token: ${notifier.tokenFile}`));
+    },
+  );
+
+kakao
+  .command("status")
+  .description("카카오 연동 설정과 토큰 상태 확인")
+  .action(async () => {
+    const config = await new ConfigManager().load();
+    const notifier = KakaoNotifier.configured(config.kakao);
+    const status = await notifier.status();
+
+    console.log(chalk.cyan("카카오 연동 상태"));
+    console.log(`  활성화: ${config.kakao?.enabled ? "✓" : "✗"}`);
+    console.log(`  REST API 키: ${status.configured ? "✓" : "✗"}`);
+    console.log(`  토큰: ${status.hasToken ? "✓" : "✗"}`);
+    console.log(chalk.gray(`  Token: ${status.tokenFile}`));
+    if (status.accessTokenExpiresAt) {
+      console.log(chalk.gray(`  Access token 만료: ${status.accessTokenExpiresAt}`));
+    }
+    if (status.refreshTokenExpiresAt) {
+      console.log(chalk.gray(`  Refresh token 만료: ${status.refreshTokenExpiresAt}`));
+    }
+    if (status.scope) {
+      console.log(chalk.gray(`  Scope: ${status.scope}`));
+    }
+  });
+
+kakao
+  .command("test")
+  .description("카카오톡 나에게 테스트 메시지 전송")
+  .action(async () => {
+    const notifier = await requireKakaoNotifier();
+    await notifier.sendTextToMe(
+      "[Portfolio Tracker]\n카카오톡 나에게 보내기 연동 테스트입니다.",
+    );
+
+    console.log(chalk.green("✓ 카카오톡 나에게 테스트 메시지 전송 완료"));
   });
 
 // report 커맨드
@@ -1352,7 +1520,97 @@ program
       config.projectDirs.forEach((dir) => {
         console.log(chalk.gray(`  - ${dir}`));
       });
+      console.log();
+      console.log(chalk.cyan("카카오 연동:"));
+      console.log(`  활성화: ${config.kakao?.enabled ? "✓" : "✗"}`);
+      console.log(`  REST API 키: ${config.kakao?.restApiKey ? "✓" : "✗"}`);
+      if (config.kakao?.redirectUri) {
+        console.log(chalk.gray(`  Redirect URI: ${config.kakao.redirectUri}`));
+      }
+      if (config.kakao?.tokenFile) {
+        console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
+      }
     }),
+  )
+  .addCommand(
+    new Command("kakao")
+      .description("카카오톡 나에게 보내기 설정")
+      .option("--enable", "카카오 연동 활성화")
+      .option("--disable", "카카오 연동 비활성화")
+      .option("--rest-api-key <key>", "Kakao Developers REST API 키")
+      .option("--client-secret <secret>", "Kakao Login client secret")
+      .option("--redirect-uri <uri>", "Kakao Login Redirect URI")
+      .option("--token-file <file>", "토큰 저장 파일")
+      .option("--link-url <url>", "카톡 메시지 버튼 링크 URL")
+      .option("--notify-on-scan <value>", "매 스캔마다 알림 true/false")
+      .option("--notify-on-changes <value>", "변화 있을 때 알림 true/false")
+      .action(
+        async (options: {
+          enable?: boolean;
+          disable?: boolean;
+          restApiKey?: string;
+          clientSecret?: string;
+          redirectUri?: string;
+          tokenFile?: string;
+          linkUrl?: string;
+          notifyOnScan?: string;
+          notifyOnChanges?: string;
+        }) => {
+          if (options.enable && options.disable) {
+            throw new Error("--enable과 --disable은 같이 사용할 수 없습니다.");
+          }
+
+          const configManager = new ConfigManager();
+          const config = await configManager.load();
+          config.kakao = {
+            enabled: false,
+            redirectUri: "http://localhost:4888/kakao/callback",
+            tokenFile: ".portfolio-tracker/kakao-token.json",
+            linkUrl: "https://developers.kakao.com",
+            notifyOnScan: true,
+            notifyOnChanges: true,
+            ...config.kakao,
+          };
+
+          if (options.enable) config.kakao.enabled = true;
+          if (options.disable) config.kakao.enabled = false;
+          if (options.restApiKey !== undefined) {
+            config.kakao.restApiKey = options.restApiKey;
+          }
+          if (options.clientSecret !== undefined) {
+            config.kakao.clientSecret = options.clientSecret;
+          }
+          if (options.redirectUri !== undefined) {
+            config.kakao.redirectUri = options.redirectUri;
+          }
+          if (options.tokenFile !== undefined) {
+            config.kakao.tokenFile = options.tokenFile;
+          }
+          if (options.linkUrl !== undefined) {
+            config.kakao.linkUrl = options.linkUrl;
+          }
+          if (options.notifyOnScan !== undefined) {
+            config.kakao.notifyOnScan = parseBooleanOption(
+              options.notifyOnScan,
+              "--notify-on-scan",
+            );
+          }
+          if (options.notifyOnChanges !== undefined) {
+            config.kakao.notifyOnChanges = parseBooleanOption(
+              options.notifyOnChanges,
+              "--notify-on-changes",
+            );
+          }
+
+          await configManager.save(config);
+
+          console.log(chalk.green("✓ 카카오 설정 저장 완료"));
+          console.log(`  활성화: ${config.kakao.enabled ? "✓" : "✗"}`);
+          console.log(`  REST API 키: ${config.kakao.restApiKey ? "✓" : "✗"}`);
+          console.log(chalk.gray(`  Redirect URI: ${config.kakao.redirectUri}`));
+          console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
+        },
+      ),
   );
 
 function formatPriority(priority = "LOW"): string {
@@ -1393,6 +1651,243 @@ function formatChange(value: number, suffix = ""): string {
   if (value === 0) return chalk.gray(`±0${suffix}`);
   if (value > 0) return chalk.green(`▲ +${value}${suffix}`);
   return chalk.red(`▼ ${value}${suffix}`);
+}
+
+function parseBooleanOption(value: string, label: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  if (["true", "1", "yes", "y", "on"].includes(normalized)) return true;
+  if (["false", "0", "no", "n", "off"].includes(normalized)) return false;
+  throw new Error(`${label} 값은 true 또는 false여야 합니다.`);
+}
+
+async function requireSubAgentClient(): Promise<SubAgentClient> {
+  const config = await new ConfigManager().load();
+  const client = SubAgentClient.fromConfig(config.subAgent);
+
+  if (!client) {
+    throw new Error(
+      "sub-agent 연결이 비활성화되어 있습니다. config.json의 subAgent.enabled를 true로 설정하세요.",
+    );
+  }
+
+  return client;
+}
+
+async function requireKakaoNotifier(): Promise<KakaoNotifier> {
+  const config = await new ConfigManager().load();
+  const notifier = KakaoNotifier.configured(config.kakao);
+  const status = await notifier.status();
+
+  if (!status.configured) {
+    throw new Error(
+      "카카오 REST API 키가 필요합니다. config.json의 kakao.restApiKey 또는 KAKAO_REST_API_KEY를 설정하세요.",
+    );
+  }
+  if (!status.hasToken) {
+    throw new Error("카카오 토큰이 없습니다. 먼저 kakao auth를 실행하세요.");
+  }
+
+  return notifier;
+}
+
+function waitForKakaoAuthCode(
+  redirectUri: string,
+  expectedState: string,
+): Promise<string> {
+  const redirect = new URL(redirectUri);
+  const allowedHosts = new Set(["localhost", "127.0.0.1"]);
+
+  if (redirect.protocol !== "http:" || !allowedHosts.has(redirect.hostname)) {
+    throw new Error(
+      "자동 인증은 http://localhost 또는 http://127.0.0.1 Redirect URI만 지원합니다. 다른 URI는 --code 옵션을 사용하세요.",
+    );
+  }
+
+  const port = Number.parseInt(redirect.port || "80", 10);
+
+  return new Promise((resolve, reject) => {
+    const server = http.createServer((request, response) => {
+      const requestUrl = new URL(request.url ?? "/", redirectUri);
+
+      if (requestUrl.pathname !== redirect.pathname) {
+        response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+        response.end("Not found");
+        return;
+      }
+
+      const error = requestUrl.searchParams.get("error");
+      const errorDescription = requestUrl.searchParams.get("error_description");
+      const state = requestUrl.searchParams.get("state");
+      const code = requestUrl.searchParams.get("code");
+
+      if (error) {
+        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.end("Kakao authorization failed. You can close this window.");
+        cleanup();
+        reject(new Error(errorDescription ?? error));
+        return;
+      }
+
+      if (state !== expectedState) {
+        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.end("Invalid state. You can close this window.");
+        cleanup();
+        reject(new Error("카카오 인증 state 값이 일치하지 않습니다."));
+        return;
+      }
+
+      if (!code) {
+        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.end("Missing authorization code. You can close this window.");
+        cleanup();
+        reject(new Error("카카오 authorization code가 없습니다."));
+        return;
+      }
+
+      response.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
+      response.end("Kakao authorization complete. You can close this window.");
+      cleanup();
+      resolve(code);
+    });
+
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("카카오 인증 대기 시간이 초과되었습니다."));
+    }, 5 * 60 * 1000);
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      server.close();
+    };
+
+    server.on("error", (error) => {
+      cleanup();
+      reject(error);
+    });
+    server.listen(port, redirect.hostname);
+  });
+}
+
+async function openBrowser(url: string): Promise<void> {
+  if (process.platform === "darwin") {
+    await execFileAsync("open", [url]);
+    return;
+  }
+
+  console.log(chalk.gray("브라우저에서 직접 URL을 여세요."));
+}
+
+async function loadLatestDiff(): Promise<ScanDiff | null> {
+  const historyStore = new HistoryStore();
+  const recentResults = await historyStore.loadRecent(2);
+
+  if (recentResults.length < 2) {
+    return null;
+  }
+
+  return TrendAnalyzer.diff(recentResults[1], recentResults[0]);
+}
+
+async function notifyWebhookAfterScan(
+  config: Config,
+  result: ScanResult,
+  diff: ScanDiff | null,
+): Promise<void> {
+  if (!config.webhookUrl) {
+    return;
+  }
+
+  try {
+    if (!diff) {
+      console.log(chalk.gray("  [webhook] 히스토리 부족 – 다음 스캔부터 알림"));
+      return;
+    }
+
+    if (WebhookNotifier.shouldNotify(diff)) {
+      const notifier = new WebhookNotifier(config.webhookUrl);
+      await notifier.notify(WebhookNotifier.buildPayload(diff, result));
+      console.log(chalk.gray("  [webhook] 변경 알림 전송 완료"));
+    }
+  } catch (webhookError) {
+    console.warn(
+      chalk.yellow(
+        `⚠ Webhook 전송 실패: ${
+          webhookError instanceof Error ? webhookError.message : webhookError
+        }`,
+      ),
+    );
+  }
+}
+
+async function notifySubAgentAfterScan(
+  config: Config,
+  result: ScanResult,
+  diff: ScanDiff | null,
+): Promise<void> {
+  const client = SubAgentClient.fromConfig(config.subAgent);
+  if (!client || !shouldNotifySubAgent(config.subAgent, diff)) {
+    return;
+  }
+
+  try {
+    const notification = buildScanNotification(result, diff);
+    await client.notify(notification.title, notification.message);
+    console.log(chalk.gray("  [sub-agent] macOS 알림 전송 완료"));
+
+    const shouldOpenReport =
+      config.subAgent?.openReportOnChanges === true &&
+      shouldNotifySubAgent(
+        {
+          ...config.subAgent,
+          notifyOnScan: false,
+          notifyOnChanges: true,
+        },
+        diff,
+      );
+
+    if (shouldOpenReport) {
+      const reportPath = path.resolve(process.cwd(), "portfolio-report.html");
+      await fs.writeFile(
+        reportPath,
+        renderHtmlReport(result, { includeLowPriority: true }),
+        "utf-8",
+      );
+      await client.openFile(reportPath);
+      console.log(chalk.gray("  [sub-agent] HTML 리포트 열기 요청 완료"));
+    }
+  } catch (subAgentError) {
+    console.warn(
+      chalk.yellow(
+        `⚠ sub-agent 전송 실패: ${
+          subAgentError instanceof Error ? subAgentError.message : subAgentError
+        }`,
+      ),
+    );
+  }
+}
+
+async function notifyKakaoAfterScan(
+  config: Config,
+  result: ScanResult,
+  diff: ScanDiff | null,
+): Promise<void> {
+  const notifier = KakaoNotifier.fromConfig(config.kakao);
+  if (!notifier || !shouldNotifyKakao(config.kakao, diff)) {
+    return;
+  }
+
+  try {
+    await notifier.sendPortfolioSummary(result, diff);
+    console.log(chalk.gray("  [kakao] 나에게 메시지 전송 완료"));
+  } catch (kakaoError) {
+    console.warn(
+      chalk.yellow(
+        `⚠ 카카오 전송 실패: ${
+          kakaoError instanceof Error ? kakaoError.message : kakaoError
+        }`,
+      ),
+    );
+  }
 }
 
 async function loadScanResult(options: {

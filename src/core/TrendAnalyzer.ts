@@ -84,7 +84,8 @@ export class TrendAnalyzer {
           beforeProject.progress.percentage,
           afterProject.progress.percentage,
         );
-        const readinessChange = afterProject.readiness - beforeProject.readiness;
+        const readinessChange =
+          afterProject.readiness - beforeProject.readiness;
         const activityChange =
           afterProject.activity.daysSinceLastCommit -
           beforeProject.activity.daysSinceLastCommit;
@@ -111,7 +112,8 @@ export class TrendAnalyzer {
         total: after.summary.total - before.summary.total,
         active: after.summary.active - before.summary.active,
         avgProgress:
-          after.summary.avgProgress !== null && before.summary.avgProgress !== null
+          after.summary.avgProgress !== null &&
+          before.summary.avgProgress !== null
             ? after.summary.avgProgress - before.summary.avgProgress
             : null,
         avgReadiness: after.summary.avgReadiness - before.summary.avgReadiness,

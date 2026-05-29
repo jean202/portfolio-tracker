@@ -284,11 +284,16 @@ export class Scanner {
         hasClaude: candidate.hasClaude,
         hasGit: candidate.hasGit,
       },
-      readiness: this.calculateReadiness(progress, activity, {
-        hasReadme: candidate.hasReadme,
-        hasClaude: candidate.hasClaude,
-        hasGit: candidate.hasGit,
-      }, candidate.packageJsonType),
+      readiness: this.calculateReadiness(
+        progress,
+        activity,
+        {
+          hasReadme: candidate.hasReadme,
+          hasClaude: candidate.hasClaude,
+          hasGit: candidate.hasGit,
+        },
+        candidate.packageJsonType,
+      ),
       nextActions: this.detectNextActions(text),
       issues,
       scannedAt: new Date(),
@@ -512,7 +517,10 @@ export class Scanner {
         knownProgressProjects.length === 0
           ? null
           : Math.round(progressTotal / knownProgressProjects.length),
-      avgReadiness: projects.length === 0 ? 0 : Math.round(readinessTotal / projects.length),
+      avgReadiness:
+        projects.length === 0
+          ? 0
+          : Math.round(readinessTotal / projects.length),
       byPriority,
       byType,
     };
@@ -552,9 +560,15 @@ export class Scanner {
     // Activity quality: 0-25점
     if (activity.isActive) {
       score += 25;
-    } else if (activity.daysSinceLastCommit < 60 && activity.daysSinceLastCommit !== Number.MAX_SAFE_INTEGER) {
+    } else if (
+      activity.daysSinceLastCommit < 60 &&
+      activity.daysSinceLastCommit !== Number.MAX_SAFE_INTEGER
+    ) {
       score += 15;
-    } else if (activity.daysSinceLastCommit < 180 && activity.daysSinceLastCommit !== Number.MAX_SAFE_INTEGER) {
+    } else if (
+      activity.daysSinceLastCommit < 180 &&
+      activity.daysSinceLastCommit !== Number.MAX_SAFE_INTEGER
+    ) {
       score += 8;
     }
 

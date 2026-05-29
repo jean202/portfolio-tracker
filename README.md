@@ -157,6 +157,77 @@ portfolio-tracker service uninstall
 
 서비스 로그는 `~/Library/Logs/portfolio-tracker/watch.log`와 `watch.error.log`에 저장됩니다.
 
+### agent - local-mac-sub-agent 연동
+
+`portfolio-tracker`가 스캔 결과를 만든 뒤 local-mac-sub-agent에 macOS 알림이나 리포트 열기 요청을 보낼 수 있습니다.
+
+```json
+{
+  "subAgent": {
+    "enabled": true,
+    "baseUrl": "http://127.0.0.1:4877",
+    "tokenFile": "/Users/jean325/Documents/sub-agent/data/token",
+    "notifyOnScan": true,
+    "notifyOnChanges": true,
+    "openReportOnChanges": false
+  }
+}
+```
+
+```bash
+# 연결 상태 확인
+portfolio-tracker agent status
+
+# 테스트 알림 전송
+portfolio-tracker agent test
+
+# HTML 리포트 생성 후 sub-agent로 열기
+portfolio-tracker agent open-report
+```
+
+`watch` 실행 중에는 스캔이 끝날 때 `sub-agent`로 알림이 전송됩니다.
+
+### kakao - 카카오톡 나에게 보내기
+
+`portfolio-tracker`가 스캔 요약을 카카오톡 "나와의 채팅방"으로 보낼 수 있습니다.
+
+준비:
+
+1. Kakao Developers에서 앱 생성
+2. Kakao Login 활성화
+3. Redirect URI 등록: `http://localhost:4888/kakao/callback`
+4. 동의 항목에서 `talk_message` 사용 설정
+5. 메시지 템플릿 링크에 사용할 Web domain 등록
+   - 예: `https://jean202.github.io`
+   - 카카오 메시지 버튼은 `linkUrl`에 지정한 모바일 웹 리포트로 이동합니다.
+
+`config.json` 예시:
+
+```json
+{
+  "kakao": {
+    "enabled": true,
+    "restApiKey": "YOUR_REST_API_KEY",
+    "redirectUri": "http://localhost:4888/kakao/callback",
+    "tokenFile": ".portfolio-tracker/kakao-token.json",
+    "linkUrl": "https://jean202.github.io/portfolio-tracker/",
+    "notifyOnScan": true,
+    "notifyOnChanges": true
+  }
+}
+```
+
+인증과 테스트:
+
+```bash
+portfolio-tracker config kakao --enable --rest-api-key YOUR_REST_API_KEY
+portfolio-tracker kakao auth
+portfolio-tracker kakao status
+portfolio-tracker kakao test
+```
+
+인증이 끝나면 `watch` 실행 중 스캔 완료 요약이 카카오톡 나와의 채팅방으로 전송됩니다. 토큰 파일은 `.portfolio-tracker/kakao-token.json`에 저장됩니다.
+
 ### recommend - 작업 추천
 
 오늘 작업하기 좋은 프로젝트와 잊고 있던 프로젝트를 추천합니다:

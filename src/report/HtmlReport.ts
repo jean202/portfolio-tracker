@@ -14,12 +14,17 @@ export function renderHtmlReport(
   const actionable = projects.filter(
     (project) => project.nextActions && project.nextActions.length > 0,
   );
+  const focusProjects = actionable.slice(0, 3);
 
   return `<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fa">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Portfolio Tracker">
   <title>Portfolio Project Report</title>
   <style>
     :root {
@@ -29,11 +34,13 @@ export function renderHtmlReport(
       --text: #18202a;
       --muted: #667085;
       --line: #d8dee8;
+      --soft-line: #edf1f6;
       --critical: #c2410c;
       --high: #b45309;
       --medium: #2563eb;
       --low: #64748b;
       --active: #0f766e;
+      --focus: #111827;
     }
 
     * {
@@ -104,13 +111,54 @@ export function renderHtmlReport(
       font-size: 24px;
     }
 
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .focus-card,
+    .project-card,
+    .action-block {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .focus-card {
+      padding: 16px;
+    }
+
+    .focus-card h3,
+    .project-card h3,
+    .action-block h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .focus-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .focus-action {
+      margin-top: 12px;
+      color: var(--focus);
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
       background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      overflow: hidden;
     }
 
     th,
@@ -190,25 +238,51 @@ export function renderHtmlReport(
     }
 
     .action-block {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
       padding: 14px 16px;
     }
 
-    .action-block h3 {
-      margin: 0 0 8px;
-      font-size: 15px;
+    .action-block ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
     }
 
-    .action-block ul {
-      margin: 0;
-      padding-left: 18px;
+    .project-cards {
+      display: none;
+    }
+
+    .project-card {
+      padding: 14px 16px;
+    }
+
+    .project-card-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .project-card-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--soft-line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .project-card-meta strong {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
     }
 
     @media (max-width: 760px) {
       main {
-        width: min(100vw - 20px, 1180px);
+        width: auto;
+        margin: 24px 12px;
         padding-top: 20px;
       }
 
@@ -216,13 +290,25 @@ export function renderHtmlReport(
         display: block;
       }
 
+      h1 {
+        font-size: 24px;
+      }
+
       .summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      table {
-        display: block;
-        overflow-x: auto;
+      .focus-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      .project-cards {
+        display: grid;
+        gap: 12px;
       }
     }
   </style>
@@ -244,8 +330,11 @@ export function renderHtmlReport(
       ${renderMetric("Portfolio Readiness", `${result.summary.avgReadiness}%`)}
     </section>
 
+    ${focusProjects.length > 0 ? renderTodayFocus(focusProjects) : ""}
+
     <section>
       <h2>Projects</h2>
+      ${renderProjectCards(projects)}
       ${renderProjectTable(projects)}
     </section>
 
@@ -265,7 +354,7 @@ function renderProjectTable(projects: Project[]): string {
     return `<p class="muted">No projects to display.</p>`;
   }
 
-  return `<table>
+  return `<div class="table-wrap"><table>
   <thead>
     <tr>
       <th>Priority</th>
@@ -281,7 +370,7 @@ function renderProjectTable(projects: Project[]): string {
   <tbody>
     ${projects.map(renderProjectRow).join("\n    ")}
   </tbody>
-</table>`;
+</table></div>`;
 }
 
 function renderProjectRow(project: Project): string {
@@ -299,6 +388,40 @@ function renderProjectRow(project: Project): string {
   <td>${escapeHtml(formatActivity(project.activity.daysSinceLastCommit))}</td>
   <td>${escapeHtml(project.issues?.join(", ") || "-")}</td>
 </tr>`;
+}
+
+function renderProjectCards(projects: Project[]): string {
+  if (projects.length === 0) {
+    return "";
+  }
+
+  return `<div class="project-cards">
+    ${projects.map(renderProjectCard).join("\n    ")}
+  </div>`;
+}
+
+function renderProjectCard(project: Project): string {
+  const signalText = project.progress.signals[0]
+    ? `<div class="muted">${escapeHtml(project.progress.signals[0])}</div>`
+    : "";
+
+  return `<article class="project-card">
+  <div class="project-card-head">
+    <div>
+      <h3>${escapeHtml(project.name)}</h3>
+      <div class="path">${escapeHtml(project.path)}</div>
+    </div>
+    ${renderPriority(project.priority ?? "LOW")}
+  </div>
+  <div class="progress"><div>${formatProgress(project.progress.percentage)}</div><div class="bar"><span style="width: ${progressBarWidth(project.progress.percentage)}%"></span></div></div>
+  ${signalText}
+  <div class="project-card-meta">
+    <div><span>Type</span><strong>${escapeHtml(project.type)}</strong></div>
+    <div><span>Readiness</span><strong>${project.readiness}%</strong></div>
+    <div><span>Activity</span><strong>${escapeHtml(formatActivity(project.activity.daysSinceLastCommit))}</strong></div>
+    <div><span>Issues</span><strong>${escapeHtml(project.issues?.join(", ") || "-")}</strong></div>
+  </div>
+</article>`;
 }
 
 function renderPriority(priority: string): string {
@@ -324,6 +447,26 @@ function renderNextActions(projects: Project[]): string {
       .join("\n    ")}
   </div>
 </section>`;
+}
+
+function renderTodayFocus(projects: Project[]): string {
+  return `<section>
+  <h2>Today Focus</h2>
+  <div class="focus-grid">
+    ${projects.map(renderFocusCard).join("\n    ")}
+  </div>
+</section>`;
+}
+
+function renderFocusCard(project: Project): string {
+  const firstAction = project.nextActions?.[0] ?? "Review the project status.";
+
+  return `<article class="focus-card">
+  ${renderPriority(project.priority ?? "LOW")}
+  <h3>${escapeHtml(project.name)}</h3>
+  <p>${formatProgress(project.progress.percentage)} complete · readiness ${project.readiness}%</p>
+  <div class="focus-action">${escapeHtml(firstAction)}</div>
+</article>`;
 }
 
 function formatActivity(daysSinceLastCommit: number): string {

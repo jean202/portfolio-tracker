@@ -238,9 +238,18 @@ describe("TrendAnalyzer.buildTrend", () => {
     const t3 = new Date("2026-05-02T12:00:00.000Z");
 
     const results = [
-      makeScanResult(t1, [makeProject()], { avgProgress: 30, avgReadiness: 50 }),
-      makeScanResult(t2, [makeProject()], { avgProgress: 50, avgReadiness: 60 }),
-      makeScanResult(t3, [makeProject()], { avgProgress: 70, avgReadiness: 75 }),
+      makeScanResult(t1, [makeProject()], {
+        avgProgress: 30,
+        avgReadiness: 50,
+      }),
+      makeScanResult(t2, [makeProject()], {
+        avgProgress: 50,
+        avgReadiness: 60,
+      }),
+      makeScanResult(t3, [makeProject()], {
+        avgProgress: 70,
+        avgReadiness: 75,
+      }),
     ];
 
     const trend = TrendAnalyzer.buildTrend(results);

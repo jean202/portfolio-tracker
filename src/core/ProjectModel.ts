@@ -79,9 +79,32 @@ export interface ScanResult {
   };
 }
 
+export interface SubAgentConfig {
+  enabled?: boolean;
+  baseUrl?: string;
+  token?: string;
+  tokenFile?: string;
+  notifyOnScan?: boolean;
+  notifyOnChanges?: boolean;
+  openReportOnChanges?: boolean;
+}
+
+export interface KakaoConfig {
+  enabled?: boolean;
+  restApiKey?: string;
+  clientSecret?: string;
+  redirectUri?: string;
+  tokenFile?: string;
+  linkUrl?: string;
+  notifyOnScan?: boolean;
+  notifyOnChanges?: boolean;
+}
+
 export interface Config {
   projectDirs: string[];
   scanInterval?: number;
   excludePatterns?: string[];
   webhookUrl?: string;
+  subAgent?: SubAgentConfig;
+  kakao?: KakaoConfig;
 }
