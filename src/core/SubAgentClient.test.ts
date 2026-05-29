@@ -16,7 +16,9 @@ afterEach(() => {
 
 describe("SubAgentClient", () => {
   it("reads token file and posts a task", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "sub-agent-client-"));
+    const tempDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "sub-agent-client-"),
+    );
     const tokenPath = path.join(tempDir, "token");
     await fs.writeFile(tokenPath, "secret\n");
     const mockFetch = vi
@@ -62,15 +64,15 @@ describe("SubAgentClient", () => {
 describe("shouldNotifySubAgent", () => {
   it("requires enabled config", () => {
     expect(shouldNotifySubAgent(undefined, null)).toBe(false);
-    expect(shouldNotifySubAgent({ enabled: false, notifyOnScan: true }, null)).toBe(
-      false,
-    );
+    expect(
+      shouldNotifySubAgent({ enabled: false, notifyOnScan: true }, null),
+    ).toBe(false);
   });
 
   it("notifies every scan when notifyOnScan is true", () => {
-    expect(shouldNotifySubAgent({ enabled: true, notifyOnScan: true }, null)).toBe(
-      true,
-    );
+    expect(
+      shouldNotifySubAgent({ enabled: true, notifyOnScan: true }, null),
+    ).toBe(true);
   });
 
   it("notifies on meaningful diff when notifyOnChanges is true", () => {
@@ -90,6 +92,33 @@ describe("shouldNotifySubAgent", () => {
 
     expect(
       shouldNotifySubAgent({ enabled: true, notifyOnChanges: true }, diff),
+    ).toBe(true);
+  });
+
+  it("uses a custom progress threshold for change notifications", () => {
+    const diff = makeDiff({
+      projects: [
+        {
+          name: "project-a",
+          before: {} as never,
+          after: {} as never,
+          status: "changed",
+          progressChange: 8,
+          readinessChange: 0,
+          activityChange: 0,
+        },
+      ],
+    });
+
+    expect(
+      shouldNotifySubAgent({ enabled: true, notifyOnChanges: true }, diff, {
+        progressChangeThreshold: 10,
+      }),
+    ).toBe(false);
+    expect(
+      shouldNotifySubAgent({ enabled: true, notifyOnChanges: true }, diff, {
+        progressChangeThreshold: 8,
+      }),
     ).toBe(true);
   });
 });
@@ -126,6 +155,34 @@ describe("buildScanNotification", () => {
     expect(notification.message).toContain("큰 변화 없음");
     expect(notification.message).not.toContain("최대 변화");
     expect(notification.title).toBe("Portfolio Tracker 스캔 완료");
+  });
+
+  it("uses a custom threshold for the change count", () => {
+    const result = makeScanResult();
+    const diff = makeDiff({
+      projects: [
+        {
+          name: "project-a",
+          before: {} as never,
+          after: {} as never,
+          status: "changed",
+          progressChange: 8,
+          readinessChange: 0,
+          activityChange: 0,
+        },
+      ],
+    });
+
+    expect(
+      buildScanNotification(result, diff, {
+        progressChangeThreshold: 10,
+      }).message,
+    ).toContain("큰 변화 없음");
+    expect(
+      buildScanNotification(result, diff, {
+        progressChangeThreshold: 8,
+      }).message,
+    ).toContain("진행률 변화 1");
   });
 });
 

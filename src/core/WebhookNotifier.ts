@@ -1,5 +1,10 @@
 import type { ScanDiff, ProjectChange } from "./TrendAnalyzer.js";
 import type { ScanResult } from "./ProjectModel.js";
+import {
+  hasMeaningfulNotificationChange,
+  isMeaningfulProgressChange,
+  type NotificationPolicyOptions,
+} from "./NotificationPolicy.js";
 
 export interface WebhookPayload {
   scannedAt: string;
@@ -22,8 +27,6 @@ export interface WebhookPayload {
   };
 }
 
-const PROGRESS_CHANGE_THRESHOLD = 5;
-
 export class WebhookNotifier {
   constructor(private readonly url: string) {}
 
@@ -31,25 +34,24 @@ export class WebhookNotifier {
    * diff에 유의미한 변경이 있으면 true.
    * - 새 프로젝트 추가됨
    * - 프로젝트 삭제됨
-   * - 진행률 변화 절댓값 >= 5%p
+   * - 진행률 변화 절댓값 >= configured threshold
    */
-  static shouldNotify(diff: ScanDiff): boolean {
-    return diff.projects.some(
-      (p) =>
-        p.status === "new" ||
-        p.status === "removed" ||
-        (p.progressChange !== null &&
-          Math.abs(p.progressChange) >= PROGRESS_CHANGE_THRESHOLD),
-    );
+  static shouldNotify(
+    diff: ScanDiff,
+    options: NotificationPolicyOptions = {},
+  ): boolean {
+    return hasMeaningfulNotificationChange(diff, options);
   }
 
-  static buildPayload(diff: ScanDiff, after: ScanResult): WebhookPayload {
+  static buildPayload(
+    diff: ScanDiff,
+    after: ScanResult,
+    options: NotificationPolicyOptions = {},
+  ): WebhookPayload {
     const changed = diff.projects
       .filter(
         (p): p is ProjectChange & { status: "changed" } =>
-          p.status === "changed" &&
-          p.progressChange !== null &&
-          Math.abs(p.progressChange) >= PROGRESS_CHANGE_THRESHOLD,
+          p.status === "changed" && isMeaningfulProgressChange(p, options),
       )
       .map((p) => ({
         name: p.name,
@@ -68,8 +70,12 @@ export class WebhookNotifier {
         avgReadiness: after.summary.avgReadiness,
       },
       changes: {
-        added: diff.projects.filter((p) => p.status === "new").map((p) => p.name),
-        removed: diff.projects.filter((p) => p.status === "removed").map((p) => p.name),
+        added: diff.projects
+          .filter((p) => p.status === "new")
+          .map((p) => p.name),
+        removed: diff.projects
+          .filter((p) => p.status === "removed")
+          .map((p) => p.name),
         changed,
       },
     };

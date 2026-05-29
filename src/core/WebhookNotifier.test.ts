@@ -138,6 +138,29 @@ describe("WebhookNotifier.shouldNotify", () => {
     expect(WebhookNotifier.shouldNotify(diff)).toBe(false);
   });
 
+  it("custom threshold를 사용해 진행률 변화 알림을 판단한다", () => {
+    const diff = makeDiff({
+      projects: [
+        {
+          name: "proj",
+          before: makeProject({ name: "proj" }),
+          after: makeProject({ name: "proj" }),
+          status: "changed",
+          progressChange: 8,
+          readinessChange: 0,
+          activityChange: 0,
+        },
+      ],
+    });
+
+    expect(
+      WebhookNotifier.shouldNotify(diff, { progressChangeThreshold: 10 }),
+    ).toBe(false);
+    expect(
+      WebhookNotifier.shouldNotify(diff, { progressChangeThreshold: 8 }),
+    ).toBe(true);
+  });
+
   it("변경이 없으면 false를 반환한다", () => {
     const diff = makeDiff();
     expect(WebhookNotifier.shouldNotify(diff)).toBe(false);
@@ -327,5 +350,60 @@ describe("WebhookNotifier.buildPayload", () => {
       progressBefore: 40,
       progressAfter: 80,
     });
+  });
+
+  it("custom threshold로 payload의 changed 목록을 필터링한다", () => {
+    const after: ScanResult = {
+      projects: [],
+      scannedAt: new Date("2026-01-02T00:00:00.000Z"),
+      summary: {
+        total: 1,
+        active: 1,
+        avgProgress: 60,
+        avgReadiness: 70,
+        byPriority: { CRITICAL: 0, HIGH: 1, MEDIUM: 0, LOW: 0 },
+        byType: {
+          node: 1,
+          python: 0,
+          dart: 0,
+          java: 0,
+          kotlin: 0,
+          go: 0,
+          rust: 0,
+          unknown: 0,
+        },
+      },
+    };
+    const diff = makeDiff({
+      projects: [
+        {
+          name: "change",
+          before: makeProject({
+            name: "change",
+            progress: {
+              ...makeProject().progress,
+              percentage: 50,
+            },
+          }),
+          after: makeProject({
+            name: "change",
+            progress: {
+              ...makeProject().progress,
+              percentage: 58,
+            },
+          }),
+          status: "changed",
+          progressChange: 8,
+          readinessChange: 0,
+          activityChange: 0,
+        },
+      ],
+    });
+
+    const payload = WebhookNotifier.buildPayload(diff, after, {
+      progressChangeThreshold: 10,
+    });
+
+    expect(payload.changes.changed).toEqual([]);
   });
 });

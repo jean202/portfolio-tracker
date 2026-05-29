@@ -96,9 +96,9 @@ describe("KakaoNotifier", () => {
 
 describe("shouldNotifyKakao", () => {
   it("respects enabled and notifyOnScan flags", () => {
-    expect(shouldNotifyKakao({ enabled: false, notifyOnScan: true }, null)).toBe(
-      false,
-    );
+    expect(
+      shouldNotifyKakao({ enabled: false, notifyOnScan: true }, null),
+    ).toBe(false);
     expect(shouldNotifyKakao({ enabled: true, notifyOnScan: true }, null)).toBe(
       true,
     );
@@ -123,6 +123,33 @@ describe("shouldNotifyKakao", () => {
       shouldNotifyKakao({ enabled: true, notifyOnChanges: true }, diff),
     ).toBe(true);
   });
+
+  it("uses a custom progress threshold for change notifications", () => {
+    const diff = makeDiff({
+      projects: [
+        {
+          name: "project-a",
+          before: {} as never,
+          after: {} as never,
+          status: "changed",
+          progressChange: 8,
+          readinessChange: 0,
+          activityChange: 0,
+        },
+      ],
+    });
+
+    expect(
+      shouldNotifyKakao({ enabled: true, notifyOnChanges: true }, diff, {
+        progressChangeThreshold: 10,
+      }),
+    ).toBe(false);
+    expect(
+      shouldNotifyKakao({ enabled: true, notifyOnChanges: true }, diff, {
+        progressChangeThreshold: 8,
+      }),
+    ).toBe(true);
+  });
 });
 
 describe("buildKakaoScanMessage", () => {
@@ -132,6 +159,33 @@ describe("buildKakaoScanMessage", () => {
     expect(message.length).toBeLessThanOrEqual(200);
     expect(message).toContain("[Portfolio Tracker]");
     expect(message).toContain("전체 16");
+  });
+
+  it("uses a custom threshold in the summary line", () => {
+    const diff = makeDiff({
+      projects: [
+        {
+          name: "project-a",
+          before: {} as never,
+          after: {} as never,
+          status: "changed",
+          progressChange: 8,
+          readinessChange: 0,
+          activityChange: 0,
+        },
+      ],
+    });
+
+    expect(
+      buildKakaoScanMessage(makeScanResult(), diff, {
+        progressChangeThreshold: 10,
+      }),
+    ).toContain("큰 변화 없음");
+    expect(
+      buildKakaoScanMessage(makeScanResult(), diff, {
+        progressChangeThreshold: 8,
+      }),
+    ).toContain("진행률 변화 1");
   });
 });
 

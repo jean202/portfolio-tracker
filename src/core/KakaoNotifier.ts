@@ -3,6 +3,11 @@ import os from "os";
 import path from "path";
 import type { KakaoConfig, ScanResult } from "./ProjectModel.js";
 import type { ScanDiff } from "./TrendAnalyzer.js";
+import {
+  countMeaningfulProgressChanges,
+  hasMeaningfulNotificationChange,
+  type NotificationPolicyOptions,
+} from "./NotificationPolicy.js";
 
 export interface KakaoTokenSet {
   tokenType: string;
@@ -139,8 +144,9 @@ export class KakaoNotifier {
   async sendPortfolioSummary(
     result: ScanResult,
     diff: ScanDiff | null,
+    options: NotificationPolicyOptions = {},
   ): Promise<void> {
-    await this.sendTextToMe(buildKakaoScanMessage(result, diff));
+    await this.sendTextToMe(buildKakaoScanMessage(result, diff, options));
   }
 
   async sendTextToMe(text: string): Promise<void> {
@@ -267,6 +273,7 @@ export class KakaoNotifier {
 export function shouldNotifyKakao(
   config: KakaoConfig | undefined,
   diff: ScanDiff | null,
+  options: NotificationPolicyOptions = {},
 ): boolean {
   if (!config?.enabled) {
     return false;
@@ -277,7 +284,7 @@ export function shouldNotifyKakao(
   }
 
   if (config.notifyOnChanges && diff) {
-    return hasMeaningfulKakaoChange(diff);
+    return hasMeaningfulNotificationChange(diff, options);
   }
 
   return false;
@@ -286,13 +293,14 @@ export function shouldNotifyKakao(
 export function buildKakaoScanMessage(
   result: ScanResult,
   diff: ScanDiff | null,
+  options: NotificationPolicyOptions = {},
 ): string {
   const progress =
     result.summary.avgProgress === null
       ? "판단 불가"
       : `${result.summary.avgProgress}%`;
   const changeLine = diff
-    ? summarizeDiff(diff)
+    ? summarizeDiff(diff, options)
     : "첫 스캔 또는 비교 데이터 없음";
 
   return truncateForKakao(
@@ -305,35 +313,23 @@ export function buildKakaoScanMessage(
   );
 }
 
-function summarizeDiff(diff: ScanDiff): string {
+function summarizeDiff(
+  diff: ScanDiff,
+  options: NotificationPolicyOptions = {},
+): string {
   const added = diff.projects.filter(
     (project) => project.status === "new",
   ).length;
   const removed = diff.projects.filter(
     (project) => project.status === "removed",
   ).length;
-  const changed = diff.projects.filter(
-    (project) =>
-      project.status === "changed" &&
-      project.progressChange !== null &&
-      Math.abs(project.progressChange) >= 5,
-  ).length;
+  const changed = countMeaningfulProgressChanges(diff, options);
 
   if (added === 0 && removed === 0 && changed === 0) {
     return "큰 변화 없음";
   }
 
   return `신규 ${added} · 제거 ${removed} · 진행률 변화 ${changed}`;
-}
-
-function hasMeaningfulKakaoChange(diff: ScanDiff): boolean {
-  return diff.projects.some(
-    (project) =>
-      project.status === "new" ||
-      project.status === "removed" ||
-      (project.progressChange !== null &&
-        Math.abs(project.progressChange) >= 5),
-  );
 }
 
 function truncateForKakao(text: string): string {

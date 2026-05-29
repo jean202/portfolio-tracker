@@ -14,6 +14,7 @@ import { ConfigManager } from "../config/ConfigManager.js";
 import { KakaoNotifier, shouldNotifyKakao } from "../core/KakaoNotifier.js";
 import { formatDuration, parseDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
+import { resolveProgressChangeThreshold } from "../core/NotificationPolicy.js";
 import { Scanner } from "../core/Scanner.js";
 import {
   buildScanNotification,
@@ -1545,6 +1546,11 @@ program
         console.log(chalk.gray("  Token: 직접 설정됨"));
       }
       console.log();
+      console.log(chalk.cyan("알림 정책:"));
+      console.log(
+        `  진행률 변화 기준: ${resolveProgressChangeThreshold(config.notification)}%p`,
+      );
+      console.log();
       console.log(chalk.cyan("카카오 연동:"));
       console.log(`  활성화: ${config.kakao?.enabled ? "✓" : "✗"}`);
       console.log(`  REST API 키: ${config.kakao?.restApiKey ? "✓" : "✗"}`);
@@ -1555,6 +1561,34 @@ program
         console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
       }
     }),
+  )
+  .addCommand(
+    new Command("notifications")
+      .alias("notification")
+      .description("공통 알림 정책 설정")
+      .option("--progress-threshold <percent>", "진행률 변화 알림 기준(%p)")
+      .action(async (options: { progressThreshold?: string }) => {
+        const configManager = new ConfigManager();
+        const config = await configManager.load();
+        config.notification = {
+          ...config.notification,
+        };
+
+        if (options.progressThreshold !== undefined) {
+          config.notification.progressChangeThreshold = parseNumberOption(
+            options.progressThreshold,
+            "--progress-threshold",
+          );
+          await configManager.save(config);
+          console.log(chalk.green("✓ 알림 정책 저장 완료"));
+        }
+
+        console.log(
+          chalk.gray(
+            `  진행률 변화 기준: ${resolveProgressChangeThreshold(config.notification)}%p`,
+          ),
+        );
+      }),
   )
   .addCommand(
     new Command("agent")
@@ -1769,6 +1803,14 @@ function parseBooleanOption(value: string, label: string): boolean {
   throw new Error(`${label} 값은 true 또는 false여야 합니다.`);
 }
 
+function parseNumberOption(value: string, label: string): number {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    throw new Error(`${label} 값은 0 이상의 숫자여야 합니다.`);
+  }
+  return parsed;
+}
+
 async function requireSubAgentClient(): Promise<SubAgentClient> {
   const config = await new ConfigManager().load();
   const client = SubAgentClient.fromConfig(config.subAgent);
@@ -1923,9 +1965,12 @@ async function notifyWebhookAfterScan(
       return;
     }
 
-    if (WebhookNotifier.shouldNotify(diff)) {
+    const notificationOptions = config.notification ?? {};
+    if (WebhookNotifier.shouldNotify(diff, notificationOptions)) {
       const notifier = new WebhookNotifier(config.webhookUrl);
-      await notifier.notify(WebhookNotifier.buildPayload(diff, result));
+      await notifier.notify(
+        WebhookNotifier.buildPayload(diff, result, notificationOptions),
+      );
       console.log(chalk.gray("  [webhook] 변경 알림 전송 완료"));
     }
   } catch (webhookError) {
@@ -1945,12 +1990,20 @@ async function notifySubAgentAfterScan(
   diff: ScanDiff | null,
 ): Promise<void> {
   const client = SubAgentClient.fromConfig(config.subAgent);
-  if (!client || !shouldNotifySubAgent(config.subAgent, diff)) {
+  const notificationOptions = config.notification ?? {};
+  if (
+    !client ||
+    !shouldNotifySubAgent(config.subAgent, diff, notificationOptions)
+  ) {
     return;
   }
 
   try {
-    const notification = buildScanNotification(result, diff);
+    const notification = buildScanNotification(
+      result,
+      diff,
+      notificationOptions,
+    );
     await client.notify(notification.title, notification.message);
     console.log(chalk.gray("  [sub-agent] macOS 알림 전송 완료"));
 
@@ -1963,6 +2016,7 @@ async function notifySubAgentAfterScan(
           notifyOnChanges: true,
         },
         diff,
+        notificationOptions,
       );
 
     if (shouldOpenReport) {
@@ -1992,12 +2046,16 @@ async function notifyKakaoAfterScan(
   diff: ScanDiff | null,
 ): Promise<void> {
   const notifier = KakaoNotifier.fromConfig(config.kakao);
-  if (!notifier || !shouldNotifyKakao(config.kakao, diff)) {
+  const notificationOptions = config.notification ?? {};
+  if (
+    !notifier ||
+    !shouldNotifyKakao(config.kakao, diff, notificationOptions)
+  ) {
     return;
   }
 
   try {
-    await notifier.sendPortfolioSummary(result, diff);
+    await notifier.sendPortfolioSummary(result, diff, notificationOptions);
     console.log(chalk.gray("  [kakao] 나에게 메시지 전송 완료"));
   } catch (kakaoError) {
     console.warn(

@@ -4,6 +4,11 @@ import path from "path";
 import { pathToFileURL } from "url";
 import type { ScanResult, SubAgentConfig } from "./ProjectModel.js";
 import type { ScanDiff } from "./TrendAnalyzer.js";
+import {
+  countMeaningfulProgressChanges,
+  hasMeaningfulNotificationChange,
+  type NotificationPolicyOptions,
+} from "./NotificationPolicy.js";
 
 export interface SubAgentTask {
   id: string;
@@ -145,7 +150,9 @@ export class SubAgentClient {
     }
 
     if (!this.tokenFile) {
-      throw new Error("subAgent.tokenFile 또는 subAgent.token 설정이 필요합니다.");
+      throw new Error(
+        "subAgent.tokenFile 또는 subAgent.token 설정이 필요합니다.",
+      );
     }
 
     return (await fs.readFile(this.tokenFile, "utf-8")).trim();
@@ -155,6 +162,7 @@ export class SubAgentClient {
 export function shouldNotifySubAgent(
   config: SubAgentConfig | undefined,
   diff: ScanDiff | null,
+  options: NotificationPolicyOptions = {},
 ): boolean {
   if (!config?.enabled) {
     return false;
@@ -165,7 +173,7 @@ export function shouldNotifySubAgent(
   }
 
   if (config.notifyOnChanges && diff) {
-    return hasMeaningfulChange(diff);
+    return hasMeaningfulNotificationChange(diff, options);
   }
 
   return false;
@@ -174,6 +182,7 @@ export function shouldNotifySubAgent(
 export function buildScanNotification(
   result: ScanResult,
   diff: ScanDiff | null,
+  options: NotificationPolicyOptions = {},
 ): { title: string; message: string } {
   const progress = result.summary.avgProgress ?? "판단 불가";
   const base = `${result.summary.total}개 프로젝트 · 활성 ${result.summary.active}개 · 평균 진행률 ${progress}% · 준비도 ${result.summary.avgReadiness}%`;
@@ -185,17 +194,13 @@ export function buildScanNotification(
     };
   }
 
-  const added = diff.projects.filter((project) => project.status === "new").length;
+  const added = diff.projects.filter(
+    (project) => project.status === "new",
+  ).length;
   const removed = diff.projects.filter(
     (project) => project.status === "removed",
   ).length;
-  const changed = diff.projects.filter((project) => {
-    return (
-      project.status === "changed" &&
-      project.progressChange !== null &&
-      Math.abs(project.progressChange) >= 5
-    );
-  }).length;
+  const changed = countMeaningfulProgressChanges(diff, options);
   const topMover = diff.projects
     .filter(
       (project) =>
@@ -207,10 +212,9 @@ export function buildScanNotification(
     )[0];
   const hasChangeSummary = added !== 0 || removed !== 0 || changed !== 0;
 
-  const changeSummary =
-    hasChangeSummary
-      ? `신규 ${added} · 제거 ${removed} · 진행률 변화 ${changed}`
-      : "큰 변화 없음";
+  const changeSummary = hasChangeSummary
+    ? `신규 ${added} · 제거 ${removed} · 진행률 변화 ${changed}`
+    : "큰 변화 없음";
   const moverSummary = topMover
     ? ` · 최대 변화 ${topMover.name} ${formatSigned(topMover.progressChange ?? 0)}%p`
     : "";
@@ -224,13 +228,7 @@ export function buildScanNotification(
 }
 
 export function hasMeaningfulChange(diff: ScanDiff): boolean {
-  return diff.projects.some(
-    (project) =>
-      project.status === "new" ||
-      project.status === "removed" ||
-      (project.progressChange !== null &&
-        Math.abs(project.progressChange) >= 5),
-  );
+  return hasMeaningfulNotificationChange(diff);
 }
 
 function expandHome(value: string): string {

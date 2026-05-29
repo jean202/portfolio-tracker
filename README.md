@@ -95,6 +95,12 @@ portfolio-tracker config remove ~/old-projects
 portfolio-tracker config rm ~/old-projects
 ```
 
+**공통 알림 정책 설정:**
+
+```bash
+portfolio-tracker config notifications --progress-threshold 8
+```
+
 ### stats - 통계 요약
 
 포트폴리오 전체 통계를 한눈에 확인합니다:
@@ -476,7 +482,10 @@ portfolio-tracker export -f markdown --all
   "projectDirs": ["~/portfolio/projects", "~/IdeaProjects"],
   "scanInterval": 86400000,
   "excludePatterns": ["node_modules", ".git", ".next", "dist", "build"],
-  "webhookUrl": "https://hooks.slack.com/services/..."
+  "webhookUrl": "https://hooks.slack.com/services/...",
+  "notification": {
+    "progressChangeThreshold": 5
+  }
 }
 ```
 
@@ -485,7 +494,8 @@ portfolio-tracker export -f markdown --all
 - `projectDirs` (필수): 스캔할 프로젝트 디렉토리 경로 배열
 - `scanInterval` (선택): 자동 스캔 주기 (ms 단위, 기본값: 86400000 = 24시간)
 - `excludePatterns` (선택): 스캔 제외 패턴 배열
-- `webhookUrl` (선택): `watch` 실행 중 새 프로젝트 추가/삭제 또는 진행률이 5%p 이상 변화하면 해당 URL로 POST 알림을 전송합니다.
+- `webhookUrl` (선택): `watch` 실행 중 새 프로젝트 추가/삭제 또는 설정된 진행률 변화 기준 이상 변화하면 해당 URL로 POST 알림을 전송합니다.
+- `notification.progressChangeThreshold` (선택): 변화 알림으로 볼 진행률 차이 기준입니다. 기본값은 `5`입니다.
 
 ## 진행률 감지 방식
 

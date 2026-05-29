@@ -100,6 +100,10 @@ export interface KakaoConfig {
   notifyOnChanges?: boolean;
 }
 
+export interface NotificationConfig {
+  progressChangeThreshold?: number;
+}
+
 export interface Config {
   projectDirs: string[];
   scanInterval?: number;
@@ -107,4 +111,5 @@ export interface Config {
   webhookUrl?: string;
   subAgent?: SubAgentConfig;
   kakao?: KakaoConfig;
+  notification?: NotificationConfig;
 }

@@ -36,11 +36,17 @@ describe("CLI command registration", () => {
     const kakaoHelp = await runCli(["kakao", "--help"]);
     const configAgentHelp = await runCli(["config", "agent", "--help"]);
     const configKakaoHelp = await runCli(["config", "kakao", "--help"]);
+    const configNotificationsHelp = await runCli([
+      "config",
+      "notifications",
+      "--help",
+    ]);
 
     expect(agentHelp).toContain("open-report");
     expect(kakaoHelp).toContain("auth");
     expect(configAgentHelp).toContain("--open-report-on-changes");
     expect(configKakaoHelp).toContain("--rest-api-key");
+    expect(configNotificationsHelp).toContain("--progress-threshold");
   }, 15_000);
 
   it("writes sub-agent settings through config agent", async () => {
@@ -77,6 +83,26 @@ describe("CLI command registration", () => {
         notifyOnScan: false,
         notifyOnChanges: true,
         openReportOnChanges: true,
+      });
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  }, 15_000);
+
+  it("writes shared notification policy through config notifications", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "portfolio-cli-"));
+
+    try {
+      await runCli(["config", "notifications", "--progress-threshold", "8"], {
+        cwd: tempDir,
+      });
+
+      const config = JSON.parse(
+        await fs.readFile(path.join(tempDir, "config.json"), "utf-8"),
+      );
+
+      expect(config.notification).toMatchObject({
+        progressChangeThreshold: 8,
       });
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
