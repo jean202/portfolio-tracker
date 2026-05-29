@@ -15,3 +15,5 @@ coverage/
 # 사용자 개별 설정/생성물
 config.json
 portfolio-report.*
+report.html
+.portfolio-tracker/kakao-token.json
