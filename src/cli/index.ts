@@ -11,10 +11,7 @@ import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
-import {
-  KakaoNotifier,
-  shouldNotifyKakao,
-} from "../core/KakaoNotifier.js";
+import { KakaoNotifier, shouldNotifyKakao } from "../core/KakaoNotifier.js";
 import { formatDuration, parseDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
 import { Scanner } from "../core/Scanner.js";
@@ -92,9 +89,12 @@ program
         console.log(
           chalk.blue(`🔍 증분 스캔 중... (마지막 스캔: ${daysSince}일 전)`),
         );
-        ({ result, rescanned, reused } = await scanner.scanIncremental(lastResult));
+        ({ result, rescanned, reused } =
+          await scanner.scanIncremental(lastResult));
       } else {
-        console.log(chalk.yellow("⚠ 저장된 스캔 없음, 전체 스캔으로 진행합니다."));
+        console.log(
+          chalk.yellow("⚠ 저장된 스캔 없음, 전체 스캔으로 진행합니다."),
+        );
         console.log(chalk.blue("🔍 프로젝트 스캔 중..."));
         result = await scanner.scan();
       }
@@ -384,7 +384,9 @@ agent
 
     if (!client) {
       console.log(chalk.yellow("sub-agent 연결이 비활성화되어 있습니다."));
-      console.log(chalk.gray("config.json의 subAgent.enabled를 true로 설정하세요."));
+      console.log(
+        chalk.gray("config.json의 subAgent.enabled를 true로 설정하세요."),
+      );
       return;
     }
 
@@ -436,7 +438,9 @@ agent
 
       console.log(chalk.green(`✓ HTML 리포트 열기 요청 완료 (${task.id})`));
       console.log(chalk.gray(`  파일: ${outputPath}`));
-      console.log(chalk.gray(`  데이터: ${fromCache ? "저장된 결과" : "새 스캔 결과"}`));
+      console.log(
+        chalk.gray(`  데이터: ${fromCache ? "저장된 결과" : "새 스캔 결과"}`),
+      );
     },
   );
 
@@ -474,10 +478,7 @@ kakao
       } else {
         const state = crypto.randomBytes(16).toString("hex");
         const authUrl = notifier.getAuthorizationUrl(state);
-        const codePromise = waitForKakaoAuthCode(
-          notifier.redirectUri,
-          state,
-        );
+        const codePromise = waitForKakaoAuthCode(notifier.redirectUri, state);
 
         console.log(chalk.cyan("아래 URL에서 카카오 로그인을 승인하세요."));
         console.log(authUrl);
@@ -520,10 +521,14 @@ kakao
     console.log(`  토큰: ${status.hasToken ? "✓" : "✗"}`);
     console.log(chalk.gray(`  Token: ${status.tokenFile}`));
     if (status.accessTokenExpiresAt) {
-      console.log(chalk.gray(`  Access token 만료: ${status.accessTokenExpiresAt}`));
+      console.log(
+        chalk.gray(`  Access token 만료: ${status.accessTokenExpiresAt}`),
+      );
     }
     if (status.refreshTokenExpiresAt) {
-      console.log(chalk.gray(`  Refresh token 만료: ${status.refreshTokenExpiresAt}`));
+      console.log(
+        chalk.gray(`  Refresh token 만료: ${status.refreshTokenExpiresAt}`),
+      );
     }
     if (status.scope) {
       console.log(chalk.gray(`  Scope: ${status.scope}`));
@@ -549,80 +554,88 @@ program
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 표시")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
   .option("--incremental", "변경된 프로젝트만 재스캔 (--refresh 없이도 동작)")
-  .action(async (options: { all?: boolean; refresh?: boolean; incremental?: boolean }) => {
-    console.log(chalk.blue("프로젝트 리포트 생성 중..."));
-    const { result, fromCache } = await loadScanResult({
-      refresh: options.refresh,
-      incremental: options.incremental,
-    });
-    const projects = options.all
-      ? result.projects
-      : result.projects.filter((project) => project.priority !== "LOW");
-
-    console.log();
-    console.log(chalk.cyan("요약"));
-    console.log(`  전체 프로젝트: ${result.summary.total}`);
-    console.log(`  최근 활성: ${result.summary.active}`);
-    console.log(`  평균 진행률: ${formatProgress(result.summary.avgProgress)}`);
-    console.log(`  포트폴리오 준비도: ${result.summary.avgReadiness}%`);
-    console.log(`  스캔 시각: ${formatDateTime(result.scannedAt)}`);
-    console.log(`  데이터: ${fromCache ? "저장된 결과" : "새 스캔 결과"}`);
-    console.log(
-      `  우선순위: CRITICAL ${result.summary.byPriority.CRITICAL}, HIGH ${result.summary.byPriority.HIGH}, MEDIUM ${result.summary.byPriority.MEDIUM}, LOW ${result.summary.byPriority.LOW}`,
-    );
-    console.log();
-
-    if (projects.length === 0) {
-      console.log(
-        chalk.gray(
-          "표시할 프로젝트가 없습니다. --all 옵션으로 LOW 우선순위까지 볼 수 있습니다.",
-        ),
-      );
-      return;
-    }
-
-    const table = new Table({
-      head: [
-        "우선순위",
-        "프로젝트",
-        "타입",
-        "진행률",
-        "준비도",
-        "최근 활동",
-        "이슈",
-      ],
-      wordWrap: true,
-      colWidths: [12, 24, 12, 10, 8, 16, 36],
-    });
-
-    projects.forEach((project) => {
-      table.push([
-        formatPriority(project.priority),
-        project.name,
-        project.type,
-        formatProgress(project.progress.percentage),
-        `${project.readiness}%`,
-        formatActivity(project.activity.daysSinceLastCommit),
-        project.issues?.join(", ") || "-",
-      ]);
-    });
-
-    console.log(table.toString());
-
-    const actionable = projects.filter(
-      (project) => project.nextActions && project.nextActions.length > 0,
-    );
-    if (actionable.length > 0) {
-      console.log();
-      console.log(chalk.cyan("다음 작업"));
-      actionable.slice(0, 5).forEach((project) => {
-        console.log(chalk.yellow(`  ${project.name}`));
-        project.nextActions?.slice(0, 3).forEach((action) => {
-          console.log(chalk.gray(`    - ${action}`));
-        });
+  .action(
+    async (options: {
+      all?: boolean;
+      refresh?: boolean;
+      incremental?: boolean;
+    }) => {
+      console.log(chalk.blue("프로젝트 리포트 생성 중..."));
+      const { result, fromCache } = await loadScanResult({
+        refresh: options.refresh,
+        incremental: options.incremental,
       });
-    }
-  });
+      const projects = options.all
+        ? result.projects
+        : result.projects.filter((project) => project.priority !== "LOW");
+
+      console.log();
+      console.log(chalk.cyan("요약"));
+      console.log(`  전체 프로젝트: ${result.summary.total}`);
+      console.log(`  최근 활성: ${result.summary.active}`);
+      console.log(
+        `  평균 진행률: ${formatProgress(result.summary.avgProgress)}`,
+      );
+      console.log(`  포트폴리오 준비도: ${result.summary.avgReadiness}%`);
+      console.log(`  스캔 시각: ${formatDateTime(result.scannedAt)}`);
+      console.log(`  데이터: ${fromCache ? "저장된 결과" : "새 스캔 결과"}`);
+      console.log(
+        `  우선순위: CRITICAL ${result.summary.byPriority.CRITICAL}, HIGH ${result.summary.byPriority.HIGH}, MEDIUM ${result.summary.byPriority.MEDIUM}, LOW ${result.summary.byPriority.LOW}`,
+      );
+      console.log();
+
+      if (projects.length === 0) {
+        console.log(
+          chalk.gray(
+            "표시할 프로젝트가 없습니다. --all 옵션으로 LOW 우선순위까지 볼 수 있습니다.",
+          ),
+        );
+        return;
+      }
+
+      const table = new Table({
+        head: [
+          "우선순위",
+          "프로젝트",
+          "타입",
+          "진행률",
+          "준비도",
+          "최근 활동",
+          "이슈",
+        ],
+        wordWrap: true,
+        colWidths: [12, 24, 12, 10, 8, 16, 36],
+      });
+
+      projects.forEach((project) => {
+        table.push([
+          formatPriority(project.priority),
+          project.name,
+          project.type,
+          formatProgress(project.progress.percentage),
+          `${project.readiness}%`,
+          formatActivity(project.activity.daysSinceLastCommit),
+          project.issues?.join(", ") || "-",
+        ]);
+      });
+
+      console.log(table.toString());
+
+      const actionable = projects.filter(
+        (project) => project.nextActions && project.nextActions.length > 0,
+      );
+      if (actionable.length > 0) {
+        console.log();
+        console.log(chalk.cyan("다음 작업"));
+        actionable.slice(0, 5).forEach((project) => {
+          console.log(chalk.yellow(`  ${project.name}`));
+          project.nextActions?.slice(0, 3).forEach((action) => {
+            console.log(chalk.gray(`    - ${action}`));
+          });
+        });
+      }
+    },
+  );
 
 // export 커맨드
 program
@@ -1521,6 +1534,17 @@ program
         console.log(chalk.gray(`  - ${dir}`));
       });
       console.log();
+      console.log(chalk.cyan("sub-agent 연동:"));
+      console.log(`  활성화: ${config.subAgent?.enabled ? "✓" : "✗"}`);
+      if (config.subAgent?.baseUrl) {
+        console.log(chalk.gray(`  Base URL: ${config.subAgent.baseUrl}`));
+      }
+      if (config.subAgent?.tokenFile) {
+        console.log(chalk.gray(`  Token: ${config.subAgent.tokenFile}`));
+      } else if (config.subAgent?.token) {
+        console.log(chalk.gray("  Token: 직접 설정됨"));
+      }
+      console.log();
       console.log(chalk.cyan("카카오 연동:"));
       console.log(`  활성화: ${config.kakao?.enabled ? "✓" : "✗"}`);
       console.log(`  REST API 키: ${config.kakao?.restApiKey ? "✓" : "✗"}`);
@@ -1531,6 +1555,89 @@ program
         console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
       }
     }),
+  )
+  .addCommand(
+    new Command("agent")
+      .description("local-mac-sub-agent 설정")
+      .option("--enable", "sub-agent 연동 활성화")
+      .option("--disable", "sub-agent 연동 비활성화")
+      .option("--base-url <url>", "sub-agent API Base URL")
+      .option("--token <token>", "Bearer 토큰 직접 저장")
+      .option("--token-file <file>", "Bearer 토큰 파일")
+      .option("--notify-on-scan <value>", "매 스캔마다 알림 true/false")
+      .option("--notify-on-changes <value>", "변화 있을 때 알림 true/false")
+      .option(
+        "--open-report-on-changes <value>",
+        "변화 있을 때 HTML 리포트 열기 true/false",
+      )
+      .action(
+        async (options: {
+          enable?: boolean;
+          disable?: boolean;
+          baseUrl?: string;
+          token?: string;
+          tokenFile?: string;
+          notifyOnScan?: string;
+          notifyOnChanges?: string;
+          openReportOnChanges?: string;
+        }) => {
+          if (options.enable && options.disable) {
+            throw new Error("--enable과 --disable은 같이 사용할 수 없습니다.");
+          }
+
+          const configManager = new ConfigManager();
+          const config = await configManager.load();
+          config.subAgent = {
+            enabled: false,
+            baseUrl: "http://127.0.0.1:4877",
+            notifyOnScan: true,
+            notifyOnChanges: true,
+            openReportOnChanges: false,
+            ...config.subAgent,
+          };
+
+          if (options.enable) config.subAgent.enabled = true;
+          if (options.disable) config.subAgent.enabled = false;
+          if (options.baseUrl !== undefined) {
+            config.subAgent.baseUrl = options.baseUrl;
+          }
+          if (options.token !== undefined) {
+            config.subAgent.token = options.token;
+          }
+          if (options.tokenFile !== undefined) {
+            config.subAgent.tokenFile = options.tokenFile;
+          }
+          if (options.notifyOnScan !== undefined) {
+            config.subAgent.notifyOnScan = parseBooleanOption(
+              options.notifyOnScan,
+              "--notify-on-scan",
+            );
+          }
+          if (options.notifyOnChanges !== undefined) {
+            config.subAgent.notifyOnChanges = parseBooleanOption(
+              options.notifyOnChanges,
+              "--notify-on-changes",
+            );
+          }
+          if (options.openReportOnChanges !== undefined) {
+            config.subAgent.openReportOnChanges = parseBooleanOption(
+              options.openReportOnChanges,
+              "--open-report-on-changes",
+            );
+          }
+
+          await configManager.save(config);
+
+          console.log(chalk.green("✓ sub-agent 설정 저장 완료"));
+          console.log(`  활성화: ${config.subAgent.enabled ? "✓" : "✗"}`);
+          console.log(chalk.gray(`  Base URL: ${config.subAgent.baseUrl}`));
+          if (config.subAgent.tokenFile) {
+            console.log(chalk.gray(`  Token: ${config.subAgent.tokenFile}`));
+          } else if (config.subAgent.token) {
+            console.log(chalk.gray("  Token: 직접 설정됨"));
+          }
+        },
+      ),
   )
   .addCommand(
     new Command("kakao")
@@ -1607,7 +1714,9 @@ program
           console.log(chalk.green("✓ 카카오 설정 저장 완료"));
           console.log(`  활성화: ${config.kakao.enabled ? "✓" : "✗"}`);
           console.log(`  REST API 키: ${config.kakao.restApiKey ? "✓" : "✗"}`);
-          console.log(chalk.gray(`  Redirect URI: ${config.kakao.redirectUri}`));
+          console.log(
+            chalk.gray(`  Redirect URI: ${config.kakao.redirectUri}`),
+          );
           console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
         },
       ),
@@ -1710,7 +1819,9 @@ function waitForKakaoAuthCode(
       const requestUrl = new URL(request.url ?? "/", redirectUri);
 
       if (requestUrl.pathname !== redirect.pathname) {
-        response.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+        response.writeHead(404, {
+          "content-type": "text/plain; charset=utf-8",
+        });
         response.end("Not found");
         return;
       }
@@ -1721,7 +1832,9 @@ function waitForKakaoAuthCode(
       const code = requestUrl.searchParams.get("code");
 
       if (error) {
-        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.writeHead(400, {
+          "content-type": "text/plain; charset=utf-8",
+        });
         response.end("Kakao authorization failed. You can close this window.");
         cleanup();
         reject(new Error(errorDescription ?? error));
@@ -1729,7 +1842,9 @@ function waitForKakaoAuthCode(
       }
 
       if (state !== expectedState) {
-        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.writeHead(400, {
+          "content-type": "text/plain; charset=utf-8",
+        });
         response.end("Invalid state. You can close this window.");
         cleanup();
         reject(new Error("카카오 인증 state 값이 일치하지 않습니다."));
@@ -1737,7 +1852,9 @@ function waitForKakaoAuthCode(
       }
 
       if (!code) {
-        response.writeHead(400, { "content-type": "text/plain; charset=utf-8" });
+        response.writeHead(400, {
+          "content-type": "text/plain; charset=utf-8",
+        });
         response.end("Missing authorization code. You can close this window.");
         cleanup();
         reject(new Error("카카오 authorization code가 없습니다."));
@@ -1750,10 +1867,13 @@ function waitForKakaoAuthCode(
       resolve(code);
     });
 
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error("카카오 인증 대기 시간이 초과되었습니다."));
-    }, 5 * 60 * 1000);
+    const timeout = setTimeout(
+      () => {
+        cleanup();
+        reject(new Error("카카오 인증 대기 시간이 초과되었습니다."));
+      },
+      5 * 60 * 1000,
+    );
 
     const cleanup = () => {
       clearTimeout(timeout);

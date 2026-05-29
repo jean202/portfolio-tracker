@@ -21,11 +21,13 @@ npm run build
 ```
 
 개발 중에는:
+
 ```bash
 npm run start -- report
 ```
 
 글로벌 설치:
+
 ```bash
 npm link
 portfolio-tracker report
@@ -54,17 +56,20 @@ portfolio-tracker watch
 ## 커맨드
 
 ### init - 초기화
+
 ```bash
 portfolio-tracker init
 ```
 
 대화형 모드로 프로젝트 디렉토리를 설정합니다:
+
 ```
 ? 기본 디렉토리를 사용하시겠어요? (Y/n)
 ? 추가 디렉토리를 더 추가하시겠어요? (y/N)
 ```
 
 기본값 사용:
+
 ```bash
 portfolio-tracker init --non-interactive
 ```
@@ -72,16 +77,19 @@ portfolio-tracker init --non-interactive
 ### config - 설정 관리
 
 **현재 설정 확인:**
+
 ```bash
 portfolio-tracker config list
 ```
 
 **디렉토리 추가:**
+
 ```bash
 portfolio-tracker config add ~/my-projects
 ```
 
 **디렉토리 제거:**
+
 ```bash
 portfolio-tracker config remove ~/old-projects
 portfolio-tracker config rm ~/old-projects
@@ -96,6 +104,7 @@ portfolio-tracker stats
 ```
 
 **표시 정보:**
+
 - 개요 (전체/활성 프로젝트, 평균 진행률, 준비도)
 - 우선순위별 분포 (CRITICAL/HIGH/MEDIUM/LOW)
 - 기술 타입별 분포
@@ -175,6 +184,9 @@ portfolio-tracker service uninstall
 ```
 
 ```bash
+# 설정 저장
+portfolio-tracker config agent --enable --base-url http://127.0.0.1:4877 --token-file /Users/jean325/Documents/sub-agent/data/token
+
 # 연결 상태 확인
 portfolio-tracker agent status
 
@@ -242,6 +254,7 @@ portfolio-tracker recommend -n 5
 ```
 
 **추천 기준:**
+
 - ✓ CRITICAL/HIGH 우선순위 (+30/+20점)
 - ✓ 최근 활동 있음 (+15점)
 - ✓ 진행률 70%+ (마무리 단계, +25점)
@@ -249,6 +262,7 @@ portfolio-tracker recommend -n 5
 - ✓ 막힘(이슈) 없음 (+10점)
 
 **잊혀진 프로젝트 감지:**
+
 - 14일+ 미활동
 - 진행률 30% 이상 (시작은 했지만 멈춤)
 - 진행률 90% 미만 (거의 다 하지 않음)
@@ -302,6 +316,7 @@ portfolio-tracker history asset-radar
 ```
 
 **프로젝트 히스토리 표시:**
+
 - 시점별 진행률, 신뢰도, 준비도, 활동 변화
 - 전체 변화 요약 (▲ +18%p 형태)
 
@@ -316,6 +331,7 @@ portfolio-tracker diff -n 3
 ```
 
 **표시 정보:**
+
 - 요약 변화 (전체/활성 프로젝트, 평균 진행률, 준비도)
 - ✨ 새 프로젝트
 - 💀 사라진 프로젝트
@@ -332,12 +348,14 @@ portfolio-tracker trends -n 30
 ```
 
 **표시 정보:**
+
 - 평균 진행률 추이 (시각적 바 차트)
 - 포트폴리오 준비도 추이
 - 활성 프로젝트 수 추이
 - 전체 변화 요약 (처음 → 마지막)
 
 **예시 출력:**
+
 ```
 평균 진행률 추이
   04. 25. 오후 12:48 █████████████░░░░░░░░░░░ 42%
@@ -360,6 +378,7 @@ portfolio-tracker d <프로젝트명>
 ```
 
 **표시 정보:**
+
 - 기본 정보: 타입, 우선순위, 설명
 - 진행률: 완료도, 신뢰도, 근거(signals), 체크박스 통계
 - 활동: 마지막 커밋, 커밋 메시지, 지난 7일 커밋 수
@@ -370,6 +389,7 @@ portfolio-tracker d <프로젝트명>
 - 다음 작업: 할 일 목록
 
 **예시:**
+
 ```bash
 $ portfolio-tracker detail asset-radar
 
@@ -398,11 +418,13 @@ $ portfolio-tracker detail asset-radar
 ```
 
 새로 스캔해서 조회:
+
 ```bash
 portfolio-tracker detail asset-radar --refresh
 ```
 
 ### scan - 스캔
+
 ```bash
 # 스캔 & 저장
 portfolio-tracker scan
@@ -414,6 +436,7 @@ portfolio-tracker scan --no-save
 `.portfolio-tracker/scan-result.json`에 결과 저장
 
 ### report - 리포트 보기
+
 ```bash
 # 캐시된 결과 보기
 portfolio-tracker report
@@ -426,6 +449,7 @@ portfolio-tracker report --all
 ```
 
 ### export - 내보내기
+
 ```bash
 # Markdown (기본값)
 portfolio-tracker export -f markdown -o report.md
@@ -449,10 +473,7 @@ portfolio-tracker export -f markdown --all
 
 ```json
 {
-  "projectDirs": [
-    "~/portfolio/projects",
-    "~/IdeaProjects"
-  ],
+  "projectDirs": ["~/portfolio/projects", "~/IdeaProjects"],
   "scanInterval": 86400000,
   "excludePatterns": ["node_modules", ".git", ".next", "dist", "build"],
   "webhookUrl": "https://hooks.slack.com/services/..."
@@ -460,6 +481,7 @@ portfolio-tracker export -f markdown --all
 ```
 
 **설정값:**
+
 - `projectDirs` (필수): 스캔할 프로젝트 디렉토리 경로 배열
 - `scanInterval` (선택): 자동 스캔 주기 (ms 단위, 기본값: 86400000 = 24시간)
 - `excludePatterns` (선택): 스캔 제외 패턴 배열
@@ -470,7 +492,9 @@ portfolio-tracker export -f markdown --all
 프로젝트의 진행률을 다음 우선순위로 자동 감지합니다:
 
 ### 1. 명시적 진행률 (높은 신뢰도)
+
 문서에서 다음 형식을 찾습니다:
+
 ```markdown
 - Progress: 65%
 - 진행률: 70%
@@ -478,16 +502,20 @@ portfolio-tracker export -f markdown --all
 ```
 
 ### 2. 체크박스 완료율 (중간 신뢰도)
+
 TODO.md, PROJECT_PLAN.md의 체크박스를 세어 계산:
+
 ```markdown
 - [x] 기능 A 구현
 - [x] 기능 B 구현
 - [ ] 기능 C 구현
-→ 66% (2/3 완료)
+      → 66% (2/3 완료)
 ```
 
 ### 3. 휴리스틱 신호 (낮은 신뢰도)
+
 문서의 키워드로 상태 추정:
+
 - **배포/출시 완료**: 85% - "배포 완료", "release done", "production ready"
 - **MVP/핵심 기능 완료**: 70% - "MVP 완료", "core features done"
 - **테스트 필요**: 60% - "테스트 필요", "test remaining"
@@ -495,6 +523,7 @@ TODO.md, PROJECT_PLAN.md의 체크박스를 세어 계산:
 - **진행 중**: 45% - "진행 중", "in progress", "WIP"
 
 ### 4. 판단 불가
+
 위의 어느것도 감지되지 않으면 `Unknown` (판단 불가)로 표시
 
 ## Portfolio Readiness 점수
@@ -503,14 +532,15 @@ TODO.md, PROJECT_PLAN.md의 체크박스를 세어 계산:
 
 ### 점수 구성
 
-| 항목 | 점수 | 기준 |
-|------|------|------|
-| 진행률 품질 | 0~30점 | 진행률(0~20점) + 신뢰도(0~10점) |
-| 활동 품질 | 0~25점 | 최근 활동 여부, 커밋 주기 |
-| 문서 품질 | 0~25점 | README(10) + CLAUDE.md(10) + Git(5) |
-| 타입 성숙도 | 0~20점 | Known type(Node, Python 등) |
+| 항목        | 점수   | 기준                                |
+| ----------- | ------ | ----------------------------------- |
+| 진행률 품질 | 0~30점 | 진행률(0~20점) + 신뢰도(0~10점)     |
+| 활동 품질   | 0~25점 | 최근 활동 여부, 커밋 주기           |
+| 문서 품질   | 0~25점 | README(10) + CLAUDE.md(10) + Git(5) |
+| 타입 성숙도 | 0~20점 | Known type(Node, Python 등)         |
 
 ### 예시
+
 ```
 asset-radar:
   - 진행률 83% (high 신뢰도) = 30점
@@ -545,26 +575,28 @@ discord-kakao-translator:
 ## 스캔되는 문서
 
 각 프로젝트에서 자동으로 읽는 파일들:
+
 1. CLAUDE.md
 2. README.md / readme.md
 3. PROJECT_PLAN.md
 4. AGENTS.md
 5. TODO.md / TODO.txt
 6. mvp-plan.md
-7. docs/*.md (docs 디렉토리의 모든 마크다운)
+7. docs/\*.md (docs 디렉토리의 모든 마크다운)
 
 ## 우선순위 자동 분류
 
-| 우선순위 | 조건 |
-|---------|------|
-| **CRITICAL** | "critical", "긴급" 키워드 또는 Git 없음 |
-| **HIGH** | "high", "높음" 키워드 또는 진행률 0~80% + 최근 활성 |
-| **MEDIUM** | 최근 활성이거나 진행률 80% 이상인데 이슈 있음 |
-| **LOW** | 위의 어느것도 아님 |
+| 우선순위     | 조건                                                |
+| ------------ | --------------------------------------------------- |
+| **CRITICAL** | "critical", "긴급" 키워드 또는 Git 없음             |
+| **HIGH**     | "high", "높음" 키워드 또는 진행률 0~80% + 최근 활성 |
+| **MEDIUM**   | 최근 활성이거나 진행률 80% 이상인데 이슈 있음       |
+| **LOW**      | 위의 어느것도 아님                                  |
 
 ## 출력 형식
 
 ### Console
+
 ```bash
 portfolio-tracker report
 ```
@@ -572,6 +604,7 @@ portfolio-tracker report
 프로젝트 목록 표(우선순위, 진행률, 준비도, 최근 활동, 이슈 포함)
 
 ### Markdown
+
 ```bash
 portfolio-tracker export -f markdown -o report.md
 ```
@@ -579,16 +612,19 @@ portfolio-tracker export -f markdown -o report.md
 마크다운 테이블 + 요약 통계 + Next Actions
 
 ### HTML
+
 ```bash
 portfolio-tracker export -f html -o report.html
 ```
 
 스타일링된 대시보드:
+
 - 📊 Summary 메트릭
 - 📋 인터랙티브 테이블
 - 📝 Next Actions 섹션
 
 ### JSON
+
 ```bash
 portfolio-tracker export -f json -o report.json
 ```
@@ -604,6 +640,7 @@ npm test -- --run
 ```
 
 테스트 (watch mode):
+
 ```bash
 npm test -- --watch
 ```
