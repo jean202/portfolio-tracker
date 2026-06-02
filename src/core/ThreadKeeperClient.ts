@@ -11,7 +11,7 @@ export class ThreadKeeperClient {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
-      const url = `${this.baseUrl.replace(/\/$/, "")}/api/v1/threads`;
+      const url = `${this.baseUrl.replace(/\/+$/, "")}/api/v1/threads`;
       const res = await this.fetchFn(url, { signal: controller.signal });
       if (!res.ok) {
         throw new Error(`ThreadKeeper responded with ${res.status}`);
