@@ -630,7 +630,7 @@ program
           "이슈",
         ],
         wordWrap: true,
-        colWidths: [12, 24, 12, 10, 8, 16, 36],
+        colWidths: [12, 24, 12, 10, 20, 16, 30],
       });
 
       projects.forEach((project) => {
