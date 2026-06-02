@@ -1,6 +1,20 @@
 import { describe, it, expect } from "vitest";
 import { resolveProjectKey, summarizeThreads } from "./threadScoring.js";
 import type { RawThread } from "./ProjectModel.js";
+import { computeThreadAdjustment } from "./threadScoring.js";
+import type { ThreadSummary } from "./ProjectModel.js";
+
+function summary(over: Partial<ThreadSummary>): ThreadSummary {
+  return {
+    projectKey: "pt",
+    total: 0,
+    active: 0,
+    completed: 0,
+    activeThreads: [],
+    mostRecentActivityAt: null,
+    ...over,
+  };
+}
 
 function thread(over: Partial<RawThread>): RawThread {
   return {
@@ -77,5 +91,68 @@ describe("summarizeThreads", () => {
     expect(s.representative).toBeUndefined();
     expect(s.activeThreads).toEqual([]);
     expect(s.mostRecentActivityAt).toBeNull();
+  });
+});
+
+describe("computeThreadAdjustment", () => {
+  const now = new Date("2026-06-02T00:00:00Z");
+
+  it("returns 0 with no signals for an empty summary", () => {
+    const { adjustment, signals } = computeThreadAdjustment(summary({}), now);
+    expect(adjustment).toBe(0);
+    expect(signals).toEqual([]);
+  });
+
+  it("awards next-action points when active threads have a pinned next action", () => {
+    const s = summary({
+      total: 2,
+      active: 2,
+      activeThreads: [
+        { title: "a", status: "ACTIVE", priority: "HIGH", currentNextAction: "do x", lastActivityAt: null },
+        { title: "b", status: "ACTIVE", priority: "LOW", currentNextAction: null, lastActivityAt: null },
+      ],
+    });
+    const { adjustment, signals } = computeThreadAdjustment(s, now);
+    // 1 of 2 active has next action -> round(0.5*6)=3
+    expect(adjustment).toBeGreaterThanOrEqual(3);
+    expect(signals.some((x) => x.includes("다음 액션"))).toBe(true);
+  });
+
+  it("awards recency points for very recent activity", () => {
+    const s = summary({
+      total: 1,
+      active: 1,
+      activeThreads: [{ title: "a", status: "ACTIVE", priority: "HIGH", currentNextAction: null, lastActivityAt: "2026-06-01T00:00:00Z" }],
+      mostRecentActivityAt: "2026-06-01T00:00:00Z", // 1 day ago -> 5 recency + 2 active = 7
+    });
+    const { adjustment } = computeThreadAdjustment(s, now);
+    expect(adjustment).toBe(7);
+  });
+
+  it("awards completed-ratio points", () => {
+    const s = summary({ total: 4, active: 0, completed: 4 });
+    const { adjustment, signals } = computeThreadAdjustment(s, now);
+    // ratio 1.0 -> round(1*6)=6
+    expect(adjustment).toBe(6);
+    expect(signals.some((x) => x.includes("완료"))).toBe(true);
+  });
+
+  it("caps the total adjustment at 20", () => {
+    const active = Array.from({ length: 5 }, (_, i) => ({
+      title: `t${i}`,
+      status: "ACTIVE",
+      priority: "HIGH",
+      currentNextAction: "go",
+      lastActivityAt: "2026-06-01T00:00:00Z",
+    }));
+    const s = summary({
+      total: 10,
+      active: 5,
+      completed: 5,
+      activeThreads: active,
+      mostRecentActivityAt: "2026-06-01T00:00:00Z",
+    });
+    const { adjustment } = computeThreadAdjustment(s, now);
+    expect(adjustment).toBe(20);
   });
 });
