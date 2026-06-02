@@ -145,6 +145,7 @@ export interface ThreadSummary {
   total: number;
   active: number;
   completed: number;
+  // most-recently-active thread; if none are active, the highest-priority thread. undefined when there are no threads.
   representative?: ThreadSummaryItem;
   activeThreads: ThreadSummaryItem[];
   mostRecentActivityAt?: string | null;
