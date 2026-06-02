@@ -1,4 +1,9 @@
-import { Project, Progress, ScanResult } from "../core/ProjectModel.js";
+import {
+  ContinuitySummary,
+  Project,
+  Progress,
+  ScanResult,
+} from "../core/ProjectModel.js";
 
 export interface MarkdownReportOptions {
   includeLowPriority?: boolean;
@@ -48,17 +53,45 @@ function renderProjectTable(projects: Project[]): string {
       project.type,
       formatProgress(project.progress.percentage),
       formatProgressDetails(project.progress),
-      `${project.readiness}%`,
+      formatReadinessCell(project),
+      formatThreadCell(project),
       formatActivity(project.activity.daysSinceLastCommit),
       escapeTableCell(project.issues?.join(", ") || "-"),
     ].join(" | "),
   );
 
   return [
-    "| Priority | Project | Type | Progress | Details | Readiness | Last activity | Issues |",
-    "| --- | --- | --- | ---: | --- | ---: | --- | --- |",
+    "| Priority | Project | Type | Progress | Details | Readiness | Threads | Last activity | Issues |",
+    "| --- | --- | --- | ---: | --- | ---: | --- | --- | --- |",
     ...rows.map((row) => `| ${row} |`),
   ].join("\n");
+}
+
+function formatCoverageBadge(
+  coverage: ContinuitySummary["coverage"],
+  ageDays?: number,
+): string {
+  if (coverage === "live") return "live";
+  if (coverage === "stale") return `stale (${ageDays ?? "?"}d)`;
+  return "offline";
+}
+
+function formatReadinessCell(project: Project): string {
+  const c = project.continuity;
+  if (!c || c.coverage === "unavailable") {
+    return `${project.readiness}%`;
+  }
+  return `${project.readiness}% (${project.baseReadiness}+${c.threadAdjustment}, ${formatCoverageBadge(c.coverage, c.ageDays)})`;
+}
+
+function formatThreadCell(project: Project): string {
+  const c = project.continuity;
+  if (!c || !c.summary || c.summary.total === 0) return "-";
+  const s = c.summary;
+  const rep = s.representative
+    ? `${escapeTableCell(s.representative.title)}${s.representative.currentNextAction ? ` → ${escapeTableCell(s.representative.currentNextAction)}` : ""}`
+    : "-";
+  return `활성 ${s.active} / 전체 ${s.total}<br>${rep}`;
 }
 
 function renderNextActions(projects: Project[]): string {
