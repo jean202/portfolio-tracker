@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import simpleGit from "simple-git";
 import { Scanner } from "./Scanner.js";
 
@@ -275,5 +275,47 @@ describe("Scanner.scanIncremental", () => {
     expect(result.projects).toHaveLength(1);
     expect(result.projects[0].name).toBe("brand-new");
     expect(rescanned).toBe(1);
+  });
+
+  it("threadKeeper가 켜져 있으면 증분 스캔도 enrichment를 적용한다 (오프라인→unavailable)", async () => {
+    const projectDir = path.join(tempRoot, "proj");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Proj");
+
+    const scanner = new Scanner({
+      projectDirs: [tempRoot],
+      // unreachable port → fetch fails fast → coverage "unavailable"
+      threadKeeper: { enabled: true, baseUrl: "http://127.0.0.1:1", timeoutMs: 50 },
+    });
+    const emptyResult = await scanner.scan();
+
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const { result } = await scanner.scanIncremental({
+        ...emptyResult,
+        scannedAt: new Date(0),
+      });
+      const proj = result.projects.find((p) => p.name === "proj");
+      expect(proj?.continuity?.coverage).toBe("unavailable");
+      expect(proj?.readiness).toBe(proj?.baseReadiness);
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it("threadKeeper가 꺼져 있으면 증분 스캔은 enrichment를 적용하지 않는다", async () => {
+    const projectDir = path.join(tempRoot, "proj");
+    await fs.mkdir(projectDir);
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Proj");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const emptyResult = await scanner.scan();
+
+    const { result } = await scanner.scanIncremental({
+      ...emptyResult,
+      scannedAt: new Date(0),
+    });
+    const proj = result.projects.find((p) => p.name === "proj");
+    expect(proj?.continuity).toBeUndefined();
   });
 });

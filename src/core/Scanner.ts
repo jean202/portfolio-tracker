@@ -179,6 +179,8 @@ export class Scanner {
     const reused = outcomes.filter((o) => o.wasReused).length;
     const rescanned = outcomes.filter((o) => !o.wasReused).length;
 
+    await this.enrichProjects(projects);
+
     const sortedProjects = this.sortProjects(projects);
 
     const result: ScanResult = {
