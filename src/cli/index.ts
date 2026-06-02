@@ -27,7 +27,7 @@ import {
 } from "../core/SubAgentClient.js";
 import { TrendAnalyzer } from "../core/TrendAnalyzer.js";
 import { WebhookNotifier } from "../core/WebhookNotifier.js";
-import type { Config, ScanResult } from "../core/ProjectModel.js";
+import type { Config, Project, ScanResult } from "../core/ProjectModel.js";
 import type { ScanDiff } from "../core/TrendAnalyzer.js";
 import { renderHtmlReport } from "../report/HtmlReport.js";
 import { renderJsonReport } from "../report/JsonReport.js";
@@ -578,11 +578,13 @@ program
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 표시")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
   .option("--incremental", "변경된 프로젝트만 재스캔 (--refresh 없이도 동작)")
+  .option("--threads", "프로젝트별 활성 thread 상세 표시 (ThreadKeeper)")
   .action(
     async (options: {
       all?: boolean;
       refresh?: boolean;
       incremental?: boolean;
+      threads?: boolean;
     }) => {
       console.log(chalk.blue("프로젝트 리포트 생성 중..."));
       const { result, fromCache } = await loadScanResult({
@@ -637,13 +639,39 @@ program
           project.name,
           project.type,
           formatProgress(project.progress.percentage),
-          `${project.readiness}%`,
+          formatReadinessCellConsole(project),
           formatActivity(project.activity.daysSinceLastCommit),
           project.issues?.join(", ") || "-",
         ]);
       });
 
       console.log(table.toString());
+
+      if (options.threads) {
+        console.log();
+        console.log(chalk.cyan("ThreadKeeper 스레드 상세"));
+        for (const project of projects) {
+          const c = project.continuity;
+          if (!c || !c.summary || c.summary.total === 0) continue;
+          const badge =
+            c.coverage === "live"
+              ? "live"
+              : c.coverage === "stale"
+                ? `stale ${c.ageDays ?? "?"}d`
+                : "offline";
+          console.log(
+            chalk.bold(`\n${project.name}`) +
+              chalk.gray(` [${badge}] 활성 ${c.summary.active} / 전체 ${c.summary.total}`),
+          );
+          if (c.summary.activeThreads.length === 0) {
+            console.log(chalk.gray("  활성 thread 없음"));
+          }
+          for (const t of c.summary.activeThreads) {
+            const next = t.currentNextAction ? ` → ${t.currentNextAction}` : "";
+            console.log(`  - [${t.priority}] ${t.title}${next}`);
+          }
+        }
+      }
 
       const actionable = projects.filter(
         (project) => project.nextActions && project.nextActions.length > 0,
@@ -1822,6 +1850,13 @@ function formatPriority(priority = "LOW"): string {
   if (priority === "HIGH") return chalk.yellow(priority);
   if (priority === "MEDIUM") return chalk.blue(priority);
   return chalk.gray(priority);
+}
+
+function formatReadinessCellConsole(project: Project): string {
+  const c = project.continuity;
+  if (!c || c.coverage === "unavailable") return `${project.readiness}%`;
+  const badge = c.coverage === "live" ? "live" : `stale ${c.ageDays ?? "?"}d`;
+  return `${project.readiness}% (${project.baseReadiness}+${c.threadAdjustment}, ${badge})`;
 }
 
 function formatActivity(daysSinceLastCommit: number): string {
