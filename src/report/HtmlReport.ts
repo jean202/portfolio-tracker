@@ -1,4 +1,4 @@
-import { Project, ScanResult } from "../core/ProjectModel.js";
+import { ContinuitySummary, Project, ScanResult } from "../core/ProjectModel.js";
 
 export interface HtmlReportOptions {
   includeLowPriority?: boolean;
@@ -363,6 +363,7 @@ function renderProjectTable(projects: Project[]): string {
       <th>Progress</th>
       <th>Confidence</th>
       <th>Readiness</th>
+      <th>Threads</th>
       <th>Last activity</th>
       <th>Issues</th>
     </tr>
@@ -384,10 +385,38 @@ function renderProjectRow(project: Project): string {
   <td>${escapeHtml(project.type)}</td>
   <td class="progress"><div>${formatProgress(project.progress.percentage)}</div><div class="bar"><span style="width: ${progressBarWidth(project.progress.percentage)}%"></span></div></td>
   <td><div>${escapeHtml(project.progress.confidence)}</div>${signalText}</td>
-  <td>${project.readiness}%</td>
+  <td>${readinessHtml(project)}</td>
+  <td>${threadCellHtml(project)}</td>
   <td>${escapeHtml(formatActivity(project.activity.daysSinceLastCommit))}</td>
   <td>${escapeHtml(project.issues?.join(", ") || "-")}</td>
 </tr>`;
+}
+
+function coverageBadge(
+  coverage: ContinuitySummary["coverage"],
+  ageDays?: number,
+): string {
+  if (coverage === "live") return "live";
+  if (coverage === "stale") return `stale (${ageDays ?? "?"}d)`;
+  return "offline";
+}
+
+function readinessHtml(project: Project): string {
+  const c = project.continuity;
+  if (!c || c.coverage === "unavailable") {
+    return `${project.readiness}%`;
+  }
+  return `${project.readiness}% <span class="muted" style="font-size: 11px;">(${project.baseReadiness}+${c.threadAdjustment}, ${coverageBadge(c.coverage, c.ageDays)})</span>`;
+}
+
+function threadCellHtml(project: Project): string {
+  const c = project.continuity;
+  if (!c || !c.summary || c.summary.total === 0) return "-";
+  const s = c.summary;
+  const rep = s.representative
+    ? `<div class="muted" style="font-size: 11px; margin-top: 2px;">${escapeHtml(s.representative.title)}${s.representative.currentNextAction ? ` → ${escapeHtml(s.representative.currentNextAction)}` : ""}</div>`
+    : "";
+  return `활성 ${s.active} / 전체 ${s.total}${rep}`;
 }
 
 function renderProjectCards(projects: Project[]): string {

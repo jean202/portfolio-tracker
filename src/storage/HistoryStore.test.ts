@@ -38,6 +38,7 @@ function buildScanResult(scannedAt: Date, avgProgress = 50): ScanResult {
           hasGit: true,
         },
         readiness: 70,
+        baseReadiness: 70,
         scannedAt,
       },
     ],

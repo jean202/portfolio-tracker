@@ -62,6 +62,7 @@ function makeProject(overrides: Partial<Project> = {}): Project {
       hasGit: true,
     },
     readiness: 50,
+    baseReadiness: 50,
     nextActions: [],
     issues: [],
     scannedAt: new Date("2026-01-01T00:00:00.000Z"),

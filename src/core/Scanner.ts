@@ -11,6 +11,9 @@ import {
   ScanResult,
 } from "./ProjectModel.js";
 import { ConfigManager } from "../config/ConfigManager.js";
+import { ThreadKeeperClient } from "./ThreadKeeperClient.js";
+import { ThreadEnricher } from "./ThreadEnricher.js";
+import { ThreadCache } from "../storage/ThreadCache.js";
 
 export interface ProjectCandidate {
   name: string;
@@ -62,6 +65,9 @@ export class Scanner {
     const projects = await Promise.all(
       candidates.map((candidate) => this.analyzeProject(candidate)),
     );
+
+    await this.enrichProjects(projects);
+
     const sortedProjects = this.sortProjects(projects);
     const summary = this.buildSummary(sortedProjects);
 
@@ -70,6 +76,18 @@ export class Scanner {
       scannedAt: new Date(),
       summary,
     };
+  }
+
+  private async enrichProjects(projects: Project[]): Promise<void> {
+    const tkConfig = this.config.threadKeeper;
+    if (!tkConfig?.enabled) return;
+
+    const client = new ThreadKeeperClient(
+      tkConfig.baseUrl ?? "http://localhost:8080",
+      tkConfig.timeoutMs ?? 2000,
+    );
+    const enricher = new ThreadEnricher(tkConfig, client, new ThreadCache());
+    await enricher.enrichWithThreads(projects);
   }
 
   // 변경 감지 대상 파일 목록 (non-git 프로젝트용)
@@ -268,6 +286,16 @@ export class Scanner {
     const planText = documents.map((document) => document.content).join("\n");
     const text = `${readme}\n${claude}\n${planText}`;
     const issues = this.detectIssues(candidate, progress, activity);
+    const baseReadinessScore = this.calculateReadiness(
+      progress,
+      activity,
+      {
+        hasReadme: candidate.hasReadme,
+        hasClaude: candidate.hasClaude,
+        hasGit: candidate.hasGit,
+      },
+      candidate.packageJsonType,
+    );
 
     return {
       id: this.slug(candidate.path),
@@ -284,16 +312,8 @@ export class Scanner {
         hasClaude: candidate.hasClaude,
         hasGit: candidate.hasGit,
       },
-      readiness: this.calculateReadiness(
-        progress,
-        activity,
-        {
-          hasReadme: candidate.hasReadme,
-          hasClaude: candidate.hasClaude,
-          hasGit: candidate.hasGit,
-        },
-        candidate.packageJsonType,
-      ),
+      baseReadiness: baseReadinessScore,
+      readiness: baseReadinessScore,
       nextActions: this.detectNextActions(text),
       issues,
       scannedAt: new Date(),

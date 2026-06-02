@@ -31,6 +31,7 @@ function makeProject(overrides: Partial<Project> = {}): Project {
       hasGit: true,
     },
     readiness: 60,
+    baseReadiness: 60,
     scannedAt: now,
     ...overrides,
   };

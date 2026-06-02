@@ -11,7 +11,11 @@ import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
-import { KakaoNotifier, shouldNotifyKakao } from "../core/KakaoNotifier.js";
+import {
+  KakaoNotifier,
+  shouldNotifyKakao,
+  type KakaoDiagnosticLevel,
+} from "../core/KakaoNotifier.js";
 import { formatDuration, parseDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
 import { resolveProgressChangeThreshold } from "../core/NotificationPolicy.js";
@@ -23,7 +27,7 @@ import {
 } from "../core/SubAgentClient.js";
 import { TrendAnalyzer } from "../core/TrendAnalyzer.js";
 import { WebhookNotifier } from "../core/WebhookNotifier.js";
-import type { Config, ScanResult } from "../core/ProjectModel.js";
+import type { Config, Project, ScanResult } from "../core/ProjectModel.js";
 import type { ScanDiff } from "../core/TrendAnalyzer.js";
 import { renderHtmlReport } from "../report/HtmlReport.js";
 import { renderJsonReport } from "../report/JsonReport.js";
@@ -520,6 +524,13 @@ kakao
     console.log(`  활성화: ${config.kakao?.enabled ? "✓" : "✗"}`);
     console.log(`  REST API 키: ${status.configured ? "✓" : "✗"}`);
     console.log(`  토큰: ${status.hasToken ? "✓" : "✗"}`);
+    console.log(
+      `  talk_message 권한: ${formatScopeStatus(status.hasTalkMessageScope)}`,
+    );
+    console.log(`  Link URL: ${status.linkUrl}`);
+    if (status.linkUrlOrigin) {
+      console.log(chalk.gray(`  Web domain 후보: ${status.linkUrlOrigin}`));
+    }
     console.log(chalk.gray(`  Token: ${status.tokenFile}`));
     if (status.accessTokenExpiresAt) {
       console.log(
@@ -533,6 +544,18 @@ kakao
     }
     if (status.scope) {
       console.log(chalk.gray(`  Scope: ${status.scope}`));
+    }
+    if (status.diagnostics.length > 0) {
+      console.log();
+      console.log(chalk.cyan("진단"));
+      status.diagnostics.forEach((diagnostic) => {
+        console.log(
+          formatKakaoDiagnostic(diagnostic.level, diagnostic.message),
+        );
+        if (diagnostic.action) {
+          console.log(chalk.gray(`    조치: ${diagnostic.action}`));
+        }
+      });
     }
   });
 
@@ -555,11 +578,13 @@ program
   .option("-a, --all", "LOW 우선순위 프로젝트까지 모두 표시")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
   .option("--incremental", "변경된 프로젝트만 재스캔 (--refresh 없이도 동작)")
+  .option("--threads", "프로젝트별 활성 thread 상세 표시 (ThreadKeeper)")
   .action(
     async (options: {
       all?: boolean;
       refresh?: boolean;
       incremental?: boolean;
+      threads?: boolean;
     }) => {
       console.log(chalk.blue("프로젝트 리포트 생성 중..."));
       const { result, fromCache } = await loadScanResult({
@@ -605,7 +630,7 @@ program
           "이슈",
         ],
         wordWrap: true,
-        colWidths: [12, 24, 12, 10, 8, 16, 36],
+        colWidths: [12, 24, 12, 10, 20, 16, 30],
       });
 
       projects.forEach((project) => {
@@ -614,13 +639,39 @@ program
           project.name,
           project.type,
           formatProgress(project.progress.percentage),
-          `${project.readiness}%`,
+          formatReadinessCellConsole(project),
           formatActivity(project.activity.daysSinceLastCommit),
           project.issues?.join(", ") || "-",
         ]);
       });
 
       console.log(table.toString());
+
+      if (options.threads) {
+        console.log();
+        console.log(chalk.cyan("ThreadKeeper 스레드 상세"));
+        for (const project of projects) {
+          const c = project.continuity;
+          if (!c || !c.summary || c.summary.total === 0) continue;
+          const badge =
+            c.coverage === "live"
+              ? "live"
+              : c.coverage === "stale"
+                ? `stale ${c.ageDays ?? "?"}d`
+                : "offline";
+          console.log(
+            chalk.bold(`\n${project.name}`) +
+              chalk.gray(` [${badge}] 활성 ${c.summary.active} / 전체 ${c.summary.total}`),
+          );
+          if (c.summary.activeThreads.length === 0) {
+            console.log(chalk.gray("  활성 thread 없음"));
+          }
+          for (const t of c.summary.activeThreads) {
+            const next = t.currentNextAction ? ` → ${t.currentNextAction}` : "";
+            console.log(`  - [${t.priority}] ${t.title}${next}`);
+          }
+        }
+      }
 
       const actionable = projects.filter(
         (project) => project.nextActions && project.nextActions.length > 0,
@@ -1756,11 +1807,64 @@ program
       ),
   );
 
+// threadkeeper 커맨드
+program
+  .command("threadkeeper")
+  .description("ThreadKeeper 연동 설정")
+  .option("--enable", "ThreadKeeper 연동 켜기")
+  .option("--disable", "ThreadKeeper 연동 끄기")
+  .option("--url <url>", "ThreadKeeper base URL (예: http://localhost:8080)")
+  .option("--timeout <ms>", "요청 타임아웃 (ms)")
+  .option("--stale-days <days>", "캐시 유효 최대 일수")
+  .action(
+    async (options: {
+      enable?: boolean;
+      disable?: boolean;
+      url?: string;
+      timeout?: string;
+      staleDays?: string;
+    }) => {
+      const configManager = new ConfigManager();
+      const config = await configManager.load();
+      const tk = { ...(config.threadKeeper ?? {}) };
+
+      if (options.enable) tk.enabled = true;
+      if (options.disable) tk.enabled = false;
+      if (options.url) tk.baseUrl = options.url;
+      if (options.timeout) {
+        const ms = Number(options.timeout);
+        if (Number.isFinite(ms)) tk.timeoutMs = ms;
+        else console.log(chalk.yellow(`  --timeout 값이 숫자가 아니라 무시됨: ${options.timeout}`));
+      }
+      if (options.staleDays) {
+        const days = Number(options.staleDays);
+        if (Number.isFinite(days)) tk.staleMaxDays = days;
+        else console.log(chalk.yellow(`  --stale-days 값이 숫자가 아니라 무시됨: ${options.staleDays}`));
+      }
+
+      config.threadKeeper = tk;
+      await configManager.save(config);
+
+      console.log(chalk.green("ThreadKeeper 설정이 저장되었습니다."));
+      console.log(`  enabled: ${tk.enabled ?? false}`);
+      console.log(`  baseUrl: ${tk.baseUrl ?? "http://localhost:8080"}`);
+      console.log(`  timeoutMs: ${tk.timeoutMs ?? 2000}`);
+      console.log(`  staleMaxDays: ${tk.staleMaxDays ?? 14}`);
+    },
+  );
+
 function formatPriority(priority = "LOW"): string {
   if (priority === "CRITICAL") return chalk.red(priority);
   if (priority === "HIGH") return chalk.yellow(priority);
   if (priority === "MEDIUM") return chalk.blue(priority);
   return chalk.gray(priority);
+}
+
+function formatReadinessCellConsole(project: Project): string {
+  const c = project.continuity;
+  if (!c || c.coverage === "unavailable") return `${project.readiness}%`;
+  const badge = c.coverage === "live" ? "live" : `stale ${c.ageDays ?? "?"}d`;
+  return `${project.readiness}% (${project.baseReadiness}+${c.threadAdjustment}, ${badge})`;
 }
 
 function formatActivity(daysSinceLastCommit: number): string {
@@ -1794,6 +1898,24 @@ function formatChange(value: number, suffix = ""): string {
   if (value === 0) return chalk.gray(`±0${suffix}`);
   if (value > 0) return chalk.green(`▲ +${value}${suffix}`);
   return chalk.red(`▼ ${value}${suffix}`);
+}
+
+function formatScopeStatus(hasTalkMessageScope: boolean | null): string {
+  if (hasTalkMessageScope === true) return "✓";
+  if (hasTalkMessageScope === false) return "✗";
+  return "?";
+}
+
+function formatKakaoDiagnostic(
+  level: KakaoDiagnosticLevel,
+  message: string,
+): string {
+  const prefix =
+    level === "error" ? "[error]" : level === "warning" ? "[warn]" : "[info]";
+  const line = `  ${prefix} ${message}`;
+  if (level === "error") return chalk.red(line);
+  if (level === "warning") return chalk.yellow(line);
+  return chalk.gray(line);
 }
 
 function parseBooleanOption(value: string, label: string): boolean {
