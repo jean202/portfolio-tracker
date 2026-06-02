@@ -137,7 +137,7 @@ describe("computeThreadAdjustment", () => {
     expect(signals.some((x) => x.includes("완료"))).toBe(true);
   });
 
-  it("caps the total adjustment at 20", () => {
+  it("sums the three signals and clamps to at most 20", () => {
     const active = Array.from({ length: 5 }, (_, i) => ({
       title: `t${i}`,
       status: "ACTIVE",
@@ -153,6 +153,11 @@ describe("computeThreadAdjustment", () => {
       mostRecentActivityAt: "2026-06-01T00:00:00Z",
     });
     const { adjustment } = computeThreadAdjustment(s, now);
-    expect(adjustment).toBe(20);
+    // signal1: 5/5 active have next action -> round(6)=6
+    // signal2: recency(<=3d)=5 + active(>=3)=3 -> min(8,8)=8
+    // signal3: completed 5/10 -> round(0.5*6)=3
+    // total = 17, and never exceeds the 20 cap
+    expect(adjustment).toBe(17);
+    expect(adjustment).toBeLessThanOrEqual(20);
   });
 });

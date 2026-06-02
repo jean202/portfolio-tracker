@@ -79,7 +79,7 @@ export function computeThreadAdjustment(
     }
   }
 
-  // Signal 2: recent activity / active sessions (0-11)
+  // Signal 2: recent activity / active sessions (0-8)
   let recencyPts = 0;
   if (summary.mostRecentActivityAt) {
     const days = (now.getTime() - new Date(summary.mostRecentActivityAt).getTime()) / 86_400_000;
@@ -88,10 +88,9 @@ export function computeThreadAdjustment(
     else if (days <= 30) recencyPts = 1;
   }
   let activePts = 0;
-  if (summary.active >= 5) activePts = 6;
-  else if (summary.active >= 3) activePts = 3;
+  if (summary.active >= 3) activePts = 3;
   else if (summary.active >= 1) activePts = 2;
-  const s2 = Math.min(11, recencyPts + activePts);
+  const s2 = Math.min(8, recencyPts + activePts);
   if (s2 > 0) {
     adjustment += s2;
     signals.push(`thread: 최근 활동/활성 세션 ${summary.active}개 (+${s2})`);
