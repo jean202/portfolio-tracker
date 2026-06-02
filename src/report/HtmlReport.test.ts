@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ScanResult } from "../core/ProjectModel.js";
+import { Project, ScanResult } from "../core/ProjectModel.js";
 import { renderHtmlReport } from "./HtmlReport.js";
 
 const scannedAt = new Date("2026-04-30T09:00:00.000Z");
@@ -104,5 +104,79 @@ describe("renderHtmlReport", () => {
     const html = renderHtmlReport(result, { includeLowPriority: true });
 
     expect(html).toContain("archived-project");
+  });
+});
+
+function enrichedResult(): ScanResult {
+  const project: Project = {
+    id: "pt",
+    name: "pt",
+    path: "/abs/pt",
+    type: "node",
+    priority: "HIGH",
+    progress: {
+      percentage: 50,
+      source: "readme",
+      confidence: "medium",
+      signals: [],
+      lastUpdated: new Date("2026-06-02"),
+    },
+    activity: {
+      lastCommitDate: null,
+      commitsInLastWeek: 0,
+      isActive: false,
+      daysSinceLastCommit: 3,
+    },
+    metadata: {
+      description: "",
+      stack: [],
+      hasReadme: true,
+      hasClaude: false,
+      hasGit: true,
+    },
+    baseReadiness: 71,
+    readiness: 82,
+    continuity: {
+      coverage: "live",
+      threadAdjustment: 11,
+      signals: [],
+      summary: {
+        projectKey: "pt",
+        total: 7,
+        active: 3,
+        completed: 4,
+        activeThreads: [],
+        mostRecentActivityAt: null,
+        representative: {
+          title: "ship API",
+          status: "ACTIVE",
+          priority: "HIGH",
+          currentNextAction: "write tests",
+          lastActivityAt: null,
+        },
+      },
+    },
+    scannedAt: new Date("2026-06-02"),
+  };
+  return {
+    projects: [project],
+    scannedAt: new Date("2026-06-02"),
+    summary: {
+      total: 1,
+      active: 0,
+      avgProgress: 50,
+      avgReadiness: 82,
+      byPriority: { CRITICAL: 0, HIGH: 1, MEDIUM: 0, LOW: 0 },
+      byType: { node: 1, python: 0, dart: 0, java: 0, kotlin: 0, go: 0, rust: 0, unknown: 0 },
+    },
+  };
+}
+
+describe("HtmlReport thread enrichment", () => {
+  it("shows the readiness breakdown and thread counts", () => {
+    const html = renderHtmlReport(enrichedResult(), { includeLowPriority: true });
+    expect(html).toContain("82");
+    expect(html).toContain("71+11");
+    expect(html).toContain("활성 3 / 전체 7");
   });
 });
