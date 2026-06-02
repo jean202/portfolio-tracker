@@ -180,6 +180,7 @@ describe("MarkdownReport thread enrichment", () => {
     );
     expect(md).toContain("82% (71+11, live)");
     expect(md).toContain("활성 3 / 전체 7");
+    expect(md).toContain("ship API → write tests");
   });
 
   it("renders plain readiness when continuity is absent", () => {
