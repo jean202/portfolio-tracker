@@ -15,6 +15,12 @@ const DEFAULT_CONFIG: Config = {
   ],
   scanInterval: 24 * 60 * 60 * 1000, // 24시간
   excludePatterns: ["node_modules", ".git", ".next", "dist", "build"],
+  threadKeeper: {
+    enabled: false,
+    baseUrl: "http://localhost:8080",
+    timeoutMs: 2000,
+    staleMaxDays: 14,
+  },
 };
 
 export class ConfigManager {
@@ -130,6 +136,7 @@ export class ConfigManager {
       excludePatterns: DEFAULT_CONFIG.excludePatterns
         ? [...DEFAULT_CONFIG.excludePatterns]
         : undefined,
+      threadKeeper: DEFAULT_CONFIG.threadKeeper,
     };
 
     await this.save(config);

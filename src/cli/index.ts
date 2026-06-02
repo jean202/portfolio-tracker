@@ -11,7 +11,11 @@ import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
-import { KakaoNotifier, shouldNotifyKakao } from "../core/KakaoNotifier.js";
+import {
+  KakaoNotifier,
+  shouldNotifyKakao,
+  type KakaoDiagnosticLevel,
+} from "../core/KakaoNotifier.js";
 import { formatDuration, parseDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
 import { resolveProgressChangeThreshold } from "../core/NotificationPolicy.js";
@@ -520,6 +524,13 @@ kakao
     console.log(`  활성화: ${config.kakao?.enabled ? "✓" : "✗"}`);
     console.log(`  REST API 키: ${status.configured ? "✓" : "✗"}`);
     console.log(`  토큰: ${status.hasToken ? "✓" : "✗"}`);
+    console.log(
+      `  talk_message 권한: ${formatScopeStatus(status.hasTalkMessageScope)}`,
+    );
+    console.log(`  Link URL: ${status.linkUrl}`);
+    if (status.linkUrlOrigin) {
+      console.log(chalk.gray(`  Web domain 후보: ${status.linkUrlOrigin}`));
+    }
     console.log(chalk.gray(`  Token: ${status.tokenFile}`));
     if (status.accessTokenExpiresAt) {
       console.log(
@@ -533,6 +544,18 @@ kakao
     }
     if (status.scope) {
       console.log(chalk.gray(`  Scope: ${status.scope}`));
+    }
+    if (status.diagnostics.length > 0) {
+      console.log();
+      console.log(chalk.cyan("진단"));
+      status.diagnostics.forEach((diagnostic) => {
+        console.log(
+          formatKakaoDiagnostic(diagnostic.level, diagnostic.message),
+        );
+        if (diagnostic.action) {
+          console.log(chalk.gray(`    조치: ${diagnostic.action}`));
+        }
+      });
     }
   });
 
@@ -1756,6 +1779,44 @@ program
       ),
   );
 
+// threadkeeper 커맨드
+program
+  .command("threadkeeper")
+  .description("ThreadKeeper 연동 설정")
+  .option("--enable", "ThreadKeeper 연동 켜기")
+  .option("--disable", "ThreadKeeper 연동 끄기")
+  .option("--url <url>", "ThreadKeeper base URL (예: http://localhost:8080)")
+  .option("--timeout <ms>", "요청 타임아웃 (ms)")
+  .option("--stale-days <days>", "캐시 유효 최대 일수")
+  .action(
+    async (options: {
+      enable?: boolean;
+      disable?: boolean;
+      url?: string;
+      timeout?: string;
+      staleDays?: string;
+    }) => {
+      const configManager = new ConfigManager();
+      const config = await configManager.load();
+      const tk = { ...(config.threadKeeper ?? {}) };
+
+      if (options.enable) tk.enabled = true;
+      if (options.disable) tk.enabled = false;
+      if (options.url) tk.baseUrl = options.url;
+      if (options.timeout) tk.timeoutMs = Number(options.timeout);
+      if (options.staleDays) tk.staleMaxDays = Number(options.staleDays);
+
+      config.threadKeeper = tk;
+      await configManager.save(config);
+
+      console.log(chalk.green("ThreadKeeper 설정이 저장되었습니다."));
+      console.log(`  enabled: ${tk.enabled ?? false}`);
+      console.log(`  baseUrl: ${tk.baseUrl ?? "http://localhost:8080"}`);
+      console.log(`  timeoutMs: ${tk.timeoutMs ?? 2000}`);
+      console.log(`  staleMaxDays: ${tk.staleMaxDays ?? 14}`);
+    },
+  );
+
 function formatPriority(priority = "LOW"): string {
   if (priority === "CRITICAL") return chalk.red(priority);
   if (priority === "HIGH") return chalk.yellow(priority);
@@ -1794,6 +1855,24 @@ function formatChange(value: number, suffix = ""): string {
   if (value === 0) return chalk.gray(`±0${suffix}`);
   if (value > 0) return chalk.green(`▲ +${value}${suffix}`);
   return chalk.red(`▼ ${value}${suffix}`);
+}
+
+function formatScopeStatus(hasTalkMessageScope: boolean | null): string {
+  if (hasTalkMessageScope === true) return "✓";
+  if (hasTalkMessageScope === false) return "✗";
+  return "?";
+}
+
+function formatKakaoDiagnostic(
+  level: KakaoDiagnosticLevel,
+  message: string,
+): string {
+  const prefix =
+    level === "error" ? "[error]" : level === "warning" ? "[warn]" : "[info]";
+  const line = `  ${prefix} ${message}`;
+  if (level === "error") return chalk.red(line);
+  if (level === "warning") return chalk.yellow(line);
+  return chalk.gray(line);
 }
 
 function parseBooleanOption(value: string, label: string): boolean {
