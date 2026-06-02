@@ -136,7 +136,7 @@ export class ConfigManager {
       excludePatterns: DEFAULT_CONFIG.excludePatterns
         ? [...DEFAULT_CONFIG.excludePatterns]
         : undefined,
-      threadKeeper: DEFAULT_CONFIG.threadKeeper,
+      threadKeeper: { ...DEFAULT_CONFIG.threadKeeper },
     };
 
     await this.save(config);

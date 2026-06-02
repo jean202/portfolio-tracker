@@ -1831,8 +1831,16 @@ program
       if (options.enable) tk.enabled = true;
       if (options.disable) tk.enabled = false;
       if (options.url) tk.baseUrl = options.url;
-      if (options.timeout) tk.timeoutMs = Number(options.timeout);
-      if (options.staleDays) tk.staleMaxDays = Number(options.staleDays);
+      if (options.timeout) {
+        const ms = Number(options.timeout);
+        if (Number.isFinite(ms)) tk.timeoutMs = ms;
+        else console.log(chalk.yellow(`  --timeout 값이 숫자가 아니라 무시됨: ${options.timeout}`));
+      }
+      if (options.staleDays) {
+        const days = Number(options.staleDays);
+        if (Number.isFinite(days)) tk.staleMaxDays = days;
+        else console.log(chalk.yellow(`  --stale-days 값이 숫자가 아니라 무시됨: ${options.staleDays}`));
+      }
 
       config.threadKeeper = tk;
       await configManager.save(config);
