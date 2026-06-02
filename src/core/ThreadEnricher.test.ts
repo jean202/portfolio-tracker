@@ -103,4 +103,19 @@ describe("ThreadEnricher", () => {
     expect(p.continuity?.summary?.projectKey).toBe("threadkeeper");
     expect(p.continuity!.threadAdjustment).toBeGreaterThan(0);
   });
+
+  it("fetches threads once and warns once for many projects on failure", async () => {
+    const client = fakeClient(new Error("down"));
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const enricher = new ThreadEnricher({ enabled: true }, client, fakeCache());
+      const projects = [project({ id: "a", name: "a", path: "/abs/a" }), project({ id: "b", name: "b", path: "/abs/b" })];
+      await enricher.enrichWithThreads(projects, NOW);
+      expect(client.fetchAllThreads).toHaveBeenCalledTimes(1);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(projects.every((p) => p.continuity?.coverage === "unavailable")).toBe(true);
+    } finally {
+      warn.mockRestore();
+    }
+  });
 });
