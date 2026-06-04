@@ -318,4 +318,27 @@ describe("Scanner.scanIncremental", () => {
     const proj = result.projects.find((p) => p.name === "proj");
     expect(proj?.continuity).toBeUndefined();
   });
+
+  it("emits recentCommitDays for a git project with a recent commit", async () => {
+    const projectDir = path.join(tempRoot, "heatmap-project");
+    await fs.mkdir(projectDir);
+    const git = simpleGit(projectDir);
+    await git.init();
+    await git.addConfig("user.email", "test@test.com");
+    await git.addConfig("user.name", "Test User");
+    await fs.writeFile(path.join(projectDir, "README.md"), "# Heatmap");
+    await git.add(".");
+    await git.commit("initial commit");
+
+    const scanner = new Scanner({ projectDirs: [tempRoot] });
+    const result = await scanner.scan();
+    const project = result.projects.find((p) => p.path === projectDir);
+    expect(project).toBeDefined();
+
+    const days = project!.activity.recentCommitDays;
+    expect(days).toBeDefined();
+    const now = new Date();
+    const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    expect(days![key]).toBe(1);
+  });
 });

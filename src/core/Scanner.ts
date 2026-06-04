@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import simpleGit from "simple-git";
+import { buildCommitHistogram } from "./CommitHistogram.js";
 import {
   Activity,
   Config,
@@ -397,12 +398,27 @@ export class Scanner {
           )
         : Number.MAX_SAFE_INTEGER;
 
+      let recentCommitDays: Record<string, number> | undefined;
+      try {
+        const windowLog = await git.log({
+          "--since": "91 days ago",
+          maxCount: 2000,
+        });
+        recentCommitDays = buildCommitHistogram(
+          windowLog.all.map((c) => new Date(c.date)),
+          new Date(),
+        );
+      } catch {
+        recentCommitDays = undefined;
+      }
+
       return {
         lastCommitDate,
         lastCommitMessage: latest?.message,
         commitsInLastWeek,
         isActive: daysSinceLastCommit <= 14,
         daysSinceLastCommit,
+        recentCommitDays,
       };
     } catch {
       return {
