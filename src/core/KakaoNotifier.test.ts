@@ -92,6 +92,77 @@ describe("KakaoNotifier", () => {
       "Bearer access",
     );
   });
+
+  it("diagnoses missing talk_message scope and default link URL", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
+    const tokenFile = path.join(tempDir, "token.json");
+    await fs.writeFile(
+      tokenFile,
+      JSON.stringify({
+        tokenType: "bearer",
+        accessToken: "access",
+        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+        refreshToken: "refresh",
+        refreshTokenExpiresAt: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+        scope: "profile",
+      }),
+    );
+
+    const notifier = new KakaoNotifier({
+      restApiKey: "rest-key",
+      tokenFile,
+    });
+    const status = await notifier.status();
+
+    expect(status.hasTalkMessageScope).toBe(false);
+    expect(status.linkUrlIsDefault).toBe(true);
+    expect(status.diagnostics.map((diagnostic) => diagnostic.message)).toEqual(
+      expect.arrayContaining([
+        "토큰 scope에 talk_message 권한이 없습니다.",
+        "linkUrl이 기본 개발자 문서 URL로 설정되어 있습니다.",
+      ]),
+    );
+  });
+
+  it("diagnoses invalid link URL and expired refresh token", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
+    const tokenFile = path.join(tempDir, "token.json");
+    await fs.writeFile(
+      tokenFile,
+      JSON.stringify({
+        tokenType: "bearer",
+        accessToken: "access",
+        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+        refreshToken: "refresh",
+        refreshTokenExpiresAt: new Date(Date.now() - 1_000).toISOString(),
+        scope: "talk_message",
+      }),
+    );
+
+    const notifier = new KakaoNotifier({
+      restApiKey: "rest-key",
+      tokenFile,
+      linkUrl: "ftp://example.com",
+    });
+    const status = await notifier.status();
+
+    expect(status.hasTalkMessageScope).toBe(true);
+    expect(status.linkUrlValid).toBe(false);
+    expect(status.diagnostics).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          level: "error",
+          message: "Refresh token이 만료되었습니다.",
+        }),
+        expect.objectContaining({
+          level: "error",
+          message: "linkUrl이 올바른 http(s) URL이 아닙니다: ftp://example.com",
+        }),
+      ]),
+    );
+  });
 });
 
 describe("shouldNotifyKakao", () => {

@@ -244,7 +244,7 @@ portfolio-tracker kakao status
 portfolio-tracker kakao test
 ```
 
-인증이 끝나면 `watch` 실행 중 스캔 완료 요약이 카카오톡 나와의 채팅방으로 전송됩니다. 토큰 파일은 `.portfolio-tracker/kakao-token.json`에 저장됩니다.
+`kakao status`는 토큰 만료, `talk_message` 권한, 메시지 버튼 `linkUrl`과 Kakao Developers Web domain 등록 후보를 함께 점검합니다. 인증이 끝나면 `watch` 실행 중 스캔 완료 요약이 카카오톡 나와의 채팅방으로 전송됩니다. 토큰 파일은 `.portfolio-tracker/kakao-token.json`에 저장됩니다.
 
 ### recommend - 작업 추천
 

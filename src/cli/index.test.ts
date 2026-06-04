@@ -108,4 +108,49 @@ describe("CLI command registration", () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
   }, 15_000);
+
+  it("shows actionable kakao status diagnostics", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "portfolio-cli-"));
+    const tokenFile = path.join(tempDir, "kakao-token.json");
+
+    try {
+      await fs.writeFile(
+        tokenFile,
+        JSON.stringify({
+          tokenType: "bearer",
+          accessToken: "access",
+          accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+          refreshToken: "refresh",
+          refreshTokenExpiresAt: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+          ).toISOString(),
+          scope: "profile",
+        }),
+      );
+      await fs.writeFile(
+        path.join(tempDir, "config.json"),
+        JSON.stringify(
+          {
+            projectDirs: [],
+            kakao: {
+              enabled: true,
+              restApiKey: "rest-key",
+              tokenFile,
+              linkUrl: "https://example.com/report",
+            },
+          },
+          null,
+          2,
+        ),
+      );
+
+      const output = await runCli(["kakao", "status"], { cwd: tempDir });
+
+      expect(output).toContain("talk_message 권한: ✗");
+      expect(output).toContain("Web domain 후보: https://example.com");
+      expect(output).toContain("토큰 scope에 talk_message 권한이 없습니다.");
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  }, 15_000);
 });

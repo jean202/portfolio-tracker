@@ -35,6 +35,30 @@ export interface KakaoNotifierOptions {
   linkUrl?: string;
 }
 
+export type KakaoDiagnosticLevel = "info" | "warning" | "error";
+
+export interface KakaoStatusDiagnostic {
+  level: KakaoDiagnosticLevel;
+  message: string;
+  action?: string;
+}
+
+export interface KakaoStatus {
+  configured: boolean;
+  tokenFile: string;
+  hasToken: boolean;
+  tokenError?: string;
+  accessTokenExpiresAt?: string;
+  refreshTokenExpiresAt?: string;
+  scope?: string;
+  hasTalkMessageScope: boolean | null;
+  linkUrl: string;
+  linkUrlValid: boolean;
+  linkUrlOrigin?: string;
+  linkUrlIsDefault: boolean;
+  diagnostics: KakaoStatusDiagnostic[];
+}
+
 const AUTH_URL = "https://kauth.kakao.com/oauth/authorize";
 const TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 const SEND_TO_ME_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
@@ -42,6 +66,8 @@ const DEFAULT_REDIRECT_URI = "http://localhost:4888/kakao/callback";
 const DEFAULT_TOKEN_FILE = ".portfolio-tracker/kakao-token.json";
 const DEFAULT_LINK_URL = "https://developers.kakao.com";
 const TOKEN_REFRESH_SKEW_MS = 60_000;
+const ACCESS_TOKEN_EXPIRY_WARNING_MS = 10 * 60 * 1000;
+const REFRESH_TOKEN_EXPIRY_WARNING_MS = 7 * 24 * 60 * 60 * 1000;
 const KAKAO_TEXT_LIMIT = 200;
 
 export class KakaoNotifier {
@@ -121,24 +147,35 @@ export class KakaoNotifier {
     return token;
   }
 
-  async status(): Promise<{
-    configured: boolean;
-    tokenFile: string;
-    hasToken: boolean;
-    accessTokenExpiresAt?: string;
-    refreshTokenExpiresAt?: string;
-    scope?: string;
-  }> {
-    const token = await this.loadToken().catch(() => null);
+  async status(): Promise<KakaoStatus> {
+    let token: KakaoTokenSet | null = null;
+    let tokenError: string | undefined;
 
-    return {
+    try {
+      token = await this.loadToken();
+    } catch (error) {
+      tokenError = error instanceof Error ? error.message : String(error);
+    }
+
+    const linkUrlInfo = inspectLinkUrl(this.linkUrl);
+    const status: KakaoStatus = {
       configured: this.hasRestApiKey,
       tokenFile: this.tokenFile,
       hasToken: token !== null,
+      tokenError,
       accessTokenExpiresAt: token?.accessTokenExpiresAt,
       refreshTokenExpiresAt: token?.refreshTokenExpiresAt,
       scope: token?.scope,
+      hasTalkMessageScope: inspectTalkMessageScope(token?.scope),
+      linkUrl: this.linkUrl,
+      linkUrlValid: linkUrlInfo.valid,
+      linkUrlOrigin: linkUrlInfo.origin,
+      linkUrlIsDefault: this.linkUrl === DEFAULT_LINK_URL,
+      diagnostics: [],
     };
+
+    status.diagnostics = buildKakaoStatusDiagnostics(status);
+    return status;
   }
 
   async sendPortfolioSummary(
@@ -355,6 +392,148 @@ function expandHome(value: string): string {
     return path.join(os.homedir(), value.slice(2));
   }
   return value;
+}
+
+function inspectTalkMessageScope(scope: string | undefined): boolean | null {
+  if (!scope) {
+    return null;
+  }
+
+  return scope.split(/[\s,]+/).includes("talk_message");
+}
+
+function inspectLinkUrl(linkUrl: string): { valid: boolean; origin?: string } {
+  try {
+    const url = new URL(linkUrl);
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return { valid: false };
+    }
+
+    return { valid: true, origin: url.origin };
+  } catch {
+    return { valid: false };
+  }
+}
+
+function buildKakaoStatusDiagnostics(
+  status: KakaoStatus,
+): KakaoStatusDiagnostic[] {
+  const diagnostics: KakaoStatusDiagnostic[] = [];
+
+  if (!status.configured) {
+    diagnostics.push({
+      level: "error",
+      message: "REST API 키가 설정되지 않았습니다.",
+      action: "portfolio-tracker config kakao --rest-api-key YOUR_REST_API_KEY",
+    });
+  }
+
+  if (!status.hasToken) {
+    diagnostics.push({
+      level: "error",
+      message: status.tokenError
+        ? `토큰을 읽을 수 없습니다: ${status.tokenError}`
+        : "저장된 카카오 토큰이 없습니다.",
+      action: "portfolio-tracker kakao auth",
+    });
+  }
+
+  if (status.hasTalkMessageScope === false) {
+    diagnostics.push({
+      level: "error",
+      message: "토큰 scope에 talk_message 권한이 없습니다.",
+      action:
+        "Kakao Developers 동의 항목에서 talk_message를 켠 뒤 kakao auth를 다시 실행하세요.",
+    });
+  } else if (status.hasToken && status.hasTalkMessageScope === null) {
+    diagnostics.push({
+      level: "warning",
+      message: "토큰 scope 정보를 확인할 수 없습니다.",
+      action: "메시지 전송이 실패하면 kakao auth를 다시 실행하세요.",
+    });
+  }
+
+  addExpiryDiagnostic(
+    diagnostics,
+    "Access token",
+    status.accessTokenExpiresAt,
+    ACCESS_TOKEN_EXPIRY_WARNING_MS,
+  );
+  addExpiryDiagnostic(
+    diagnostics,
+    "Refresh token",
+    status.refreshTokenExpiresAt,
+    REFRESH_TOKEN_EXPIRY_WARNING_MS,
+  );
+
+  if (!status.linkUrlValid) {
+    diagnostics.push({
+      level: "error",
+      message: `linkUrl이 올바른 http(s) URL이 아닙니다: ${status.linkUrl}`,
+      action:
+        "portfolio-tracker config kakao --link-url https://YOUR_DOMAIN/portfolio-tracker/",
+    });
+  } else if (status.linkUrlIsDefault) {
+    diagnostics.push({
+      level: "warning",
+      message: "linkUrl이 기본 개발자 문서 URL로 설정되어 있습니다.",
+      action: "카카오 메시지 버튼이 열 실제 리포트 URL로 바꾸세요.",
+    });
+  } else if (status.linkUrlOrigin) {
+    diagnostics.push({
+      level: "info",
+      message: `Kakao Developers Web domain 등록 후보: ${status.linkUrlOrigin}`,
+      action:
+        "카카오 메시지 링크가 동작하려면 이 도메인이 앱 플랫폼 설정에 등록되어 있어야 합니다.",
+    });
+  }
+
+  return diagnostics;
+}
+
+function addExpiryDiagnostic(
+  diagnostics: KakaoStatusDiagnostic[],
+  label: string,
+  expiresAt: string | undefined,
+  warningMs: number,
+): void {
+  if (!expiresAt) {
+    return;
+  }
+
+  const timestamp = Date.parse(expiresAt);
+  if (!Number.isFinite(timestamp)) {
+    diagnostics.push({
+      level: "warning",
+      message: `${label} 만료 시각을 해석할 수 없습니다: ${expiresAt}`,
+      action: "메시지 전송이 실패하면 kakao auth를 다시 실행하세요.",
+    });
+    return;
+  }
+
+  const remainingMs = timestamp - Date.now();
+  if (remainingMs <= 0) {
+    diagnostics.push({
+      level: label === "Refresh token" ? "error" : "warning",
+      message: `${label}이 만료되었습니다.`,
+      action:
+        label === "Refresh token"
+          ? "portfolio-tracker kakao auth"
+          : "다음 메시지 전송 때 refresh token으로 갱신을 시도합니다.",
+    });
+    return;
+  }
+
+  if (remainingMs <= warningMs) {
+    diagnostics.push({
+      level: "warning",
+      message: `${label} 만료가 임박했습니다: ${expiresAt}`,
+      action:
+        label === "Refresh token"
+          ? "portfolio-tracker kakao auth"
+          : "다음 메시지 전송 때 자동 갱신될 수 있습니다.",
+    });
+  }
 }
 
 async function formatKakaoError(response: Response): Promise<string> {
