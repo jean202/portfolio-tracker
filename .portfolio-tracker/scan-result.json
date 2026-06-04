@@ -12,7 +12,7 @@
         "signals": [
           "README.md: explicit 85% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.461Z"
+        "lastUpdated": "2026-06-04T02:25:56.329Z"
       },
       "priority": "CRITICAL",
       "activity": {
@@ -20,7 +20,10 @@
         "lastCommitMessage": "Initial commit: Discord-to-KakaoTalk translator bridge",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 54
+        "daysSinceLastCommit": 55,
+        "recentCommitDays": {
+          "2026-04-09": 1
+        }
       },
       "metadata": {
         "description": "Discord -> Korean -> KakaoTalk",
@@ -44,9 +47,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.461Z",
+      "scannedAt": "2026-06-04T02:25:56.330Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "discord-kakao-translator",
           "total": 7,
@@ -116,9 +119,7 @@
         "signals": [
           "thread: 활성 7개 중 7개에 다음 액션 핀됨 (+6)",
           "thread: 최근 활동/활성 세션 7개 (+3)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        ]
       }
     },
     {
@@ -137,7 +138,7 @@
           "docs/architecture.md: checklist",
           "docs/data-sources.md: checklist"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.471Z",
+        "lastUpdated": "2026-06-04T02:25:56.350Z",
         "breakdown": {
           "completed": 79,
           "total": 88
@@ -149,7 +150,19 @@
         "lastCommitMessage": "feat: 포트폴리오 추천/전략화 로직 구현",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 29
+        "daysSinceLastCommit": 30,
+        "recentCommitDays": {
+          "2026-05-04": 1,
+          "2026-05-03": 1,
+          "2026-05-02": 1,
+          "2026-04-25": 1,
+          "2026-04-09": 3,
+          "2026-04-05": 1,
+          "2026-04-02": 7,
+          "2026-04-01": 1,
+          "2026-03-31": 1,
+          "2026-03-27": 1
+        }
       },
       "metadata": {
         "description": "asset-radar",
@@ -173,9 +186,9 @@
         "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정"
       ],
       "issues": [],
-      "scannedAt": "2026-06-03T04:46:44.471Z",
+      "scannedAt": "2026-06-04T02:25:56.350Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "asset-radar",
           "total": 8,
@@ -252,9 +265,7 @@
         "signals": [
           "thread: 활성 8개 중 8개에 다음 액션 핀됨 (+6)",
           "thread: 최근 활동/활성 세션 8개 (+4)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        ]
       }
     },
     {
@@ -270,7 +281,7 @@
           "Early-stage wording found",
           "In-progress wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.569Z"
+        "lastUpdated": "2026-06-04T02:25:56.347Z"
       },
       "priority": "CRITICAL",
       "activity": {
@@ -278,7 +289,13 @@
         "lastCommitMessage": "chore: adopt jackson-datatype-jsr310, ErrorResponse @JsonFormat, guest count validation",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 15
+        "daysSinceLastCommit": 16,
+        "recentCommitDays": {
+          "2026-05-18": 13,
+          "2026-05-17": 1,
+          "2026-05-03": 2,
+          "2026-04-28": 1
+        }
       },
       "metadata": {
         "description": "SlotOps",
@@ -293,9 +310,9 @@
       "readiness": 49,
       "nextActions": [],
       "issues": [],
-      "scannedAt": "2026-06-03T04:46:44.569Z",
+      "scannedAt": "2026-06-04T02:25:56.348Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "slotops",
           "total": 0,
@@ -305,9 +322,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -322,15 +337,92 @@
         "signals": [
           "README.md: explicit 70% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.541Z"
+        "lastUpdated": "2026-06-04T02:25:56.382Z"
       },
       "priority": "CRITICAL",
       "activity": {
         "lastCommitDate": "2026-05-29T07:50:35.000Z",
         "lastCommitMessage": "Merge pull request #116 from ZayaMK/database-read-standardization",
-        "commitsInLastWeek": 28,
+        "commitsInLastWeek": 24,
         "isActive": true,
-        "daysSinceLastCommit": 4
+        "daysSinceLastCommit": 5,
+        "recentCommitDays": {
+          "2026-05-29": 15,
+          "2026-05-28": 12,
+          "2026-05-27": 6,
+          "2026-05-26": 13,
+          "2026-05-25": 8,
+          "2026-05-24": 8,
+          "2026-05-23": 9,
+          "2026-05-22": 14,
+          "2026-05-21": 10,
+          "2026-05-20": 15,
+          "2026-05-19": 10,
+          "2026-05-18": 9,
+          "2026-05-17": 12,
+          "2026-05-16": 7,
+          "2026-05-15": 16,
+          "2026-05-14": 12,
+          "2026-05-13": 11,
+          "2026-05-12": 18,
+          "2026-05-11": 16,
+          "2026-05-10": 9,
+          "2026-05-09": 2,
+          "2026-05-08": 1,
+          "2026-05-07": 8,
+          "2026-05-06": 18,
+          "2026-05-05": 16,
+          "2026-05-04": 23,
+          "2026-05-03": 13,
+          "2026-05-02": 2,
+          "2026-05-01": 9,
+          "2026-04-30": 17,
+          "2026-04-29": 23,
+          "2026-04-28": 22,
+          "2026-04-27": 18,
+          "2026-04-26": 14,
+          "2026-04-25": 1,
+          "2026-04-24": 19,
+          "2026-04-23": 14,
+          "2026-04-22": 17,
+          "2026-04-21": 13,
+          "2026-04-20": 24,
+          "2026-04-19": 18,
+          "2026-04-18": 22,
+          "2026-04-17": 19,
+          "2026-04-16": 2,
+          "2026-04-15": 1,
+          "2026-04-14": 1,
+          "2026-04-13": 3,
+          "2026-04-04": 24,
+          "2026-04-03": 11,
+          "2026-04-02": 16,
+          "2026-04-01": 16,
+          "2026-03-31": 15,
+          "2026-03-30": 12,
+          "2026-03-29": 7,
+          "2026-03-28": 6,
+          "2026-03-27": 14,
+          "2026-03-26": 16,
+          "2026-03-25": 27,
+          "2026-03-23": 4,
+          "2026-03-21": 1,
+          "2026-03-20": 4,
+          "2026-03-19": 5,
+          "2026-03-18": 1,
+          "2026-03-17": 2,
+          "2026-03-16": 9,
+          "2026-03-15": 1,
+          "2026-03-13": 3,
+          "2026-03-12": 7,
+          "2026-03-11": 1,
+          "2026-03-10": 6,
+          "2026-03-09": 6,
+          "2026-03-08": 3,
+          "2026-03-07": 10,
+          "2026-03-06": 8,
+          "2026-03-05": 4
+        }
       },
       "metadata": {
         "description": "Cleanera",
@@ -352,9 +444,9 @@
         "End-to-end usage screenshots or demo flow"
       ],
       "issues": [],
-      "scannedAt": "2026-06-03T04:46:44.541Z",
+      "scannedAt": "2026-06-04T02:25:56.382Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "Cleanera",
           "total": 0,
@@ -364,9 +456,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -381,15 +471,23 @@
         "signals": [
           "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.996Z"
+        "lastUpdated": "2026-06-04T02:25:56.362Z"
       },
       "priority": "CRITICAL",
       "activity": {
-        "lastCommitDate": "2026-06-03T04:28:48.000Z",
-        "lastCommitMessage": "chore: ignore *.tsbuildinfo build artifacts",
+        "lastCommitDate": "2026-06-03T14:13:18.000Z",
+        "lastCommitMessage": "Merge feature/auto-import-scheduler: scheduled automatic import (staleness catch-up)",
         "commitsInLastWeek": 50,
         "isActive": true,
-        "daysSinceLastCommit": 0
+        "daysSinceLastCommit": 0,
+        "recentCommitDays": {
+          "2026-06-03": 24,
+          "2026-06-02": 13,
+          "2026-06-01": 18,
+          "2026-05-30": 8,
+          "2026-05-22": 5,
+          "2026-05-19": 1
+        }
       },
       "metadata": {
         "description": "ThreadKeeper",
@@ -404,12 +502,12 @@
         "hasGit": true
       },
       "baseReadiness": 44,
-      "readiness": 57,
+      "readiness": 55,
       "nextActions": [],
       "issues": [],
-      "scannedAt": "2026-06-03T04:46:44.997Z",
+      "scannedAt": "2026-06-04T02:25:56.362Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "threadkeeper",
           "total": 1,
@@ -433,13 +531,11 @@
           ],
           "mostRecentActivityAt": "2026-06-01T02:10:47.339Z"
         },
-        "threadAdjustment": 13,
+        "threadAdjustment": 11,
         "signals": [
           "thread: 활성 1개 중 1개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 1개 (+7)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+          "thread: 최근 활동/활성 세션 1개 (+5)"
+        ]
       }
     },
     {
@@ -454,7 +550,7 @@
         "signals": [
           "README.md: explicit 80% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.382Z"
+        "lastUpdated": "2026-06-04T02:25:56.340Z"
       },
       "priority": "HIGH",
       "activity": {
@@ -462,7 +558,10 @@
         "lastCommitMessage": "Initial commit: macOS HEIC-to-JPEG CLI tool",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 54
+        "daysSinceLastCommit": 55,
+        "recentCommitDays": {
+          "2026-04-09": 1
+        }
       },
       "metadata": {
         "description": "heic-jpg",
@@ -472,7 +571,7 @@
         "hasGit": true
       },
       "baseReadiness": 56,
-      "readiness": 65,
+      "readiness": 70,
       "nextActions": [
         "Homebrew 또는 설치 스크립트 정리",
         "SwiftUI macOS/iOS 앱 확장",
@@ -483,22 +582,29 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.382Z",
+      "scannedAt": "2026-06-04T02:25:56.340Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "heic-jpg",
-          "total": 3,
-          "active": 3,
+          "total": 4,
+          "active": 4,
           "completed": 0,
           "representative": {
-            "title": "사용자 홈 디렉터리 내에 /.agentic-coding-toolkit 폴더를 생성하고(/.claude 폴더 옆에 위치), 이 ZIP 파일의 압축",
+            "title": "(base) ➜ projects cd heic-jpg (base) ➜ heic-jpg git:(main) ✗ ls build docs heic-",
             "status": "ACTIVE",
             "priority": "MEDIUM",
-            "currentNextAction": "이 채팅에서 제가 세션을 직접 종료할 수는 없습니다. 터미널에서 `exit` 입력하시면 됩니다.",
-            "lastActivityAt": "2026-04-06T06:11:49.602Z"
+            "currentNextAction": "네가 실제로 실행하는 스크립트는 [heic-jpg](/Users/jean325/portfolio/projects/heic-jpg/heic-jpg:1) 입니다.\n\n```bash\n#!/usr/bin/env bash\n```\n\n이 파일을 `bash`로 실행하라는 뜻입니다. `env`를 쓰면 현재 시스템 PATH에서 `bash`를 찾아 실행합니다.\n\n```bash\nset -euo pipefail\n```\n\n스크립트를 엄격하게 실행하는 옵션입니다.\n\n- `-e`: 명령어가 실패하면 바로 종료\n- `-u`: 정의되지 않은 변수를 쓰면 에러\n- `-o pipefail`: 파이프라인 중간 명령이 실패해도 실패로 처리\n\n```bash\nROOT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n```\n\n`heic-jpg` 스크립트가 있는 디렉터리의 절대경로를 구해서 `ROOT_DIR`에 저장합니다.\n\n예를 들면 지금은:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg\n```\n\n이 됩니다. 네가 어느 폴더에서 실행해도 프로젝트 루트를 정확히 찾기 위한 코드입니다.\n\n```bash\n\"$ROOT_DIR/scripts/build.sh\" >/dev/null\n```\n\n실행할 때마다 먼저 Java 코드를 빌드합니다.  \n`>/dev/null`은 빌드 출력 메시지를 숨기는 뜻입니다.\n\n즉 내부적으로는 이걸 실행하는 셈입니다:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg/scripts/build.sh\n```\n\n```bash\nexec java -cp \"$ROOT_DIR/build/classes\" io.github.jean202.heicjpg.Main \"$@\"\n```\n\n빌드된 Java 클래스를 실행합니다.\n\n- `java`: Java 프로그램 실행\n- `-cp \"$ROOT_DIR/build/classes\"`: 컴파일된 클래스 위치 지정\n- `io.github.jean202.heicjpg.Main`: 실행할 Java 메인 클래스\n- `\"$@\"`: 네가 `./heic-jpg` 뒤에 입력한 모든 인자를 그대로 Java 프로그램에 전달\n\n그래서 이 명령을 입력하면:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```\n\n마지막 줄의 `\"$@\"` 자리에 저 경로가 들어갑니다.\n\n`.mov`를 건너뛰는 조건은 shell script가 아니라 Java 코드 쪽에 이미 들어가 있습니다. 디렉터리를 받으면 내부에서 `.heic`, `.heif`만 골라서 변환하고 `.mov`는 무시합니다. 그래서 실제 변환 명령은 그대로 이거면 됩니다:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```",
+            "lastActivityAt": "2026-06-02T13:44:24.278Z"
           },
           "activeThreads": [
+            {
+              "title": "(base) ➜ projects cd heic-jpg (base) ➜ heic-jpg git:(main) ✗ ls build docs heic-",
+              "status": "ACTIVE",
+              "priority": "MEDIUM",
+              "currentNextAction": "네가 실제로 실행하는 스크립트는 [heic-jpg](/Users/jean325/portfolio/projects/heic-jpg/heic-jpg:1) 입니다.\n\n```bash\n#!/usr/bin/env bash\n```\n\n이 파일을 `bash`로 실행하라는 뜻입니다. `env`를 쓰면 현재 시스템 PATH에서 `bash`를 찾아 실행합니다.\n\n```bash\nset -euo pipefail\n```\n\n스크립트를 엄격하게 실행하는 옵션입니다.\n\n- `-e`: 명령어가 실패하면 바로 종료\n- `-u`: 정의되지 않은 변수를 쓰면 에러\n- `-o pipefail`: 파이프라인 중간 명령이 실패해도 실패로 처리\n\n```bash\nROOT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n```\n\n`heic-jpg` 스크립트가 있는 디렉터리의 절대경로를 구해서 `ROOT_DIR`에 저장합니다.\n\n예를 들면 지금은:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg\n```\n\n이 됩니다. 네가 어느 폴더에서 실행해도 프로젝트 루트를 정확히 찾기 위한 코드입니다.\n\n```bash\n\"$ROOT_DIR/scripts/build.sh\" >/dev/null\n```\n\n실행할 때마다 먼저 Java 코드를 빌드합니다.  \n`>/dev/null`은 빌드 출력 메시지를 숨기는 뜻입니다.\n\n즉 내부적으로는 이걸 실행하는 셈입니다:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg/scripts/build.sh\n```\n\n```bash\nexec java -cp \"$ROOT_DIR/build/classes\" io.github.jean202.heicjpg.Main \"$@\"\n```\n\n빌드된 Java 클래스를 실행합니다.\n\n- `java`: Java 프로그램 실행\n- `-cp \"$ROOT_DIR/build/classes\"`: 컴파일된 클래스 위치 지정\n- `io.github.jean202.heicjpg.Main`: 실행할 Java 메인 클래스\n- `\"$@\"`: 네가 `./heic-jpg` 뒤에 입력한 모든 인자를 그대로 Java 프로그램에 전달\n\n그래서 이 명령을 입력하면:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```\n\n마지막 줄의 `\"$@\"` 자리에 저 경로가 들어갑니다.\n\n`.mov`를 건너뛰는 조건은 shell script가 아니라 Java 코드 쪽에 이미 들어가 있습니다. 디렉터리를 받으면 내부에서 `.heic`, `.heif`만 골라서 변환하고 `.mov`는 무시합니다. 그래서 실제 변환 명령은 그대로 이거면 됩니다:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```",
+              "lastActivityAt": "2026-06-02T13:44:24.278Z"
+            },
             {
               "title": "사용자 홈 디렉터리 내에 /.agentic-coding-toolkit 폴더를 생성하고(/.claude 폴더 옆에 위치), 이 ZIP 파일의 압축",
               "status": "ACTIVE",
@@ -521,15 +627,13 @@
               "lastActivityAt": "2026-04-01T16:08:37.393Z"
             }
           ],
-          "mostRecentActivityAt": "2026-04-06T06:11:49.602Z"
+          "mostRecentActivityAt": "2026-06-02T13:44:24.278Z"
         },
-        "threadAdjustment": 9,
+        "threadAdjustment": 14,
         "signals": [
-          "thread: 활성 3개 중 3개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 3개 (+3)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+          "thread: 활성 4개 중 4개에 다음 액션 핀됨 (+6)",
+          "thread: 최근 활동/활성 세션 4개 (+8)"
+        ]
       }
     },
     {
@@ -545,7 +649,7 @@
           "Deployment/release completion mentioned",
           "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.445Z"
+        "lastUpdated": "2026-06-04T02:25:56.339Z"
       },
       "priority": "HIGH",
       "activity": {
@@ -553,7 +657,13 @@
         "lastCommitMessage": "docs: update README with Discord channel and Spring AOP status",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 54
+        "daysSinceLastCommit": 55,
+        "recentCommitDays": {
+          "2026-04-09": 3,
+          "2026-04-05": 1,
+          "2026-03-31": 1,
+          "2026-03-27": 1
+        }
       },
       "metadata": {
         "description": "webhook-notify",
@@ -571,9 +681,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.445Z",
+      "scannedAt": "2026-06-04T02:25:56.339Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "webhook-notify",
           "total": 1,
@@ -601,9 +711,7 @@
         "signals": [
           "thread: 활성 1개 중 1개에 다음 액션 핀됨 (+6)",
           "thread: 최근 활동/활성 세션 1개 (+2)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        ]
       }
     },
     {
@@ -620,7 +728,7 @@
           "Early-stage wording found",
           "In-progress wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.544Z"
+        "lastUpdated": "2026-06-04T02:25:56.342Z"
       },
       "priority": "HIGH",
       "activity": {
@@ -628,7 +736,16 @@
         "lastCommitMessage": "build: add CI and harden validation coverage",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 45
+        "daysSinceLastCommit": 46,
+        "recentCommitDays": {
+          "2026-04-18": 2,
+          "2026-04-09": 1,
+          "2026-04-05": 4,
+          "2026-04-04": 2,
+          "2026-04-01": 1,
+          "2026-03-31": 2,
+          "2026-03-27": 1
+        }
       },
       "metadata": {
         "description": "card-mizer",
@@ -647,9 +764,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.546Z",
+      "scannedAt": "2026-06-04T02:25:56.344Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "card-mizer",
           "total": 5,
@@ -705,9 +822,7 @@
         "signals": [
           "thread: 활성 5개 중 5개에 다음 액션 핀됨 (+6)",
           "thread: 최근 활동/활성 세션 5개 (+4)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        ]
       }
     },
     {
@@ -722,7 +837,7 @@
         "signals": [
           "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.434Z"
+        "lastUpdated": "2026-06-04T02:25:56.338Z"
       },
       "priority": "HIGH",
       "activity": {
@@ -730,7 +845,14 @@
         "lastCommitMessage": "docs: 포트폴리오용 README 업그레이드 및 .gitignore 보강",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 39
+        "daysSinceLastCommit": 40,
+        "recentCommitDays": {
+          "2026-04-25": 1,
+          "2026-04-09": 1,
+          "2026-04-05": 1,
+          "2026-03-31": 1,
+          "2026-03-22": 1
+        }
       },
       "metadata": {
         "description": "videoTrans",
@@ -747,9 +869,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.434Z",
+      "scannedAt": "2026-06-04T02:25:56.338Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "video-trans",
           "total": 0,
@@ -759,9 +881,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -776,7 +896,7 @@
         "signals": [
           "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:45.008Z"
+        "lastUpdated": "2026-06-04T02:25:56.355Z"
       },
       "priority": "HIGH",
       "activity": {
@@ -784,7 +904,19 @@
         "lastCommitMessage": "fix: make warm_tone and emoji_engagement mutually exclusive to avoid inflated positive count",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 16
+        "daysSinceLastCommit": 17,
+        "recentCommitDays": {
+          "2026-05-17": 22,
+          "2026-05-15": 1,
+          "2026-05-14": 4,
+          "2026-05-08": 1,
+          "2026-05-07": 3,
+          "2026-05-04": 1,
+          "2026-05-03": 3,
+          "2026-04-13": 1,
+          "2026-04-10": 1,
+          "2026-04-09": 3
+        }
       },
       "metadata": {
         "description": "SignalMate",
@@ -800,9 +932,9 @@
       "readiness": 44,
       "nextActions": [],
       "issues": [],
-      "scannedAt": "2026-06-03T04:46:45.008Z",
+      "scannedAt": "2026-06-04T02:25:56.355Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "signalmate",
           "total": 5,
@@ -858,9 +990,7 @@
         "signals": [
           "thread: 활성 5개 중 5개에 다음 액션 핀됨 (+6)",
           "thread: 최근 활동/활성 세션 5개 (+4)"
-        ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        ]
       }
     },
     {
@@ -875,7 +1005,7 @@
         "signals": [
           "README.md: explicit 95% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.424Z"
+        "lastUpdated": "2026-06-04T02:25:56.345Z"
       },
       "priority": "MEDIUM",
       "activity": {
@@ -883,7 +1013,11 @@
         "lastCommitMessage": "feat: Claude API 기반 AI 해설 생성 기능 추가",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 38
+        "daysSinceLastCommit": 39,
+        "recentCommitDays": {
+          "2026-04-26": 3,
+          "2026-04-18": 1
+        }
       },
       "metadata": {
         "description": "라면류 수요예측 파이프라인",
@@ -905,9 +1039,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.424Z",
+      "scannedAt": "2026-06-04T02:25:56.345Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "ramen-demand-forecast",
           "total": 0,
@@ -917,9 +1051,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -934,7 +1066,7 @@
         "signals": [
           "No reliable progress signal found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.346Z"
+        "lastUpdated": "2026-06-04T02:25:56.348Z"
       },
       "priority": "MEDIUM",
       "activity": {
@@ -942,7 +1074,12 @@
         "lastCommitMessage": "Build Night Auditor shift-helper UI",
         "commitsInLastWeek": 6,
         "isActive": true,
-        "daysSinceLastCommit": 1
+        "daysSinceLastCommit": 2,
+        "recentCommitDays": {
+          "2026-06-02": 3,
+          "2026-06-01": 3,
+          "2026-05-19": 1
+        }
       },
       "metadata": {
         "description": "Booking Reservation Sync Monitor",
@@ -960,9 +1097,9 @@
       "issues": [
         "진행률 판단 불가"
       ],
-      "scannedAt": "2026-06-03T04:46:44.348Z",
+      "scannedAt": "2026-06-04T02:25:56.349Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "booking-reservation-sync-monitor",
           "total": 1,
@@ -990,9 +1127,64 @@
         "signals": [
           "thread: 활성 1개 중 1개에 다음 액션 핀됨 (+6)",
           "thread: 최근 활동/활성 세션 1개 (+3)"
+        ]
+      }
+    },
+    {
+      "id": "users-jean325-portfolio-projects-pt-mobile",
+      "name": "pt-mobile",
+      "path": "/Users/jean325/portfolio/projects/pt-mobile",
+      "type": "dart",
+      "progress": {
+        "percentage": null,
+        "source": "unknown",
+        "confidence": "low",
+        "signals": [
+          "No reliable progress signal found"
         ],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "lastUpdated": "2026-06-04T02:25:56.352Z"
+      },
+      "priority": "MEDIUM",
+      "activity": {
+        "lastCommitDate": "2026-06-04T02:25:40.000Z",
+        "lastCommitMessage": "feat: activity heatmap on Trends, replacing the active-count line",
+        "commitsInLastWeek": 42,
+        "isActive": true,
+        "daysSinceLastCommit": 0,
+        "recentCommitDays": {
+          "2026-06-04": 5,
+          "2026-06-03": 37
+        }
+      },
+      "metadata": {
+        "description": "pt_mobile",
+        "stack": [
+          "dart",
+          "Flutter"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "baseReadiness": 60,
+      "readiness": 60,
+      "nextActions": [],
+      "issues": [
+        "진행률 판단 불가"
+      ],
+      "scannedAt": "2026-06-04T02:25:56.352Z",
+      "continuity": {
+        "coverage": "live",
+        "summary": {
+          "projectKey": "pt-mobile",
+          "total": 0,
+          "active": 0,
+          "completed": 0,
+          "activeThreads": [],
+          "mostRecentActivityAt": null
+        },
+        "threadAdjustment": 0,
+        "signals": []
       }
     },
     {
@@ -1007,7 +1199,7 @@
         "signals": [
           "README.md: explicit 20% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.350Z"
+        "lastUpdated": "2026-06-04T02:25:55.608Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1035,9 +1227,9 @@
         "포트폴리오용 사용 사례 정리"
       ],
       "issues": [],
-      "scannedAt": "2026-06-03T04:46:44.350Z",
+      "scannedAt": "2026-06-04T02:25:55.609Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "google-drive-api-controller",
           "total": 0,
@@ -1047,9 +1239,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -1064,7 +1254,7 @@
         "signals": [
           "README.md: explicit 35% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.623Z"
+        "lastUpdated": "2026-06-04T02:25:56.386Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1072,7 +1262,8 @@
         "lastCommitMessage": "add x-ray data",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 584
+        "daysSinceLastCommit": 585,
+        "recentCommitDays": {}
       },
       "metadata": {
         "description": "til",
@@ -1093,9 +1284,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.623Z",
+      "scannedAt": "2026-06-04T02:25:56.386Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "til",
           "total": 0,
@@ -1105,9 +1296,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -1122,7 +1311,7 @@
         "signals": [
           "README.md: explicit 75% progress"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.345Z"
+        "lastUpdated": "2026-06-04T02:25:56.228Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1130,7 +1319,10 @@
         "lastCommitMessage": "Initial commit: Naver blog to YouTube Shorts pipeline",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 54
+        "daysSinceLastCommit": 55,
+        "recentCommitDays": {
+          "2026-04-09": 1
+        }
       },
       "metadata": {
         "description": "blog-to-shorts",
@@ -1153,9 +1345,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.346Z",
+      "scannedAt": "2026-06-04T02:25:56.228Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "blog-to-shorts",
           "total": 0,
@@ -1165,9 +1357,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -1182,7 +1372,7 @@
         "signals": [
           "In-progress wording found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.431Z"
+        "lastUpdated": "2026-06-04T02:25:56.326Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1190,7 +1380,13 @@
         "lastCommitMessage": ".",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 35
+        "daysSinceLastCommit": 36,
+        "recentCommitDays": {
+          "2026-04-29": 1,
+          "2026-04-28": 19,
+          "2026-04-26": 6,
+          "2026-04-24": 1
+        }
       },
       "metadata": {
         "description": "Haera",
@@ -1205,9 +1401,9 @@
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-03T04:46:44.431Z",
+      "scannedAt": "2026-06-04T02:25:56.326Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "haera",
           "total": 0,
@@ -1217,9 +1413,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -1234,7 +1428,7 @@
         "signals": [
           "No reliable progress signal found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.492Z"
+        "lastUpdated": "2026-06-04T02:25:56.354Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1242,7 +1436,31 @@
         "lastCommitMessage": "test(overlap-race): cut INNER_ITERATIONS 500 -> 300 for headroom",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 28
+        "daysSinceLastCommit": 29,
+        "recentCommitDays": {
+          "2026-05-05": 30,
+          "2026-05-04": 49,
+          "2026-05-03": 7,
+          "2026-04-29": 3,
+          "2026-04-26": 2,
+          "2026-04-24": 4,
+          "2026-04-22": 13,
+          "2026-04-21": 15,
+          "2026-04-20": 8,
+          "2026-04-19": 11,
+          "2026-04-18": 25,
+          "2026-04-15": 1,
+          "2026-04-14": 2,
+          "2026-04-13": 18,
+          "2026-04-12": 16,
+          "2026-04-11": 2,
+          "2026-04-10": 2,
+          "2026-04-09": 5,
+          "2026-04-08": 2,
+          "2026-04-07": 15,
+          "2026-04-06": 23,
+          "2026-04-05": 22
+        }
       },
       "metadata": {
         "description": "nest-seed",
@@ -1260,9 +1478,9 @@
       "issues": [
         "진행률 판단 불가"
       ],
-      "scannedAt": "2026-06-03T04:46:44.494Z",
+      "scannedAt": "2026-06-04T02:25:56.355Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "nest-seed",
           "total": 0,
@@ -1272,9 +1490,7 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     },
     {
@@ -1289,7 +1505,7 @@
         "signals": [
           "No reliable progress signal found"
         ],
-        "lastUpdated": "2026-06-03T04:46:44.364Z"
+        "lastUpdated": "2026-06-04T02:25:56.351Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1297,7 +1513,10 @@
         "lastCommitMessage": "Initial commit",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 16
+        "daysSinceLastCommit": 17,
+        "recentCommitDays": {
+          "2026-05-17": 1
+        }
       },
       "metadata": {
         "description": "@AGENTS.md",
@@ -1315,9 +1534,9 @@
         "README 없음",
         "진행률 판단 불가"
       ],
-      "scannedAt": "2026-06-03T04:46:44.364Z",
+      "scannedAt": "2026-06-04T02:25:56.351Z",
       "continuity": {
-        "coverage": "stale",
+        "coverage": "live",
         "summary": {
           "projectKey": "signalmate-app",
           "total": 0,
@@ -1327,28 +1546,26 @@
           "mostRecentActivityAt": null
         },
         "threadAdjustment": 0,
-        "signals": [],
-        "fetchedAt": "2026-06-02T15:54:12.369Z",
-        "ageDays": 0
+        "signals": []
       }
     }
   ],
-  "scannedAt": "2026-06-03T04:46:45.049Z",
+  "scannedAt": "2026-06-04T02:25:56.633Z",
   "summary": {
-    "total": 18,
-    "active": 3,
+    "total": 19,
+    "active": 4,
     "avgProgress": 56,
     "avgReadiness": 62,
     "byPriority": {
       "CRITICAL": 5,
       "HIGH": 5,
-      "MEDIUM": 2,
+      "MEDIUM": 3,
       "LOW": 6
     },
     "byType": {
       "node": 3,
       "python": 3,
-      "dart": 1,
+      "dart": 2,
       "java": 1,
       "kotlin": 3,
       "go": 0,
