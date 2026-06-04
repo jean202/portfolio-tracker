@@ -38,6 +38,8 @@ export interface Activity {
   commitsInLastWeek: number;
   isActive: boolean;
   daysSinceLastCommit: number;
+  /** Local-day "YYYY-MM-DD" → commit count over the last ~91 days. Omitted on non-git/failure. */
+  recentCommitDays?: Record<string, number>;
 }
 
 export interface Metadata {
