@@ -93,6 +93,93 @@ describe("KakaoNotifier", () => {
     );
   });
 
+  it("includes execution params when screen is provided", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
+    const tokenFile = path.join(tempDir, "token.json");
+    await fs.writeFile(
+      tokenFile,
+      JSON.stringify({
+        tokenType: "bearer",
+        accessToken: "access",
+        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+        refreshToken: "refresh",
+      }),
+    );
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => "",
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const notifier = new KakaoNotifier({
+      restApiKey: "rest-key",
+      tokenFile,
+      linkUrl: "https://example.com",
+    });
+    await notifier.sendTextToMe("hello", { screen: "recommendations" });
+
+    const body = mockFetch.mock.calls[0][1].body as URLSearchParams;
+    const template = JSON.parse(body.get("template_object")!);
+    expect(template.link.ios_execution_params).toBe("screen=recommendations");
+    expect(template.link.android_execution_params).toBe(
+      "screen=recommendations",
+    );
+    expect(template.link.web_url).toBe("https://example.com");
+  });
+
+  it("omits execution params when screen is not provided", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
+    const tokenFile = path.join(tempDir, "token.json");
+    await fs.writeFile(
+      tokenFile,
+      JSON.stringify({
+        tokenType: "bearer",
+        accessToken: "access",
+        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+        refreshToken: "refresh",
+      }),
+    );
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => "",
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const notifier = new KakaoNotifier({ restApiKey: "rest-key", tokenFile });
+    await notifier.sendTextToMe("hello");
+
+    const body = mockFetch.mock.calls[0][1].body as URLSearchParams;
+    const template = JSON.parse(body.get("template_object")!);
+    expect(template.link.ios_execution_params).toBeUndefined();
+    expect(template.link.android_execution_params).toBeUndefined();
+  });
+
+  it("sends portfolio summary with dashboard screen param", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
+    const tokenFile = path.join(tempDir, "token.json");
+    await fs.writeFile(
+      tokenFile,
+      JSON.stringify({
+        tokenType: "bearer",
+        accessToken: "access",
+        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+        refreshToken: "refresh",
+      }),
+    );
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => "",
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const notifier = new KakaoNotifier({ restApiKey: "rest-key", tokenFile });
+    await notifier.sendPortfolioSummary(makeScanResult(), null);
+
+    const body = mockFetch.mock.calls[0][1].body as URLSearchParams;
+    const template = JSON.parse(body.get("template_object")!);
+    expect(template.link.ios_execution_params).toBe("screen=dashboard");
+  });
+
   it("diagnoses missing talk_message scope and default link URL", async () => {
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
     const tokenFile = path.join(tempDir, "token.json");

@@ -35,6 +35,10 @@ export interface KakaoNotifierOptions {
   linkUrl?: string;
 }
 
+export interface KakaoSendOptions {
+  screen?: string;
+}
+
 export type KakaoDiagnosticLevel = "info" | "warning" | "error";
 
 export interface KakaoStatusDiagnostic {
@@ -183,18 +187,29 @@ export class KakaoNotifier {
     diff: ScanDiff | null,
     options: NotificationPolicyOptions = {},
   ): Promise<void> {
-    await this.sendTextToMe(buildKakaoScanMessage(result, diff, options));
+    await this.sendTextToMe(buildKakaoScanMessage(result, diff, options), {
+      screen: "dashboard",
+    });
   }
 
-  async sendTextToMe(text: string): Promise<void> {
+  async sendTextToMe(
+    text: string,
+    options: KakaoSendOptions = {},
+  ): Promise<void> {
     const accessToken = await this.ensureAccessToken();
+    const link: Record<string, string> = {
+      web_url: this.linkUrl,
+      mobile_web_url: this.linkUrl,
+    };
+    if (options.screen) {
+      const executionParams = `screen=${options.screen}`;
+      link.ios_execution_params = executionParams;
+      link.android_execution_params = executionParams;
+    }
     const templateObject = {
       object_type: "text",
       text: truncateForKakao(text),
-      link: {
-        web_url: this.linkUrl,
-        mobile_web_url: this.linkUrl,
-      },
+      link,
       button_title: "리포트 보기",
     };
     const body = new URLSearchParams({

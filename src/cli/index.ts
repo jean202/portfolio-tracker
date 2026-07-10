@@ -562,10 +562,15 @@ kakao
 kakao
   .command("test")
   .description("카카오톡 나에게 테스트 메시지 전송")
-  .action(async () => {
+  .option(
+    "--screen <screen>",
+    "딥링크 screen 파라미터 (dashboard | recommendations)",
+  )
+  .action(async (options: { screen?: string }) => {
     const notifier = await requireKakaoNotifier();
     await notifier.sendTextToMe(
       "[Portfolio Tracker]\n카카오톡 나에게 보내기 연동 테스트입니다.",
+      { screen: options.screen },
     );
 
     console.log(chalk.green("✓ 카카오톡 나에게 테스트 메시지 전송 완료"));
