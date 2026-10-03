@@ -1,19 +1,14 @@
 import fs from "fs/promises";
 import path from "path";
 import { ScanResult } from "../core/ProjectModel.js";
+import { getScanResultFile } from "../config/paths.js";
 import { HistoryStore } from "./HistoryStore.js";
-
-const DEFAULT_STORE_FILE = path.join(
-  process.cwd(),
-  ".portfolio-tracker",
-  "scan-result.json",
-);
 
 export class ScanStore {
   private readonly historyStore: HistoryStore;
 
   constructor(
-    private readonly filePath = DEFAULT_STORE_FILE,
+    private readonly filePath = getScanResultFile(),
     historyStore?: HistoryStore,
   ) {
     this.historyStore = historyStore ?? new HistoryStore();
