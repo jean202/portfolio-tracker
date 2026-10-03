@@ -3,6 +3,7 @@ import os from "os";
 import path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { ScanResult } from "../core/ProjectModel.js";
+import { HistoryStore } from "./HistoryStore.js";
 import { ScanStore } from "./ScanStore.js";
 
 let tempRoot: string;
@@ -17,7 +18,10 @@ afterEach(async () => {
 
 describe("ScanStore", () => {
   it("saves and loads scan results with Date values revived", async () => {
-    const store = new ScanStore(path.join(tempRoot, "data", "scan.json"));
+    const store = new ScanStore(
+      path.join(tempRoot, "data", "scan.json"),
+      new HistoryStore(path.join(tempRoot, "data", "history")),
+    );
     const now = new Date("2026-04-30T09:00:00.000Z");
     const result: ScanResult = {
       scannedAt: now,
