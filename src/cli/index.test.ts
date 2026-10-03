@@ -14,22 +14,26 @@ const repoRoot = path.resolve(
 const tsxBin = path.join(repoRoot, "node_modules/.bin/tsx");
 const cliPath = path.join(repoRoot, "src/cli/index.ts");
 
+function cliEnv(options: { cwd?: string; home?: string }) {
+  return {
+    ...process.env,
+    // 실제 ~/.portfolio-tracker를 건드리지 않도록 테스트마다 데이터 디렉토리 지정
+    PORTFOLIO_TRACKER_HOME:
+      options.home ??
+      options.cwd ??
+      path.join(os.tmpdir(), "portfolio-cli-unused"),
+    FORCE_COLOR: "0",
+    NO_COLOR: "1",
+  };
+}
+
 async function runCli(
   args: string[],
   options: { cwd?: string; home?: string } = {},
 ): Promise<string> {
   const { stdout } = await execFileAsync(tsxBin, [cliPath, ...args], {
     cwd: options.cwd ?? repoRoot,
-    env: {
-      ...process.env,
-      // 실제 ~/.portfolio-tracker를 건드리지 않도록 테스트마다 데이터 디렉토리 지정
-      PORTFOLIO_TRACKER_HOME:
-        options.home ??
-        options.cwd ??
-        path.join(os.tmpdir(), "portfolio-cli-unused"),
-      FORCE_COLOR: "0",
-      NO_COLOR: "1",
-    },
+    env: cliEnv(options),
   });
 
   return stdout;
@@ -42,7 +46,7 @@ async function runCliExpectingFailure(
   try {
     await execFileAsync(tsxBin, [cliPath, ...args], {
       cwd: options.cwd ?? repoRoot,
-      env: { ...process.env, FORCE_COLOR: "0", NO_COLOR: "1" },
+      env: cliEnv(options),
     });
   } catch (error) {
     const failure = error as { code: number; stdout: string; stderr: string };
