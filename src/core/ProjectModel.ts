@@ -102,6 +102,8 @@ export interface KakaoConfig {
   linkUrl?: string;
   notifyOnScan?: boolean;
   notifyOnChanges?: boolean;
+  /** 요약 다음에 프로젝트별 현황 메시지를 한 통 더 보낸다 (기본 true) */
+  sendDetails?: boolean;
 }
 
 export interface NotificationConfig {

@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - .portfolio-tracker/scan-result.json
+      - src/report/**
+      - .github/workflows/pages.yml
+  # Actions 탭에서 직접 다시 배포할 수 있게
+  workflow_dispatch:
 
 permissions:
   pages: write
