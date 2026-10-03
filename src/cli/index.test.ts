@@ -35,6 +35,39 @@ async function runCli(
   return stdout;
 }
 
+async function runCliExpectingFailure(
+  args: string[],
+  options: { cwd?: string } = {},
+): Promise<{ code: number; stdout: string; stderr: string }> {
+  try {
+    await execFileAsync(tsxBin, [cliPath, ...args], {
+      cwd: options.cwd ?? repoRoot,
+      env: { ...process.env, FORCE_COLOR: "0", NO_COLOR: "1" },
+    });
+  } catch (error) {
+    const failure = error as { code: number; stdout: string; stderr: string };
+    return {
+      code: failure.code,
+      stdout: failure.stdout,
+      stderr: failure.stderr,
+    };
+  }
+  throw new Error(`Expected CLI to fail: ${args.join(" ")}`);
+}
+
+async function withEmptyConfig<T>(fn: (dir: string) => Promise<T>) {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "portfolio-cli-"));
+  try {
+    await fs.writeFile(
+      path.join(tempDir, "config.json"),
+      JSON.stringify({ projectDirs: [] }),
+    );
+    return await fn(tempDir);
+  } finally {
+    await fs.rm(tempDir, { recursive: true, force: true });
+  }
+}
+
 describe("CLI command registration", () => {
   it("shows notification command groups in help output", async () => {
     const agentHelp = await runCli(["agent", "--help"]);
@@ -184,5 +217,61 @@ describe("CLI command registration", () => {
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
+  }, 15_000);
+});
+
+describe("CLI input validation and exit codes", () => {
+  it("rejects an invalid watch interval without a stack trace", async () => {
+    const { code, stderr } = await runCliExpectingFailure([
+      "watch",
+      "--once",
+      "--interval",
+      "5x",
+    ]);
+
+    expect(code).toBe(1);
+    expect(stderr).toContain("'5x' is invalid");
+    expect(stderr).toContain("예: 30m, 2h, 1d");
+    expect(stderr).not.toMatch(/\bat .+:\d+:\d+/);
+  }, 15_000);
+
+  it("rejects non-numeric counts and ranges", async () => {
+    for (const args of [
+      ["recommend", "-n", "abc"],
+      ["history", "-n", "abc"],
+      ["trends", "-n", "0"],
+      ["diff", "-n", "x"],
+      ["search", "--min-progress", "abc"],
+      ["search", "--max-progress", "150"],
+    ]) {
+      const { code, stderr } = await runCliExpectingFailure(args);
+      expect(code, args.join(" ")).toBe(1);
+      expect(stderr, args.join(" ")).toContain("is invalid");
+    }
+  }, 60_000);
+
+  it("exits with 1 when detail cannot find the project", async () => {
+    await withEmptyConfig(async (cwd) => {
+      const { code, stderr } = await runCliExpectingFailure(
+        ["detail", "no-such-project"],
+        { cwd },
+      );
+
+      expect(code).toBe(1);
+      expect(stderr).toContain("프로젝트를 찾을 수 없습니다: no-such-project");
+    });
+  }, 15_000);
+
+  it("prints thrown errors as one line and exits with 1", async () => {
+    await withEmptyConfig(async (cwd) => {
+      const { code, stderr } = await runCliExpectingFailure(
+        ["export", "--format", "pdf"],
+        { cwd },
+      );
+
+      expect(code).toBe(1);
+      expect(stderr).toContain("✗ 지원하지 않는 export 형식입니다: pdf");
+      expect(stderr).not.toMatch(/\bat .+:\d+:\d+/);
+    });
   }, 15_000);
 });
