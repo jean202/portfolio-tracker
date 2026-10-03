@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { getThreadCacheFile } from "../config/paths.js";
 import type { ThreadSummary } from "../core/ProjectModel.js";
 
 export interface ThreadCacheEntry {
@@ -11,10 +12,8 @@ interface ThreadCacheData {
   entries: Record<string, ThreadCacheEntry>;
 }
 
-const DEFAULT_FILE = path.join(process.cwd(), ".portfolio-tracker", "thread-cache.json");
-
 export class ThreadCache {
-  constructor(private readonly file: string = DEFAULT_FILE) {}
+  constructor(private readonly file: string = getThreadCacheFile()) {}
 
   private async load(): Promise<ThreadCacheData> {
     try {

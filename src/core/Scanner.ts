@@ -44,17 +44,17 @@ export class Scanner {
    * 모든 프로젝트 디렉토리를 스캔해서 프로젝트 후보 찾기
    */
   async scanProjectDirs(): Promise<ProjectCandidate[]> {
-    const expandedDirs = this.configManager.expandPaths(
-      this.config.projectDirs,
-    );
     const candidates: ProjectCandidate[] = [];
 
-    for (const dir of expandedDirs) {
+    for (const configuredDir of this.config.projectDirs) {
+      const dir = this.configManager.expandPath(configuredDir);
       try {
-        const projectCandidates = await this.scanDirectory(dir);
+        const projectCandidates = await this.scanDirectory(dir, configuredDir);
         candidates.push(...projectCandidates);
       } catch (error) {
-        console.warn(`Failed to scan directory ${dir}:`, error);
+        console.warn(
+          `⚠ 디렉토리 스캔 실패: ${configuredDir} (${errorMessage(error)})`,
+        );
       }
     }
 
@@ -198,7 +198,10 @@ export class Scanner {
    * - 1단계: README.md 또는 package.json 등의 존재 확인
    * - 2단계: git 저장소 또는 메타데이터 확인
    */
-  private async scanDirectory(dir: string): Promise<ProjectCandidate[]> {
+  private async scanDirectory(
+    dir: string,
+    configuredDir: string = dir,
+  ): Promise<ProjectCandidate[]> {
     const candidates: ProjectCandidate[] = [];
 
     try {
@@ -216,7 +219,16 @@ export class Scanner {
         }
       }
     } catch (error) {
-      console.warn(`Failed to read directory ${dir}:`, error);
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code === "ENOENT" || code === "ENOTDIR") {
+        console.warn(
+          `⚠ 없는 디렉토리 건너뜀: ${configuredDir} (제거하려면: portfolio-tracker config remove "${configuredDir}")`,
+        );
+      } else {
+        console.warn(
+          `⚠ 디렉토리를 읽을 수 없어 건너뜀: ${configuredDir} (${errorMessage(error)})`,
+        );
+      }
     }
 
     return candidates;
@@ -823,4 +835,8 @@ export class Scanner {
       .replace(/[^a-z0-9가-힣]+/g, "-")
       .replace(/^-|-$/g, "");
   }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }

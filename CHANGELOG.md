@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **데이터 저장 위치 고정**: 설정·스캔 결과·히스토리·토큰을 실행 폴더 대신 `~/.portfolio-tracker/`에 저장
+  - `PORTFOLIO_TRACKER_HOME` 환경변수로 위치 변경 가능
+  - 첫 실행 시 예전 위치(현재 폴더, 저장소 폴더)의 파일을 자동 복사
+- **카톡 "리포트 보기" 버튼이 웹 리포트를 엶**: 앱 실행 파라미터를 빼서 모바일 앱 대신 GitHub Pages 리포트로 이동
+  - `kakao test --screen` 옵션 제거
+- **카톡 프로젝트별 현황 메시지**: 요약 뒤에 프로젝트별 진행률·마지막 활동을 한 통 더 전송 (`kakao.sendDetails`, 기본 켜짐)
+
 ### Added
 - **History/Trend Analysis**: 시계열 데이터 자동 저장 및 분석
   - `history` 커맨드: 전체 스캔 히스토리 또는 특정 프로젝트의 진행 추이

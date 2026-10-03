@@ -11,12 +11,14 @@ import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
+import { getDataDir, migrateLegacyData } from "../config/paths.js";
 import {
   KakaoNotifier,
+  resolveTokenFile,
   shouldNotifyKakao,
   type KakaoDiagnosticLevel,
 } from "../core/KakaoNotifier.js";
-import { formatDuration, parseDuration } from "../core/Interval.js";
+import { formatDuration } from "../core/Interval.js";
 import { LaunchAgent } from "../core/LaunchAgent.js";
 import { resolveProgressChangeThreshold } from "../core/NotificationPolicy.js";
 import { Scanner } from "../core/Scanner.js";
@@ -34,6 +36,13 @@ import { renderJsonReport } from "../report/JsonReport.js";
 import { renderMarkdownReport } from "../report/MarkdownReport.js";
 import { HistoryStore } from "../storage/HistoryStore.js";
 import { ScanStore } from "../storage/ScanStore.js";
+import {
+  formatErrorMessage,
+  parseDurationOption,
+  parseNonNegativeNumber,
+  parsePercent,
+  parsePositiveInt,
+} from "./options.js";
 
 const program = new Command();
 const execFileAsync = promisify(execFile);
@@ -41,7 +50,23 @@ const execFileAsync = promisify(execFile);
 program
   .name("portfolio-tracker")
   .description("포트폴리오 프로젝트 자동 추적 도구")
-  .version("0.1.0");
+  .version("0.1.0")
+  .hook("preAction", async () => {
+    // 예전 버전은 실행 폴더(또는 저장소 루트)에 설정/캐시를 저장했으므로 한 번 옮겨온다.
+    const packageRoot = path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "..",
+    );
+    const migrated = await migrateLegacyData([process.cwd(), packageRoot]);
+    if (migrated.length > 0) {
+      console.error(
+        chalk.gray(
+          `기존 설정/데이터를 ${getDataDir()}로 복사했습니다: ${migrated.join(", ")}`,
+        ),
+      );
+    }
+  });
 
 // init 커맨드
 program
@@ -55,7 +80,7 @@ program
 
     console.log();
     console.log(chalk.green("✓ portfolio-tracker 초기화 완료!"));
-    console.log(chalk.gray("config.json이 생성되었습니다."));
+    console.log(chalk.gray(`설정 파일: ${configManager.path}`));
     console.log();
     console.log(chalk.cyan("등록된 프로젝트 디렉토리:"));
     config.projectDirs.forEach((dir) => {
@@ -143,20 +168,23 @@ program
 program
   .command("watch")
   .description("설정된 주기로 프로젝트를 자동 스캔")
-  .option("-i, --interval <duration>", "스캔 주기 (예: 30m, 2h, 1d)")
+  .option(
+    "-i, --interval <duration>",
+    "스캔 주기 (예: 30m, 2h, 1d)",
+    parseDurationOption,
+  )
   .option("--no-initial", "시작 직후 스캔하지 않음")
   .option("--once", "한 번만 스캔하고 종료 (테스트/자동화용)")
   .action(
     async (options: {
-      interval?: string;
+      interval?: number;
       initial?: boolean;
       once?: boolean;
     }) => {
       const configManager = new ConfigManager();
       const config = await configManager.load();
-      const intervalMs = options.interval
-        ? parseDuration(options.interval)
-        : (config.scanInterval ?? 24 * 60 * 60 * 1000);
+      const intervalMs =
+        options.interval ?? config.scanInterval ?? 24 * 60 * 60 * 1000;
 
       console.log(chalk.cyan("자동 스캔을 시작합니다."));
       console.log(chalk.gray(`  주기: ${formatDuration(intervalMs)}`));
@@ -165,6 +193,7 @@ program
       console.log();
 
       let running = false;
+      let lastRunFailed = false;
       const run = async () => {
         if (running) {
           console.log(
@@ -193,8 +222,12 @@ program
           await notifyWebhookAfterScan(config, result, diff);
           await notifySubAgentAfterScan(config, result, diff);
           await notifyKakaoAfterScan(config, result, diff);
+          lastRunFailed = false;
         } catch (error) {
-          console.error(chalk.red("자동 스캔 실패:"), error);
+          console.error(
+            chalk.red(`자동 스캔 실패: ${formatErrorMessage(error)}`),
+          );
+          lastRunFailed = true;
         } finally {
           running = false;
         }
@@ -205,6 +238,7 @@ program
       }
 
       if (options.once) {
+        if (lastRunFailed) process.exitCode = 1;
         return;
       }
 
@@ -232,25 +266,27 @@ const service = program
 service
   .command("install")
   .description("로그인 시 자동 스캔이 시작되도록 등록")
-  .option("-i, --interval <duration>", "스캔 주기 (예: 30m, 2h, 1d)")
+  .option(
+    "-i, --interval <duration>",
+    "스캔 주기 (예: 30m, 2h, 1d)",
+    parseDurationOption,
+  )
   .option("--no-initial", "서비스 시작 직후 스캔하지 않음")
   .option("--no-start", "등록만 하고 바로 시작하지 않음")
   .action(
     async (options: {
-      interval?: string;
+      interval?: number;
       initial?: boolean;
       start?: boolean;
     }) => {
-      const intervalMs = options.interval
-        ? parseDuration(options.interval)
-        : undefined;
+      const intervalMs = options.interval;
       const agent = new LaunchAgent();
 
       await agent.install({
         nodePath: await resolveNodePath(),
         cliPath: fileURLToPath(import.meta.url),
         workingDirectory: process.cwd(),
-        interval: options.interval,
+        interval: intervalMs ? formatDuration(intervalMs) : undefined,
         initial: options.initial,
       });
 
@@ -281,11 +317,12 @@ service
   .action(async () => {
     const agent = new LaunchAgent();
     if (!(await agent.isInstalled())) {
-      console.log(
+      console.error(
         chalk.yellow(
           "등록된 서비스가 없습니다. 먼저 service install을 실행하세요.",
         ),
       );
+      process.exitCode = 1;
       return;
     }
 
@@ -317,11 +354,12 @@ service
   .action(async () => {
     const agent = new LaunchAgent();
     if (!(await agent.isInstalled())) {
-      console.log(
+      console.error(
         chalk.yellow(
           "등록된 서비스가 없습니다. 먼저 service install을 실행하세요.",
         ),
       );
+      process.exitCode = 1;
       return;
     }
 
@@ -358,18 +396,14 @@ service
 service
   .command("logs")
   .description("자동 스캔 서비스 로그 확인")
-  .option("-n, --lines <count>", "출력할 마지막 줄 수", "80")
+  .option("-n, --lines <count>", "출력할 마지막 줄 수", parsePositiveInt, 80)
   .option("--error", "에러 로그 확인")
-  .action(async (options: { lines?: string; error?: boolean }) => {
+  .action(async (options: { lines: number; error?: boolean }) => {
     const agent = new LaunchAgent();
     const logPath = options.error
       ? agent.paths.errorLogPath
       : agent.paths.logPath;
-    const lines = Number.parseInt(options.lines ?? "80", 10);
-    const content = await readLastLines(
-      logPath,
-      Number.isFinite(lines) ? lines : 80,
-    );
+    const content = await readLastLines(logPath, options.lines);
 
     console.log(chalk.gray(logPath));
     console.log(content || chalk.gray("(로그 없음)"));
@@ -562,15 +596,10 @@ kakao
 kakao
   .command("test")
   .description("카카오톡 나에게 테스트 메시지 전송")
-  .option(
-    "--screen <screen>",
-    "딥링크 screen 파라미터 (dashboard | recommendations)",
-  )
-  .action(async (options: { screen?: string }) => {
+  .action(async () => {
     const notifier = await requireKakaoNotifier();
     await notifier.sendTextToMe(
       "[Portfolio Tracker]\n카카오톡 나에게 보내기 연동 테스트입니다.",
-      { screen: options.screen },
     );
 
     console.log(chalk.green("✓ 카카오톡 나에게 테스트 메시지 전송 완료"));
@@ -754,10 +783,13 @@ program
     );
 
     if (!project) {
-      console.log(chalk.red(`✗ 프로젝트를 찾을 수 없습니다: ${projectName}`));
-      console.log();
-      console.log(chalk.gray("등록된 프로젝트:"));
-      result.projects.forEach((p) => console.log(chalk.gray(`  - ${p.name}`)));
+      console.error(chalk.red(`✗ 프로젝트를 찾을 수 없습니다: ${projectName}`));
+      console.error();
+      console.error(chalk.gray("등록된 프로젝트:"));
+      result.projects.forEach((p) =>
+        console.error(chalk.gray(`  - ${p.name}`)),
+      );
+      process.exitCode = 1;
       return;
     }
 
@@ -1016,10 +1048,10 @@ program
   .alias("reco")
   .description("작업하기 좋은 프로젝트 추천")
   .option("-r, --refresh", "저장된 결과 대신 새로 스캔")
-  .option("-n, --count <count>", "추천 개수", "3")
-  .action(async (options: { refresh?: boolean; count: string }) => {
+  .option("-n, --count <count>", "추천 개수", parsePositiveInt, 3)
+  .action(async (options: { refresh?: boolean; count: number }) => {
     const { result } = await loadScanResult({ refresh: options.refresh });
-    const count = parseInt(options.count, 10) || 3;
+    const count = options.count;
     const projects = result.projects;
 
     // 추천 점수 계산
@@ -1136,9 +1168,9 @@ program
     "-p, --priority <priority>",
     "우선순위로 필터링 (CRITICAL, HIGH, MEDIUM, LOW)",
   )
-  .option("--min-progress <progress>", "최소 진행률 (0-100)")
-  .option("--max-progress <progress>", "최대 진행률 (0-100)")
-  .option("--min-readiness <readiness>", "최소 준비도 (0-100)")
+  .option("--min-progress <progress>", "최소 진행률 (0-100)", parsePercent)
+  .option("--max-progress <progress>", "최대 진행률 (0-100)", parsePercent)
+  .option("--min-readiness <readiness>", "최소 준비도 (0-100)", parsePercent)
   .option("--active", "활성 프로젝트만")
   .option("--has-issues", "이슈가 있는 프로젝트만")
   .action(
@@ -1148,9 +1180,9 @@ program
         refresh?: boolean;
         type?: string;
         priority?: string;
-        minProgress?: string;
-        maxProgress?: string;
-        minReadiness?: string;
+        minProgress?: number;
+        maxProgress?: number;
+        minReadiness?: number;
         active?: boolean;
         hasIssues?: boolean;
       },
@@ -1183,13 +1215,13 @@ program
 
       // 진행률 필터
       if (options.minProgress !== undefined) {
-        const min = parseInt(options.minProgress, 10);
+        const min = options.minProgress;
         filtered = filtered.filter(
           (p) => p.progress.percentage !== null && p.progress.percentage >= min,
         );
       }
       if (options.maxProgress !== undefined) {
-        const max = parseInt(options.maxProgress, 10);
+        const max = options.maxProgress;
         filtered = filtered.filter(
           (p) => p.progress.percentage !== null && p.progress.percentage <= max,
         );
@@ -1197,7 +1229,7 @@ program
 
       // 준비도 필터
       if (options.minReadiness !== undefined) {
-        const min = parseInt(options.minReadiness, 10);
+        const min = options.minReadiness;
         filtered = filtered.filter((p) => p.readiness >= min);
       }
 
@@ -1249,11 +1281,11 @@ program
   .alias("hist")
   .argument("[project]", "특정 프로젝트의 히스토리 (선택)")
   .description("스캔 히스토리 보기")
-  .option("-n, --count <count>", "표시할 항목 수", "10")
+  .option("-n, --count <count>", "표시할 항목 수", parsePositiveInt, 10)
   .action(
-    async (projectName: string | undefined, options: { count: string }) => {
+    async (projectName: string | undefined, options: { count: number }) => {
       const historyStore = new HistoryStore();
-      const count = parseInt(options.count, 10) || 10;
+      const count = options.count;
       const results = await historyStore.loadRecent(count);
 
       if (results.length === 0) {
@@ -1268,11 +1300,12 @@ program
         const trend = TrendAnalyzer.buildProjectTrend(results, projectName);
 
         if (trend.length === 0) {
-          console.log(
+          console.error(
             chalk.red(
               `✗ 히스토리에서 프로젝트를 찾을 수 없습니다: ${projectName}`,
             ),
           );
+          process.exitCode = 1;
           return;
         }
 
@@ -1354,11 +1387,12 @@ program
   .option(
     "-n, --against <count>",
     "비교 대상 (1=가장 최근 이전, 2=2번째 이전 ...)",
-    "1",
+    parsePositiveInt,
+    1,
   )
-  .action(async (options: { against: string }) => {
+  .action(async (options: { against: number }) => {
     const historyStore = new HistoryStore();
-    const againstIdx = parseInt(options.against, 10) || 1;
+    const againstIdx = options.against;
     const results = await historyStore.loadRecent(againstIdx + 1);
 
     if (results.length < 2) {
@@ -1468,10 +1502,10 @@ program
 program
   .command("trends")
   .description("포트폴리오 트렌드 분석")
-  .option("-n, --count <count>", "분석할 스캔 개수", "10")
-  .action(async (options: { count: string }) => {
+  .option("-n, --count <count>", "분석할 스캔 개수", parsePositiveInt, 10)
+  .action(async (options: { count: number }) => {
     const historyStore = new HistoryStore();
-    const count = parseInt(options.count, 10) || 10;
+    const count = options.count;
     const results = await historyStore.loadRecent(count);
 
     if (results.length < 2) {
@@ -1586,6 +1620,7 @@ program
       const configManager = new ConfigManager();
       const config = await configManager.getConfig();
 
+      console.log(chalk.gray(`설정 파일: ${configManager.path}`));
       console.log(chalk.cyan("프로젝트 디렉토리:"));
       config.projectDirs.forEach((dir) => {
         console.log(chalk.gray(`  - ${dir}`));
@@ -1741,6 +1776,10 @@ program
       .option("--link-url <url>", "카톡 메시지 버튼 링크 URL")
       .option("--notify-on-scan <value>", "매 스캔마다 알림 true/false")
       .option("--notify-on-changes <value>", "변화 있을 때 알림 true/false")
+      .option(
+        "--send-details <value>",
+        "요약 뒤에 프로젝트별 현황 메시지도 전송 true/false",
+      )
       .action(
         async (options: {
           enable?: boolean;
@@ -1752,6 +1791,7 @@ program
           linkUrl?: string;
           notifyOnScan?: string;
           notifyOnChanges?: string;
+          sendDetails?: string;
         }) => {
           if (options.enable && options.disable) {
             throw new Error("--enable과 --disable은 같이 사용할 수 없습니다.");
@@ -1762,7 +1802,6 @@ program
           config.kakao = {
             enabled: false,
             redirectUri: "http://localhost:4888/kakao/callback",
-            tokenFile: ".portfolio-tracker/kakao-token.json",
             linkUrl: "https://developers.kakao.com",
             notifyOnScan: true,
             notifyOnChanges: true,
@@ -1798,6 +1837,12 @@ program
               "--notify-on-changes",
             );
           }
+          if (options.sendDetails !== undefined) {
+            config.kakao.sendDetails = parseBooleanOption(
+              options.sendDetails,
+              "--send-details",
+            );
+          }
 
           await configManager.save(config);
 
@@ -1807,7 +1852,9 @@ program
           console.log(
             chalk.gray(`  Redirect URI: ${config.kakao.redirectUri}`),
           );
-          console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
+          console.log(
+            chalk.gray(`  Token: ${resolveTokenFile(config.kakao.tokenFile)}`),
+          );
         },
       ),
   );
@@ -1819,15 +1866,15 @@ program
   .option("--enable", "ThreadKeeper 연동 켜기")
   .option("--disable", "ThreadKeeper 연동 끄기")
   .option("--url <url>", "ThreadKeeper base URL (예: http://localhost:8080)")
-  .option("--timeout <ms>", "요청 타임아웃 (ms)")
-  .option("--stale-days <days>", "캐시 유효 최대 일수")
+  .option("--timeout <ms>", "요청 타임아웃 (ms)", parsePositiveInt)
+  .option("--stale-days <days>", "캐시 유효 최대 일수", parseNonNegativeNumber)
   .action(
     async (options: {
       enable?: boolean;
       disable?: boolean;
       url?: string;
-      timeout?: string;
-      staleDays?: string;
+      timeout?: number;
+      staleDays?: number;
     }) => {
       const configManager = new ConfigManager();
       const config = await configManager.load();
@@ -1836,16 +1883,8 @@ program
       if (options.enable) tk.enabled = true;
       if (options.disable) tk.enabled = false;
       if (options.url) tk.baseUrl = options.url;
-      if (options.timeout) {
-        const ms = Number(options.timeout);
-        if (Number.isFinite(ms)) tk.timeoutMs = ms;
-        else console.log(chalk.yellow(`  --timeout 값이 숫자가 아니라 무시됨: ${options.timeout}`));
-      }
-      if (options.staleDays) {
-        const days = Number(options.staleDays);
-        if (Number.isFinite(days)) tk.staleMaxDays = days;
-        else console.log(chalk.yellow(`  --stale-days 값이 숫자가 아니라 무시됨: ${options.staleDays}`));
-      }
+      if (options.timeout !== undefined) tk.timeoutMs = options.timeout;
+      if (options.staleDays !== undefined) tk.staleMaxDays = options.staleDays;
 
       config.threadKeeper = tk;
       await configManager.save(config);
@@ -2287,4 +2326,10 @@ function renderExportContent(
   return renderMarkdownReport(result, options);
 }
 
-program.parse(process.argv);
+program.parseAsync(process.argv).catch((error: unknown) => {
+  console.error(chalk.red(`✗ ${formatErrorMessage(error)}`));
+  if (process.env.DEBUG && error instanceof Error && error.stack) {
+    console.error(chalk.gray(error.stack));
+  }
+  process.exitCode = 1;
+});

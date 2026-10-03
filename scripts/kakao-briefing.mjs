@@ -81,7 +81,7 @@ async function main() {
   if (!status.configured) throw new Error("카카오 REST API 키 미설정 (config.json kakao.restApiKey)");
   if (!status.hasToken) throw new Error("카카오 토큰 없음 — 먼저 `portfolio-tracker kakao auth` 실행");
 
-  await notifier.sendTextToMe(message, { screen: "recommendations" });
+  await notifier.sendTextToMe(message);
   console.log("✅ 카카오톡 전송 완료\n--- 보낸 내용 ---\n" + message);
 }
 

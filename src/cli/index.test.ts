@@ -14,20 +14,62 @@ const repoRoot = path.resolve(
 const tsxBin = path.join(repoRoot, "node_modules/.bin/tsx");
 const cliPath = path.join(repoRoot, "src/cli/index.ts");
 
+function cliEnv(options: { cwd?: string; home?: string }) {
+  return {
+    ...process.env,
+    // 실제 ~/.portfolio-tracker를 건드리지 않도록 테스트마다 데이터 디렉토리 지정
+    PORTFOLIO_TRACKER_HOME:
+      options.home ??
+      options.cwd ??
+      path.join(os.tmpdir(), "portfolio-cli-unused"),
+    FORCE_COLOR: "0",
+    NO_COLOR: "1",
+  };
+}
+
 async function runCli(
   args: string[],
-  options: { cwd?: string } = {},
+  options: { cwd?: string; home?: string } = {},
 ): Promise<string> {
   const { stdout } = await execFileAsync(tsxBin, [cliPath, ...args], {
     cwd: options.cwd ?? repoRoot,
-    env: {
-      ...process.env,
-      FORCE_COLOR: "0",
-      NO_COLOR: "1",
-    },
+    env: cliEnv(options),
   });
 
   return stdout;
+}
+
+async function runCliExpectingFailure(
+  args: string[],
+  options: { cwd?: string } = {},
+): Promise<{ code: number; stdout: string; stderr: string }> {
+  try {
+    await execFileAsync(tsxBin, [cliPath, ...args], {
+      cwd: options.cwd ?? repoRoot,
+      env: cliEnv(options),
+    });
+  } catch (error) {
+    const failure = error as { code: number; stdout: string; stderr: string };
+    return {
+      code: failure.code,
+      stdout: failure.stdout,
+      stderr: failure.stderr,
+    };
+  }
+  throw new Error(`Expected CLI to fail: ${args.join(" ")}`);
+}
+
+async function withEmptyConfig<T>(fn: (dir: string) => Promise<T>) {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "portfolio-cli-"));
+  try {
+    await fs.writeFile(
+      path.join(tempDir, "config.json"),
+      JSON.stringify({ projectDirs: [] }),
+    );
+    return await fn(tempDir);
+  } finally {
+    await fs.rm(tempDir, { recursive: true, force: true });
+  }
 }
 
 describe("CLI command registration", () => {
@@ -152,5 +194,88 @@ describe("CLI command registration", () => {
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
+  }, 15_000);
+
+  it("reads the same config no matter which folder it runs from", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "portfolio-cli-"));
+    const legacyDir = path.join(tempDir, "old-checkout");
+    const otherDir = path.join(tempDir, "somewhere-else");
+    const home = path.join(tempDir, "data");
+
+    try {
+      await fs.mkdir(legacyDir);
+      await fs.mkdir(otherDir);
+      await fs.writeFile(
+        path.join(legacyDir, "config.json"),
+        JSON.stringify({ projectDirs: ["~/legacy-projects"] }),
+      );
+
+      // 예전 위치에서 처음 실행하면 설정이 데이터 디렉토리로 복사된다
+      const first = await runCli(["config", "list"], { cwd: legacyDir, home });
+      expect(first).toContain("~/legacy-projects");
+      expect(first).toContain(path.join(home, "config.json"));
+
+      // 다른 폴더에서 실행해도 같은 설정을 읽는다
+      const second = await runCli(["config", "list"], { cwd: otherDir, home });
+      expect(second).toContain("~/legacy-projects");
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  }, 15_000);
+});
+
+describe("CLI input validation and exit codes", () => {
+  it("rejects an invalid watch interval without a stack trace", async () => {
+    const { code, stderr } = await runCliExpectingFailure([
+      "watch",
+      "--once",
+      "--interval",
+      "5x",
+    ]);
+
+    expect(code).toBe(1);
+    expect(stderr).toContain("'5x' is invalid");
+    expect(stderr).toContain("예: 30m, 2h, 1d");
+    expect(stderr).not.toMatch(/\bat .+:\d+:\d+/);
+  }, 15_000);
+
+  it("rejects non-numeric counts and ranges", async () => {
+    for (const args of [
+      ["recommend", "-n", "abc"],
+      ["history", "-n", "abc"],
+      ["trends", "-n", "0"],
+      ["diff", "-n", "x"],
+      ["search", "--min-progress", "abc"],
+      ["search", "--max-progress", "150"],
+    ]) {
+      const { code, stderr } = await runCliExpectingFailure(args);
+      expect(code, args.join(" ")).toBe(1);
+      expect(stderr, args.join(" ")).toContain("is invalid");
+    }
+  }, 60_000);
+
+  it("exits with 1 when detail cannot find the project", async () => {
+    await withEmptyConfig(async (cwd) => {
+      const { code, stderr } = await runCliExpectingFailure(
+        ["detail", "no-such-project"],
+        { cwd },
+      );
+
+      expect(code).toBe(1);
+      expect(stderr).toContain("프로젝트를 찾을 수 없습니다: no-such-project");
+    });
+  }, 15_000);
+
+  it("prints thrown errors as one line and exits with 1", async () => {
+    await withEmptyConfig(async (cwd) => {
+      const { code, stderr } = await runCliExpectingFailure(
+        ["export", "--format", "pdf"],
+        { cwd },
+      );
+
+      expect(code).toBe(1);
+      expect(stderr).toContain("✗ 지원하지 않는 export 형식입니다: pdf");
+      expect(stderr).not.toMatch(/\bat .+:\d+:\d+/);
+    });
   }, 15_000);
 });

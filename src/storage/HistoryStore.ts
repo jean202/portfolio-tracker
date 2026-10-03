@@ -1,12 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
+import { getHistoryDir } from "../config/paths.js";
 import { ScanResult } from "../core/ProjectModel.js";
-
-const DEFAULT_HISTORY_DIR = path.join(
-  process.cwd(),
-  ".portfolio-tracker",
-  "history",
-);
 
 /**
  * 히스토리 항목의 메타데이터.
@@ -19,7 +14,7 @@ export interface HistoryEntry {
 }
 
 export class HistoryStore {
-  constructor(private readonly historyDir = DEFAULT_HISTORY_DIR) {}
+  constructor(private readonly historyDir = getHistoryDir()) {}
 
   get dir(): string {
     return this.historyDir;
