@@ -244,7 +244,8 @@ portfolio-tracker agent open-report
 4. 동의 항목에서 `talk_message` 사용 설정
 5. 메시지 템플릿 링크에 사용할 Web domain 등록
    - 예: `https://jean202.github.io`
-   - 카카오 메시지 버튼은 `linkUrl`에 지정한 모바일 웹 리포트로 이동합니다.
+   - 카카오 메시지의 "리포트 보기" 버튼은 앱을 실행하지 않고 `linkUrl`에 지정한 웹 리포트를 엽니다.
+6. GitHub 저장소 Settings → Pages → Source를 "GitHub Actions"로 설정 (웹 리포트 배포용)
 
 `config.json` 예시:
 
@@ -256,10 +257,13 @@ portfolio-tracker agent open-report
     "redirectUri": "http://localhost:4888/kakao/callback",
     "linkUrl": "https://jean202.github.io/portfolio-tracker/",
     "notifyOnScan": true,
-    "notifyOnChanges": true
+    "notifyOnChanges": true,
+    "sendDetails": true
   }
 }
 ```
+
+`sendDetails`가 켜져 있으면(기본값) 요약 메시지 다음에 프로젝트별 진행률과 마지막 활동을 담은 메시지를 한 통 더 보냅니다. 끄려면 `portfolio-tracker config kakao --send-details false`.
 
 인증과 테스트:
 

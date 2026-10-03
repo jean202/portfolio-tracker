@@ -596,15 +596,10 @@ kakao
 kakao
   .command("test")
   .description("카카오톡 나에게 테스트 메시지 전송")
-  .option(
-    "--screen <screen>",
-    "딥링크 screen 파라미터 (dashboard | recommendations)",
-  )
-  .action(async (options: { screen?: string }) => {
+  .action(async () => {
     const notifier = await requireKakaoNotifier();
     await notifier.sendTextToMe(
       "[Portfolio Tracker]\n카카오톡 나에게 보내기 연동 테스트입니다.",
-      { screen: options.screen },
     );
 
     console.log(chalk.green("✓ 카카오톡 나에게 테스트 메시지 전송 완료"));
@@ -1781,6 +1776,10 @@ program
       .option("--link-url <url>", "카톡 메시지 버튼 링크 URL")
       .option("--notify-on-scan <value>", "매 스캔마다 알림 true/false")
       .option("--notify-on-changes <value>", "변화 있을 때 알림 true/false")
+      .option(
+        "--send-details <value>",
+        "요약 뒤에 프로젝트별 현황 메시지도 전송 true/false",
+      )
       .action(
         async (options: {
           enable?: boolean;
@@ -1792,6 +1791,7 @@ program
           linkUrl?: string;
           notifyOnScan?: string;
           notifyOnChanges?: string;
+          sendDetails?: string;
         }) => {
           if (options.enable && options.disable) {
             throw new Error("--enable과 --disable은 같이 사용할 수 없습니다.");
@@ -1835,6 +1835,12 @@ program
             config.kakao.notifyOnChanges = parseBooleanOption(
               options.notifyOnChanges,
               "--notify-on-changes",
+            );
+          }
+          if (options.sendDetails !== undefined) {
+            config.kakao.sendDetails = parseBooleanOption(
+              options.sendDetails,
+              "--send-details",
             );
           }
 

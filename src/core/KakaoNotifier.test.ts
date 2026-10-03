@@ -3,12 +3,13 @@ import os from "os";
 import path from "path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  buildKakaoDetailMessage,
   buildKakaoScanMessage,
   KakaoNotifier,
   shouldNotifyKakao,
 } from "./KakaoNotifier.js";
 import type { ScanDiff } from "./TrendAnalyzer.js";
-import type { ScanResult } from "./ProjectModel.js";
+import type { Priority, Project, ScanResult } from "./ProjectModel.js";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -93,91 +94,56 @@ describe("KakaoNotifier", () => {
     );
   });
 
-  it("includes execution params when screen is provided", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
-    const tokenFile = path.join(tempDir, "token.json");
-    await fs.writeFile(
-      tokenFile,
-      JSON.stringify({
-        tokenType: "bearer",
-        accessToken: "access",
-        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
-        refreshToken: "refresh",
-      }),
-    );
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      text: async () => "",
-    });
-    vi.stubGlobal("fetch", mockFetch);
+  it("links the button to the web page only, without app launch params", async () => {
+    const tokenFile = await writeValidToken();
+    const mockFetch = mockSendOk();
 
     const notifier = new KakaoNotifier({
       restApiKey: "rest-key",
       tokenFile,
       linkUrl: "https://example.com",
     });
-    await notifier.sendTextToMe("hello", { screen: "recommendations" });
-
-    const body = mockFetch.mock.calls[0][1].body as URLSearchParams;
-    const template = JSON.parse(body.get("template_object")!);
-    expect(template.link.ios_execution_params).toBe("screen=recommendations");
-    expect(template.link.android_execution_params).toBe(
-      "screen=recommendations",
-    );
-    expect(template.link.web_url).toBe("https://example.com");
-  });
-
-  it("omits execution params when screen is not provided", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
-    const tokenFile = path.join(tempDir, "token.json");
-    await fs.writeFile(
-      tokenFile,
-      JSON.stringify({
-        tokenType: "bearer",
-        accessToken: "access",
-        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
-        refreshToken: "refresh",
-      }),
-    );
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      text: async () => "",
-    });
-    vi.stubGlobal("fetch", mockFetch);
-
-    const notifier = new KakaoNotifier({ restApiKey: "rest-key", tokenFile });
     await notifier.sendTextToMe("hello");
 
-    const body = mockFetch.mock.calls[0][1].body as URLSearchParams;
-    const template = JSON.parse(body.get("template_object")!);
-    expect(template.link.ios_execution_params).toBeUndefined();
-    expect(template.link.android_execution_params).toBeUndefined();
+    const template = sentTemplate(mockFetch, 0);
+    expect(template.link).toEqual({
+      web_url: "https://example.com",
+      mobile_web_url: "https://example.com",
+    });
+    expect(template.button_title).toBe("리포트 보기");
   });
 
-  it("sends portfolio summary with dashboard screen param", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
-    const tokenFile = path.join(tempDir, "token.json");
-    await fs.writeFile(
-      tokenFile,
-      JSON.stringify({
-        tokenType: "bearer",
-        accessToken: "access",
-        accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
-        refreshToken: "refresh",
-      }),
-    );
-    const mockFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      text: async () => "",
-    });
-    vi.stubGlobal("fetch", mockFetch);
+  it("sends a per-project detail message after the summary", async () => {
+    const tokenFile = await writeValidToken();
+    const mockFetch = mockSendOk();
 
     const notifier = new KakaoNotifier({ restApiKey: "rest-key", tokenFile });
-    await notifier.sendPortfolioSummary(makeScanResult(), null);
+    const result = makeScanResult();
+    result.projects = [makeProject("alpha", 40, "LOW", 3)];
+    await notifier.sendPortfolioSummary(result, null);
 
-    const body = mockFetch.mock.calls[0][1].body as URLSearchParams;
-    const template = JSON.parse(body.get("template_object")!);
-    expect(template.link.ios_execution_params).toBe("screen=dashboard");
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(sentTemplate(mockFetch, 0).text).toContain("[Portfolio Tracker]");
+    expect(sentTemplate(mockFetch, 1).text).toBe(
+      "[프로젝트별 현황]\n1.alpha 40% · 3일 전",
+    );
+    expect(sentTemplate(mockFetch, 1).link.ios_execution_params).toBeUndefined();
+  });
+
+  it("skips the detail message when sendDetails is false", async () => {
+    const tokenFile = await writeValidToken();
+    const mockFetch = mockSendOk();
+
+    const notifier = new KakaoNotifier({
+      restApiKey: "rest-key",
+      tokenFile,
+      sendDetails: false,
+    });
+    const result = makeScanResult();
+    result.projects = [makeProject("alpha", 40, "LOW", 3)];
+    await notifier.sendPortfolioSummary(result, null);
+
+    expect(mockFetch).toHaveBeenCalledOnce();
   });
 
   it("diagnoses missing talk_message scope and default link URL", async () => {
@@ -346,6 +312,106 @@ describe("buildKakaoScanMessage", () => {
     ).toContain("진행률 변화 1");
   });
 });
+
+describe("buildKakaoDetailMessage", () => {
+  it("lists higher-priority projects first with progress and last activity", () => {
+    const result = makeScanResult();
+    result.projects = [
+      makeProject("low-one", 90, "LOW", 1),
+      makeProject("hot", null, "HIGH", 0),
+      makeProject("never", 10, "MEDIUM", null),
+    ];
+
+    expect(buildKakaoDetailMessage(result)).toBe(
+      [
+        "[프로젝트별 현황]",
+        "1.hot - · 오늘",
+        "2.never 10% · 커밋 없음",
+        "3.low-one 90% · 1일 전",
+      ].join("\n"),
+    );
+  });
+
+  it("stays within the Kakao text limit and counts the rest", () => {
+    const result = makeScanResult();
+    result.projects = Array.from({ length: 30 }, (_, i) =>
+      makeProject(`project-number-${i}`, 50, "MEDIUM", 2),
+    );
+
+    const message = buildKakaoDetailMessage(result);
+    expect(message.length).toBeLessThanOrEqual(200);
+    expect(message).toMatch(/외 \d+개$/);
+    expect(message).not.toContain("…\n외");
+  });
+});
+
+async function writeValidToken(): Promise<string> {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "kakao-token-"));
+  const tokenFile = path.join(tempDir, "token.json");
+  await fs.writeFile(
+    tokenFile,
+    JSON.stringify({
+      tokenType: "bearer",
+      accessToken: "access",
+      accessTokenExpiresAt: new Date(Date.now() + 120_000).toISOString(),
+      refreshToken: "refresh",
+    }),
+  );
+  return tokenFile;
+}
+
+function mockSendOk() {
+  const mockFetch = vi.fn().mockResolvedValue({
+    ok: true,
+    text: async () => "",
+  });
+  vi.stubGlobal("fetch", mockFetch);
+  return mockFetch;
+}
+
+function sentTemplate(mockFetch: ReturnType<typeof vi.fn>, call: number) {
+  const body = mockFetch.mock.calls[call][1].body as URLSearchParams;
+  return JSON.parse(body.get("template_object")!);
+}
+
+function makeProject(
+  name: string,
+  percentage: number | null,
+  priority: Priority,
+  daysSinceLastCommit: number | null,
+): Project {
+  const now = new Date("2026-01-02T00:00:00.000Z");
+  return {
+    id: name,
+    name,
+    path: `/tmp/${name}`,
+    type: "node",
+    progress: {
+      percentage,
+      source: "readme",
+      confidence: "medium",
+      signals: [],
+      lastUpdated: now,
+    },
+    priority,
+    activity: {
+      lastCommitDate: daysSinceLastCommit === null ? null : now,
+      commitsInLastWeek: 0,
+      isActive: false,
+      daysSinceLastCommit: daysSinceLastCommit ?? 0,
+    },
+    metadata: {
+      description: "",
+      stack: [],
+      hasReadme: true,
+      hasClaude: false,
+      hasGit: daysSinceLastCommit !== null,
+    },
+    readiness: 50,
+    baseReadiness: 50,
+    scannedAt: now,
+  };
+}
 
 function makeScanResult(): ScanResult {
   return {

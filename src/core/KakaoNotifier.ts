@@ -2,7 +2,12 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 import { getDataDir, getKakaoTokenFile } from "../config/paths.js";
-import type { KakaoConfig, ScanResult } from "./ProjectModel.js";
+import type {
+  KakaoConfig,
+  Priority,
+  Project,
+  ScanResult,
+} from "./ProjectModel.js";
 import type { ScanDiff } from "./TrendAnalyzer.js";
 import {
   countMeaningfulProgressChanges,
@@ -34,10 +39,7 @@ export interface KakaoNotifierOptions {
   redirectUri?: string;
   tokenFile?: string;
   linkUrl?: string;
-}
-
-export interface KakaoSendOptions {
-  screen?: string;
+  sendDetails?: boolean;
 }
 
 export type KakaoDiagnosticLevel = "info" | "warning" | "error";
@@ -80,6 +82,7 @@ export class KakaoNotifier {
   readonly tokenFile: string;
   readonly redirectUri: string;
   readonly linkUrl: string;
+  readonly sendDetails: boolean;
   private readonly restApiKey: string;
   private readonly clientSecret?: string;
 
@@ -93,6 +96,7 @@ export class KakaoNotifier {
       DEFAULT_REDIRECT_URI;
     this.tokenFile = resolveTokenFile(options.tokenFile);
     this.linkUrl = options.linkUrl ?? DEFAULT_LINK_URL;
+    this.sendDetails = options.sendDetails ?? true;
   }
 
   static fromConfig(config?: KakaoConfig): KakaoNotifier | null {
@@ -106,6 +110,7 @@ export class KakaoNotifier {
       redirectUri: config.redirectUri,
       tokenFile: config.tokenFile,
       linkUrl: config.linkUrl,
+      sendDetails: config.sendDetails,
     });
   }
 
@@ -189,25 +194,19 @@ export class KakaoNotifier {
     diff: ScanDiff | null,
     options: NotificationPolicyOptions = {},
   ): Promise<void> {
-    await this.sendTextToMe(buildKakaoScanMessage(result, diff, options), {
-      screen: "dashboard",
-    });
+    await this.sendTextToMe(buildKakaoScanMessage(result, diff, options));
+    if (this.sendDetails && result.projects.length > 0) {
+      await this.sendTextToMe(buildKakaoDetailMessage(result));
+    }
   }
 
-  async sendTextToMe(
-    text: string,
-    options: KakaoSendOptions = {},
-  ): Promise<void> {
+  async sendTextToMe(text: string): Promise<void> {
     const accessToken = await this.ensureAccessToken();
-    const link: Record<string, string> = {
+    // 앱 실행 파라미터 없이 웹 링크만 넣어야 버튼이 앱 대신 웹페이지를 연다
+    const link = {
       web_url: this.linkUrl,
       mobile_web_url: this.linkUrl,
     };
-    if (options.screen) {
-      const executionParams = `screen=${options.screen}`;
-      link.ios_execution_params = executionParams;
-      link.android_execution_params = executionParams;
-    }
     const templateObject = {
       object_type: "text",
       text: truncateForKakao(text),
@@ -365,6 +364,59 @@ export function buildKakaoScanMessage(
       `평균 진행률 ${progress} · 준비도 ${result.summary.avgReadiness}%`,
     ].join("\n"),
   );
+}
+
+const PRIORITY_ORDER: Record<Priority, number> = {
+  CRITICAL: 0,
+  HIGH: 1,
+  MEDIUM: 2,
+  LOW: 3,
+};
+const DETAIL_NAME_LIMIT = 14;
+
+/** 프로젝트별 진행률과 마지막 활동을 카톡 한 통(200자)에 들어가는 만큼 나열한다. */
+export function buildKakaoDetailMessage(result: ScanResult): string {
+  const projects = [...result.projects].sort(
+    (a, b) =>
+      PRIORITY_ORDER[a.priority ?? "LOW"] -
+        PRIORITY_ORDER[b.priority ?? "LOW"] ||
+      b.readiness - a.readiness ||
+      a.name.localeCompare(b.name),
+  );
+
+  const lines = ["[프로젝트별 현황]"];
+  for (const [index, project] of projects.entries()) {
+    const line = `${index + 1}.${formatDetailLine(project)}`;
+    const rest = projects.length - index - 1;
+    const tail = rest > 0 ? `외 ${rest}개` : "";
+    const next = [...lines, line].join("\n");
+    // 마지막 줄에 "외 N개"가 들어갈 자리를 남긴다
+    const reserve = rest > 0 ? tail.length + 1 : 0;
+    if (next.length + reserve > KAKAO_TEXT_LIMIT) {
+      lines.push(`외 ${projects.length - index}개`);
+      break;
+    }
+    lines.push(line);
+  }
+
+  return truncateForKakao(lines.join("\n"));
+}
+
+function formatDetailLine(project: Project): string {
+  const name =
+    project.name.length > DETAIL_NAME_LIMIT
+      ? `${project.name.slice(0, DETAIL_NAME_LIMIT - 1)}…`
+      : project.name;
+  const progress =
+    project.progress.percentage === null
+      ? "-"
+      : `${project.progress.percentage}%`;
+  const activity = project.activity.lastCommitDate
+    ? project.activity.daysSinceLastCommit === 0
+      ? "오늘"
+      : `${project.activity.daysSinceLastCommit}일 전`
+    : "커밋 없음";
+  return `${name} ${progress} · ${activity}`;
 }
 
 function summarizeDiff(
