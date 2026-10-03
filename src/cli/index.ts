@@ -11,8 +11,10 @@ import { Command } from "commander";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { ConfigManager } from "../config/ConfigManager.js";
+import { getDataDir, migrateLegacyData } from "../config/paths.js";
 import {
   KakaoNotifier,
+  resolveTokenFile,
   shouldNotifyKakao,
   type KakaoDiagnosticLevel,
 } from "../core/KakaoNotifier.js";
@@ -41,7 +43,23 @@ const execFileAsync = promisify(execFile);
 program
   .name("portfolio-tracker")
   .description("포트폴리오 프로젝트 자동 추적 도구")
-  .version("0.1.0");
+  .version("0.1.0")
+  .hook("preAction", async () => {
+    // 예전 버전은 실행 폴더(또는 저장소 루트)에 설정/캐시를 저장했으므로 한 번 옮겨온다.
+    const packageRoot = path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "..",
+    );
+    const migrated = await migrateLegacyData([process.cwd(), packageRoot]);
+    if (migrated.length > 0) {
+      console.error(
+        chalk.gray(
+          `기존 설정/데이터를 ${getDataDir()}로 복사했습니다: ${migrated.join(", ")}`,
+        ),
+      );
+    }
+  });
 
 // init 커맨드
 program
@@ -55,7 +73,7 @@ program
 
     console.log();
     console.log(chalk.green("✓ portfolio-tracker 초기화 완료!"));
-    console.log(chalk.gray("config.json이 생성되었습니다."));
+    console.log(chalk.gray(`설정 파일: ${configManager.path}`));
     console.log();
     console.log(chalk.cyan("등록된 프로젝트 디렉토리:"));
     config.projectDirs.forEach((dir) => {
@@ -1586,6 +1604,7 @@ program
       const configManager = new ConfigManager();
       const config = await configManager.getConfig();
 
+      console.log(chalk.gray(`설정 파일: ${configManager.path}`));
       console.log(chalk.cyan("프로젝트 디렉토리:"));
       config.projectDirs.forEach((dir) => {
         console.log(chalk.gray(`  - ${dir}`));
@@ -1762,7 +1781,6 @@ program
           config.kakao = {
             enabled: false,
             redirectUri: "http://localhost:4888/kakao/callback",
-            tokenFile: ".portfolio-tracker/kakao-token.json",
             linkUrl: "https://developers.kakao.com",
             notifyOnScan: true,
             notifyOnChanges: true,
@@ -1807,7 +1825,9 @@ program
           console.log(
             chalk.gray(`  Redirect URI: ${config.kakao.redirectUri}`),
           );
-          console.log(chalk.gray(`  Token: ${config.kakao.tokenFile}`));
+          console.log(
+            chalk.gray(`  Token: ${resolveTokenFile(config.kakao.tokenFile)}`),
+          );
         },
       ),
   );
@@ -2287,4 +2307,4 @@ function renderExportContent(
   return renderMarkdownReport(result, options);
 }
 
-program.parse(process.argv);
+await program.parseAsync(process.argv);

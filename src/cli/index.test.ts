@@ -16,12 +16,17 @@ const cliPath = path.join(repoRoot, "src/cli/index.ts");
 
 async function runCli(
   args: string[],
-  options: { cwd?: string } = {},
+  options: { cwd?: string; home?: string } = {},
 ): Promise<string> {
   const { stdout } = await execFileAsync(tsxBin, [cliPath, ...args], {
     cwd: options.cwd ?? repoRoot,
     env: {
       ...process.env,
+      // 실제 ~/.portfolio-tracker를 건드리지 않도록 테스트마다 데이터 디렉토리 지정
+      PORTFOLIO_TRACKER_HOME:
+        options.home ??
+        options.cwd ??
+        path.join(os.tmpdir(), "portfolio-cli-unused"),
       FORCE_COLOR: "0",
       NO_COLOR: "1",
     },
@@ -149,6 +154,33 @@ describe("CLI command registration", () => {
       expect(output).toContain("talk_message 권한: ✗");
       expect(output).toContain("Web domain 후보: https://example.com");
       expect(output).toContain("토큰 scope에 talk_message 권한이 없습니다.");
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  }, 15_000);
+
+  it("reads the same config no matter which folder it runs from", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "portfolio-cli-"));
+    const legacyDir = path.join(tempDir, "old-checkout");
+    const otherDir = path.join(tempDir, "somewhere-else");
+    const home = path.join(tempDir, "data");
+
+    try {
+      await fs.mkdir(legacyDir);
+      await fs.mkdir(otherDir);
+      await fs.writeFile(
+        path.join(legacyDir, "config.json"),
+        JSON.stringify({ projectDirs: ["~/legacy-projects"] }),
+      );
+
+      // 예전 위치에서 처음 실행하면 설정이 데이터 디렉토리로 복사된다
+      const first = await runCli(["config", "list"], { cwd: legacyDir, home });
+      expect(first).toContain("~/legacy-projects");
+      expect(first).toContain(path.join(home, "config.json"));
+
+      // 다른 폴더에서 실행해도 같은 설정을 읽는다
+      const second = await runCli(["config", "list"], { cwd: otherDir, home });
+      expect(second).toContain("~/legacy-projects");
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }

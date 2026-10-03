@@ -33,6 +33,33 @@ npm link
 portfolio-tracker report
 ```
 
+### 데이터 저장 위치
+
+설정과 스캔 결과는 실행한 폴더와 상관없이 `~/.portfolio-tracker/`에 저장됩니다. 어느 폴더에서 실행해도 같은 설정과 히스토리를 사용합니다.
+
+```
+~/.portfolio-tracker/
+├── config.json          # 설정
+├── scan-result.json     # 마지막 스캔 결과
+├── history/             # 스캔 히스토리
+├── thread-cache.json    # ThreadKeeper 캐시
+└── kakao-token.json     # 카카오 토큰
+```
+
+다른 위치를 쓰려면 `PORTFOLIO_TRACKER_HOME` 환경변수를 지정하세요.
+
+```bash
+PORTFOLIO_TRACKER_HOME=~/Dropbox/portfolio-tracker portfolio-tracker report
+```
+
+예전 버전은 실행한 폴더의 `config.json`과 `.portfolio-tracker/`에 저장했습니다. `~/.portfolio-tracker/`가 아직 없으면 첫 실행 때 현재 폴더와 이 저장소 폴더에서 기존 파일을 찾아 복사합니다(원본은 그대로 둡니다).
+
+GitHub Pages 리포트는 저장소에 커밋된 `.portfolio-tracker/scan-result.json`으로 만들어집니다. 최신 결과를 배포하려면 스캔 후 복사해서 커밋하세요.
+
+```bash
+cp ~/.portfolio-tracker/scan-result.json .portfolio-tracker/scan-result.json
+```
+
 ## 빠른 시작
 
 ```bash
@@ -119,7 +146,7 @@ portfolio-tracker stats
 
 ### watch - 주기적 자동 스캔
 
-터미널에서 프로세스를 계속 띄워두고 설정된 주기마다 스캔합니다. 결과는 `.portfolio-tracker/scan-result.json`과 `.portfolio-tracker/history/`에 저장됩니다.
+터미널에서 프로세스를 계속 띄워두고 설정된 주기마다 스캔합니다. 결과는 `~/.portfolio-tracker/scan-result.json`과 `~/.portfolio-tracker/history/`에 저장됩니다.
 
 ```bash
 # config.json의 scanInterval 사용 (기본 24시간)
@@ -227,7 +254,6 @@ portfolio-tracker agent open-report
     "enabled": true,
     "restApiKey": "YOUR_REST_API_KEY",
     "redirectUri": "http://localhost:4888/kakao/callback",
-    "tokenFile": ".portfolio-tracker/kakao-token.json",
     "linkUrl": "https://jean202.github.io/portfolio-tracker/",
     "notifyOnScan": true,
     "notifyOnChanges": true
@@ -244,7 +270,7 @@ portfolio-tracker kakao status
 portfolio-tracker kakao test
 ```
 
-`kakao status`는 토큰 만료, `talk_message` 권한, 메시지 버튼 `linkUrl`과 Kakao Developers Web domain 등록 후보를 함께 점검합니다. 인증이 끝나면 `watch` 실행 중 스캔 완료 요약이 카카오톡 나와의 채팅방으로 전송됩니다. 토큰 파일은 `.portfolio-tracker/kakao-token.json`에 저장됩니다.
+`kakao status`는 토큰 만료, `talk_message` 권한, 메시지 버튼 `linkUrl`과 Kakao Developers Web domain 등록 후보를 함께 점검합니다. 인증이 끝나면 `watch` 실행 중 스캔 완료 요약이 카카오톡 나와의 채팅방으로 전송됩니다. 토큰 파일은 기본으로 `~/.portfolio-tracker/kakao-token.json`에 저장되며, `tokenFile`로 바꿀 수 있습니다(상대 경로는 데이터 디렉토리 기준).
 
 ### recommend - 작업 추천
 
@@ -307,7 +333,7 @@ portfolio-tracker search --type kotlin --priority HIGH --active
 
 ### history - 스캔 히스토리
 
-스캔 결과는 `.portfolio-tracker/history/` 폴더에 자동 저장되어 시간에 따른 변화를 추적할 수 있습니다.
+스캔 결과는 `~/.portfolio-tracker/history/` 폴더에 자동 저장되어 시간에 따른 변화를 추적할 수 있습니다.
 
 ```bash
 # 전체 히스토리 (최근 10개)
@@ -439,7 +465,7 @@ portfolio-tracker scan
 portfolio-tracker scan --no-save
 ```
 
-`.portfolio-tracker/scan-result.json`에 결과 저장
+`~/.portfolio-tracker/scan-result.json`에 결과 저장
 
 ### report - 리포트 보기
 
@@ -475,7 +501,7 @@ portfolio-tracker export -f markdown --all
 
 ## 설정 (config.json)
 
-`config.json` 파일로 프로젝트 디렉토리 관리:
+`~/.portfolio-tracker/config.json` 파일로 프로젝트 디렉토리 관리 (`portfolio-tracker config list`로 실제 경로 확인):
 
 ```json
 {

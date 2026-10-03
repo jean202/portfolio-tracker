@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **데이터 저장 위치 고정**: 설정·스캔 결과·히스토리·토큰을 실행 폴더 대신 `~/.portfolio-tracker/`에 저장
+  - `PORTFOLIO_TRACKER_HOME` 환경변수로 위치 변경 가능
+  - 첫 실행 시 예전 위치(현재 폴더, 저장소 폴더)의 파일을 자동 복사
+
 ### Added
 - **History/Trend Analysis**: 시계열 데이터 자동 저장 및 분석
   - `history` 커맨드: 전체 스캔 히스토리 또는 특정 프로젝트의 진행 추이

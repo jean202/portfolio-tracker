@@ -2,8 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import inquirer from "inquirer";
 import { Config } from "../core/ProjectModel.js";
-
-const CONFIG_FILE = path.join(process.cwd(), "config.json");
+import { getConfigFile } from "./paths.js";
 
 const DEFAULT_CONFIG: Config = {
   projectDirs: [
@@ -26,7 +25,11 @@ const DEFAULT_CONFIG: Config = {
 export class ConfigManager {
   private config: Config | null = null;
 
-  constructor(private readonly configFile = CONFIG_FILE) {}
+  constructor(private readonly configFile = getConfigFile()) {}
+
+  get path(): string {
+    return this.configFile;
+  }
 
   async load(): Promise<Config> {
     if (this.config) {
@@ -50,6 +53,7 @@ export class ConfigManager {
 
   async save(config: Config): Promise<void> {
     const content = JSON.stringify(config, null, 2);
+    await fs.mkdir(path.dirname(this.configFile), { recursive: true });
     await fs.writeFile(this.configFile, content, "utf-8");
     this.config = config;
   }

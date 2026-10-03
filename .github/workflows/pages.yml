@@ -29,6 +29,9 @@ jobs:
 
       - name: Generate HTML report
         run: node dist/cli/index.js export -f html -o _site/index.html --all
+        env:
+          # 저장소에 커밋된 스캔 결과를 읽도록 데이터 디렉토리 지정
+          PORTFOLIO_TRACKER_HOME: .portfolio-tracker
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

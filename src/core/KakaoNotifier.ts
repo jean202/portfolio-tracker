@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import os from "os";
 import path from "path";
+import { getDataDir, getKakaoTokenFile } from "../config/paths.js";
 import type { KakaoConfig, ScanResult } from "./ProjectModel.js";
 import type { ScanDiff } from "./TrendAnalyzer.js";
 import {
@@ -67,7 +68,8 @@ const AUTH_URL = "https://kauth.kakao.com/oauth/authorize";
 const TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 const SEND_TO_ME_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 const DEFAULT_REDIRECT_URI = "http://localhost:4888/kakao/callback";
-const DEFAULT_TOKEN_FILE = ".portfolio-tracker/kakao-token.json";
+/** 예전 기본값. 데이터 디렉토리 안의 기본 토큰 파일로 취급한다. */
+const LEGACY_DEFAULT_TOKEN_FILE = ".portfolio-tracker/kakao-token.json";
 const DEFAULT_LINK_URL = "https://developers.kakao.com";
 const TOKEN_REFRESH_SKEW_MS = 60_000;
 const ACCESS_TOKEN_EXPIRY_WARNING_MS = 10 * 60 * 1000;
@@ -89,7 +91,7 @@ export class KakaoNotifier {
       options.redirectUri ??
       process.env.KAKAO_REDIRECT_URI ??
       DEFAULT_REDIRECT_URI;
-    this.tokenFile = resolveTokenFile(options.tokenFile ?? DEFAULT_TOKEN_FILE);
+    this.tokenFile = resolveTokenFile(options.tokenFile);
     this.linkUrl = options.linkUrl ?? DEFAULT_LINK_URL;
   }
 
@@ -392,11 +394,15 @@ function truncateForKakao(text: string): string {
   return `${text.slice(0, KAKAO_TEXT_LIMIT - 1)}…`;
 }
 
-function resolveTokenFile(tokenFile: string): string {
+export function resolveTokenFile(tokenFile?: string): string {
+  if (!tokenFile || tokenFile === LEGACY_DEFAULT_TOKEN_FILE) {
+    return getKakaoTokenFile();
+  }
   const expanded = expandHome(tokenFile);
+  // 상대 경로는 실행 위치가 아니라 데이터 디렉토리 기준
   return path.isAbsolute(expanded)
     ? expanded
-    : path.resolve(process.cwd(), expanded);
+    : path.resolve(getDataDir(), expanded);
 }
 
 function expandHome(value: string): string {
