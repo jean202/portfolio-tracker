@@ -40,6 +40,31 @@ describe("Scanner", () => {
     });
   });
 
+  it("warns in one line about a missing directory and keeps scanning the rest", async () => {
+    await fs.mkdir(path.join(tempRoot, "node-app"));
+    await fs.writeFile(
+      path.join(tempRoot, "node-app", "package.json"),
+      '{"name":"node-app"}',
+    );
+    const missingDir = path.join(tempRoot, "does-not-exist");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    try {
+      const scanner = new Scanner({ projectDirs: [missingDir, tempRoot] });
+      const projects = await scanner.scanProjectDirs();
+
+      expect(projects.map((p) => p.name)).toEqual(["node-app"]);
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn.mock.calls[0]).toHaveLength(1);
+      const message = String(warn.mock.calls[0][0]);
+      expect(message).toContain(missingDir);
+      expect(message).toContain("config remove");
+      expect(message).not.toContain("\n");
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
   it("builds a report with checkbox progress and summary counts", async () => {
     await fs.mkdir(path.join(tempRoot, "task-app"));
     await fs.writeFile(
