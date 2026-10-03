@@ -1,18 +1,115 @@
 {
   "projects": [
     {
-      "id": "users-jean325-portfolio-projects-discord-kakao-translator",
+      "id": "users-jean325-work-src-portfolio-projects-ai-psychology-assessment",
+      "name": "ai-psychology-assessment",
+      "path": "/Users/jean325/work-src/portfolio/projects/ai-psychology-assessment",
+      "type": "unknown",
+      "progress": {
+        "percentage": 50,
+        "source": "readme",
+        "confidence": "medium",
+        "signals": [
+          "1/2 checklist items completed",
+          "README.md: checklist"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.250Z",
+        "breakdown": {
+          "completed": 1,
+          "total": 2
+        }
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": null,
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 9007199254740991
+      },
+      "metadata": {
+        "description": "ai-psychology-assessment",
+        "stack": [],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": false
+      },
+      "baseReadiness": 25,
+      "readiness": 25,
+      "nextActions": [
+        "2주차 — 타당도 개념, 문항 분석",
+        "2주차 — 타당도 개념, 문항 분석"
+      ],
+      "issues": [
+        "Git 저장소 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.251Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-asset-radar-night",
+      "name": "asset-radar-night",
+      "path": "/Users/jean325/work-src/portfolio/projects/asset-radar-night",
+      "type": "kotlin",
+      "progress": {
+        "percentage": 95,
+        "source": "project_plan",
+        "confidence": "high",
+        "signals": [
+          "87/92 checklist items completed",
+          "PROJECT_PLAN.md: checklist",
+          "README.md: checklist",
+          "docs/architecture.md: checklist",
+          "docs/data-sources.md: checklist"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.270Z",
+        "breakdown": {
+          "completed": 87,
+          "total": 92
+        }
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": null,
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 9007199254740991
+      },
+      "metadata": {
+        "description": "asset-radar",
+        "stack": [
+          "kotlin",
+          "React",
+          "Spring",
+          "Docker"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 74,
+      "readiness": 74,
+      "nextActions": [
+        "Grafana 운영 스크린샷과 장애 진단 runbook 보강",
+        "Grafana 대시보드 기준 장애 진단 runbook 보강",
+        "한국은행 금 시세 소스 검토",
+        "소스별 장애/지연 메트릭 문서화",
+        "소스별 API rate limit과 유료/무료 플랜 차이 문서화"
+      ],
+      "issues": [],
+      "scannedAt": "2026-10-03T16:41:47.270Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-discord-kakao-translator",
       "name": "discord-kakao-translator",
-      "path": "/Users/jean325/portfolio/projects/discord-kakao-translator",
+      "path": "/Users/jean325/work-src/portfolio/projects/discord-kakao-translator",
       "type": "node",
       "progress": {
         "percentage": 85,
-        "source": "readme",
+        "source": "claude_md",
         "confidence": "high",
         "signals": [
-          "README.md: explicit 85% progress"
+          "CLAUDE.md: explicit 85% progress"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.329Z"
+        "lastUpdated": "2026-10-03T16:41:47.256Z"
       },
       "priority": "CRITICAL",
       "activity": {
@@ -20,10 +117,8 @@
         "lastCommitMessage": "Initial commit: Discord-to-KakaoTalk translator bridge",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 55,
-        "recentCommitDays": {
-          "2026-04-09": 1
-        }
+        "daysSinceLastCommit": 177,
+        "recentCommitDays": {}
       },
       "metadata": {
         "description": "Discord -> Korean -> KakaoTalk",
@@ -32,136 +127,102 @@
           "Node.js"
         ],
         "hasReadme": true,
-        "hasClaude": false,
+        "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 77,
-      "readiness": 86,
+      "baseReadiness": 80,
+      "readiness": 80,
       "nextActions": [
-        "장기 실행 안정성 로그 정리",
-        "설치/운영 체크리스트 보강",
-        "실제 운영 중 발생하는 에러 유형과 재시작/토큰 갱신 절차를 문서화하기",
-        "장기 실행 안정성 로그 정리",
-        "설치/운영 체크리스트 보강"
+        "실제 운영 로그를 24~72시간 모아 에러 빈도와 자동 재시작 필요 여부 확인하기",
+        "Node.js 20 이상에서 `npm install` 완료",
+        "`.env.example`을 `.env`로 복사하고 필수 키 입력",
+        "Discord Developer Portal에서 `MESSAGE CONTENT INTENT` 활성화",
+        "bot을 대상 서버에 초대하고 읽을 채널 권한 확인"
       ],
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-04T02:25:56.330Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "discord-kakao-translator",
-          "total": 7,
-          "active": 7,
-          "completed": 0,
-          "representative": {
-            "title": "Local Status Discord-Kakao Bridge 로컬 상태 페이지입니다. 3초마다 자동 갱신됩니다. JSON 상태는 /api/sta",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "맞습니다. `tail -f`는 파일의 맨 끝만 붙어서 보기 때문에, 이미 지나간 과거 로그는 안 보입니다. 과거 로그가 없는 게 아니라, 지금 방식으로는 못 보는 겁니다.\n\n보려면 이렇게 하시면 됩니다.\n\n- 최근 200줄부터 보고 이어서 계속 보기\n```bash\ntail -n 200 -f /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n- 과거 로그를 스크롤하면서 보기\n```bash\nless /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n- 오류만 뽑아서 보기\n```bash\nrg -n \"ENOTFOUND|Connect Timeout|channel refresh failed|REST poller failed\" /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n- 오늘 오전 9시 50분대 전후만 보기\n```bash\nrg -n \"2026-04-02|ENOTFOUND|Connect Timeout\" /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n이미 확인한 기준으로는 과거 오류가 같은 파일 [`bridge.log`](/Users/admin/Library/Logs/discord-kakao-translator/bridge.log)에 남아 있었고, 대부분 `getaddrinfo ENOTFOUND discord.com`, 1건은 `Connect Timeout Error`였습니다.\n\n원하면 다음 답변에서 제가 “과거 오류만 빠르게 보는 명령” 몇 개만 딱 정리해드리겠습니다.",
-            "lastActivityAt": "2026-04-02T01:35:49.704Z"
-          },
-          "activeThreads": [
-            {
-              "title": "Local Status Discord-Kakao Bridge 로컬 상태 페이지입니다. 3초마다 자동 갱신됩니다. JSON 상태는 /api/sta",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "맞습니다. `tail -f`는 파일의 맨 끝만 붙어서 보기 때문에, 이미 지나간 과거 로그는 안 보입니다. 과거 로그가 없는 게 아니라, 지금 방식으로는 못 보는 겁니다.\n\n보려면 이렇게 하시면 됩니다.\n\n- 최근 200줄부터 보고 이어서 계속 보기\n```bash\ntail -n 200 -f /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n- 과거 로그를 스크롤하면서 보기\n```bash\nless /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n- 오류만 뽑아서 보기\n```bash\nrg -n \"ENOTFOUND|Connect Timeout|channel refresh failed|REST poller failed\" /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n- 오늘 오전 9시 50분대 전후만 보기\n```bash\nrg -n \"2026-04-02|ENOTFOUND|Connect Timeout\" /Users/admin/Library/Logs/discord-kakao-translator/bridge.log\n```\n\n이미 확인한 기준으로는 과거 오류가 같은 파일 [`bridge.log`](/Users/admin/Library/Logs/discord-kakao-translator/bridge.log)에 남아 있었고, 대부분 `getaddrinfo ENOTFOUND discord.com`, 1건은 `Connect Timeout Error`였습니다.\n\n원하면 다음 답변에서 제가 “과거 오류만 빠르게 보는 명령” 몇 개만 딱 정리해드리겠습니다.",
-              "lastActivityAt": "2026-04-02T01:35:49.704Z"
-            },
-            {
-              "title": "맥북 껐다 켜니까 DK브릿지가 맥 트레이에서 사라졌는데 그럼 실행 안되고 있는거지?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "네. 아무 터미널에서 아래 그대로 실행하면 됩니다.\n\n```bash\nopen /Users/admin/IdeaProjects/discord-kakao-translator/build/DiscordKakaoTray.app\n```\n\n실행되면 메뉴바에 `DK` 아이콘이 다시 떠야 합니다. 만약 안 뜨면 앱은 켜졌는데 아이콘만 안 보이는지, 아니면 실행 자체가 실패했는지 로그 `~/Library/Logs/discord-kakao-translator/bridge.log` 보면 바로 구분됩니다. 원하면 제가 자동실행 설정까지 확인해드릴게요.",
-              "lastActivityAt": "2026-04-01T14:42:21.629Z"
-            },
-            {
-              "title": "DK off는 OpenClaw 쪽이 아니라 별도 프로젝트 discord-kakao-translator의 메뉴바 앱입니다. 코드에도 그대로 박혀 ",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "지금 해야 할 건 `Start Bridge`를 누르는 것입니다. 이 메뉴는 실제로 [DiscordKakaoTray.swift:457](/Users/admin/IdeaProjects/discord-kakao-translator/tray/DiscordKakaoTray.swift#L457)에서 브리지 시작/중지를 담당하고, 시작 쪽은 [DiscordKakaoTray.swift:247](/Users/admin/IdeaProjects/discord-kakao-translator/tray/DiscordKakaoTray.swift#L247)에서 `node src/index.js`를 실행합니다.\n\n눌렀을 때 기대되는 흐름은 이렇습니다.\n- `DK off` -> `DK...`\n- 몇 초 뒤 정상 연결되면 `DK`\n- 그다음 `Open Status UI`를 눌러 `http://127.0.0.1:4782` 상태 페이지 확인\n\n스크린샷 메뉴의 의미는 간단합니다.\n- `Start Bridge`: 브리지 실행\n- `Open Status UI`: 실행 후 상태 페이지 열기\n- `Open Bridge Log`: 실패 원인 로그 보기\n- `Open Project Folder`: 프로젝트 폴더만 열기\n- `Quit`: 트레이 앱 종료\n\n안 되면 먼저 `Open Bridge Log`를 보세요. 로그 파일은 `/Users/admin/Library/Logs/discord-kakao-translator/bridge.log`입니다. 이 프로젝트는 `.env`, `data/kakao-token.json`, 그리고 트레이가 사용할 Node 경로(`/opt/homebrew/bin/node`)도 잡혀 있어서, 현재 상태만 보면 우선 `Start Bridge`를 눌러보는 게 맞습니다.\n\n원하면 제가 다음으로 직접 `Start Bridge`가 실패하는 경우까지 가정해서, 로그에서 어떤 에러를 봐야 하는지 바로 체크 포인트만 뽑아드리겠습니다.",
-              "lastActivityAt": "2026-04-01T01:16:30.841Z"
-            },
-            {
-              "title": "혹시 디스코드 앱을 끄고 있는 상태에서는 어떻게 처리돼?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "원인은 필터가 아니라 수신 단계였습니다. 2026년 3월 31일 01:47 KST부터 브리지는 `ready`였지만 상태 API에 `observed: 0`만 찍혀 있었고, 같은 토큰으로 Discord REST를 조회해 보니 봇 `dis-trans-ka#1666`는 `JinZaYoon / #general`을 실제로 읽을 수 있었고 06:43~06:44 메시지도 가져왔습니다. 즉 권한이나 채널 설정 문제가 아니라, 그 실행 중이던 프로세스가 `messageCreate` gateway 이벤트를 놓치고 있었습니다.\n\n그래서 [src/discord-bridge.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/discord-bridge.js#L188)에 guild text channel용 REST polling fallback을 추가했고, 설정값은 [src/config.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/config.js#L65), 종료 경로는 [src/index.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/index.js#L22), 문서는 [README.md](/Users/admin/IdeaProjects/discord-kakao-translator/README.md#L7)에 반영했습니다. 브리지는 이미 재시작해 둔 상태고, 지금은 `REST poller tracking 5 text channels every 15000ms`로 실행 중입니다. 문법 검사는 `src/config.js`, `src/discord-bridge.js`, `src/index.js` 모두 통과했습니다.\n\n지금 기본 catch-up은 30분이라 06:43 누락분은 자동 재전송되지 않습니다. 그 메시지들까지 지금 한번 백필할지, 아니면 `#general`에 테스트 문장 하나 보내서 새 흐름이 바로 잡히는지만 먼저 확인할지 정하면 이어서 처리하겠습니다.",
-              "lastActivityAt": "2026-03-30T22:55:00.726Z"
-            },
-            {
-              "title": "# Files mentioned by the user: ## 스크린샷 2026-03-30 오후 11.55.26.png: /Users/admin/",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "맥 메뉴바 트레이 앱까지 붙였고, 실제로 실행도 해뒀습니다. 앱 번들은 [build/DiscordKakaoTray.app](/Users/admin/IdeaProjects/discord-kakao-translator/build/DiscordKakaoTray.app) 에 있고, 지금 프로세스도 떠 있습니다. 핵심 구현은 [tray/DiscordKakaoTray.swift](/Users/admin/IdeaProjects/discord-kakao-translator/tray/DiscordKakaoTray.swift), [scripts/build-tray-app.sh](/Users/admin/IdeaProjects/discord-kakao-translator/scripts/build-tray-app.sh), [tray/Info.plist](/Users/admin/IdeaProjects/discord-kakao-translator/tray/Info.plist) 에 들어갔습니다.\n\n메뉴바에서 할 수 있는 건 `Start/Stop Bridge`, `Open Status UI`, `Open Bridge Log`, `Open Project Folder`, `Quit`입니다. 다만 지금은 기존 `node src/index.js`가 이미 따로 실행 중이어서, 트레이 앱은 그 브리지를 `external`로 보고 붙습니다. 그래서 현재 상태에선 상태 확인과 열기 중심으로 동작하고, 브리지 시작/중지는 비활성일 수 있습니다. 트레이가 브리지를 직접 관리하게 하려면 터미널에서 돌고 있는 기존 브리지를 한 번 끄고 트레이 메뉴에서 시작하면 됩니다.\n\n빌드도 검증했습니다. `npm run tray:build`로 `.app` 번들이 정상 생성됐고, AppKit 타입체크와 기존 Node 코드 문법 검사도 통과했습니다. 로그는 `~/Library/Logs/discord-kakao-translator/bridge.log`에 쌓입니다.",
-              "lastActivityAt": "2026-03-30T16:55:43.820Z"
-            },
-            {
-              "title": "[1단계: Discord Bot 만들기 (5분) https://discord.com/developers/applications → New App",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "원인은 맞습니다. 카카오 메시지의 버튼 링크가 원래 fallback URL을 열고 있었고, 그 값이 `localhost:8080` 쪽이라 404가 난 겁니다.\n\n코드를 바꿨습니다. 이제 카카오 메시지 버튼이 고정 URL 대신 원본 Discord 메시지 permalink를 열도록 바뀌었고, 버튼 이름도 `Discord에서 보기`로 보냅니다. 관련 수정은 [message-utils.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/message-utils.js#L55), [discord-bridge.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/discord-bridge.js#L120), [kakao-client.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/kakao-client.js#L71)에 들어갔고, fallback 값도 [.env](/Users/admin/IdeaProjects/discord-kakao-translator/.env)에 맞춰뒀습니다. 봇도 재시작해서 현재 다시 `ready` 상태입니다.\n\n이제 한 번 더 영어 메시지를 보내서 확인하면 됩니다. 다만 Kakao Developers의 `Product Link > Web`에 `https://discord.com`은 꼭 등록해두세요. 카카오 문서상 Message API는 `Product Link`가 선행 조건입니다: [REST API](https://developers.kakao.com/docs/latest/en/kakaotalk-message/rest-api). 등록 안 되어 있으면 버튼 링크가 다시 막힐 수 있습니다.",
-              "lastActivityAt": "2026-03-30T12:12:20.594Z"
-            },
-            {
-              "title": "어떤 작업을 해야 할까?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "타임아웃/재시도와 메시지 큐/중복 방지를 넣었습니다.\n\n네트워크 쪽은 공통 유틸로 묶었습니다. [http-utils.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/http-utils.js#L1)에서 요청 타임아웃, `429`/`5xx`/일부 네트워크 오류 재시도, `Retry-After` 해석을 처리하고, 이를 [openai-translator.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/openai-translator.js#L1)와 [kakao-client.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/kakao-client.js#L1)에 연결했습니다. 카카오 토큰 교환과 메모 전송 둘 다 동일한 보호를 받습니다.\n\nDiscord 쪽은 [discord-bridge.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/discord-bridge.js#L9)에 직렬 처리 큐를 추가해서 메시지를 한 번에 하나씩 처리하게 했고, 같은 메시지 ID는 일정 시간 동안 다시 처리하지 않도록 dedupe를 넣었습니다. 실패한 메시지는 dedupe에서 해제해서 이후 재시도 기회는 남겨뒀습니다. 관련 설정은 [config.js](/Users/admin/IdeaProjects/discord-kakao-translator/src/config.js#L45), [.env.example](/Users/admin/IdeaProjects/discord-kakao-translator/.env.example#L10), [README.md](/Users/admin/IdeaProjects/discord-kakao-translator/README.md#L31)에 추가했습니다.\n\n검증은 `node --check`로 변경된 JS 파일 문법 확인까지 했습니다. 실제 OpenAI/Kakao 연동 호출은 로컬 자격 증명과 외부 네트워크가 필요해서 여기서는 실행하지 못했습니다.",
-              "lastActivityAt": "2026-03-29T09:43:47.312Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-04-02T01:35:49.704Z"
-        },
-        "threadAdjustment": 9,
-        "signals": [
-          "thread: 활성 7개 중 7개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 7개 (+3)"
-        ]
-      }
+      "scannedAt": "2026-10-03T16:41:47.256Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-asset-radar",
+      "id": "users-jean325-work-src-portfolio-projects-slotops",
+      "name": "slotops",
+      "path": "/Users/jean325/work-src/portfolio/projects/slotops",
+      "type": "unknown",
+      "progress": {
+        "percentage": 45,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Early-stage wording found",
+          "In-progress wording found"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.281Z"
+      },
+      "priority": "CRITICAL",
+      "activity": {
+        "lastCommitDate": "2026-07-24T15:21:49.000Z",
+        "lastCommitMessage": "docs: sync AGENTS.md with CLAUDE.md and update implementation plan status",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 71,
+        "recentCommitDays": {
+          "2026-07-25": 2,
+          "2026-07-24": 7,
+          "2026-07-22": 6,
+          "2026-07-21": 2
+        }
+      },
+      "metadata": {
+        "description": "SlotOps",
+        "stack": [
+          "Spring"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 42,
+      "readiness": 42,
+      "nextActions": [],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.282Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-asset-radar",
       "name": "asset-radar",
-      "path": "/Users/jean325/portfolio/projects/asset-radar",
+      "path": "/Users/jean325/work-src/portfolio/projects/asset-radar",
       "type": "kotlin",
       "progress": {
-        "percentage": 90,
+        "percentage": 95,
         "source": "project_plan",
         "confidence": "high",
         "signals": [
-          "79/88 checklist items completed",
+          "87/92 checklist items completed",
           "PROJECT_PLAN.md: checklist",
           "README.md: checklist",
           "docs/architecture.md: checklist",
           "docs/data-sources.md: checklist"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.350Z",
+        "lastUpdated": "2026-10-03T16:41:47.271Z",
         "breakdown": {
-          "completed": 79,
-          "total": 88
+          "completed": 87,
+          "total": 92
         }
       },
       "priority": "CRITICAL",
       "activity": {
-        "lastCommitDate": "2026-05-04T14:27:54.000Z",
-        "lastCommitMessage": "feat: 포트폴리오 추천/전략화 로직 구현",
+        "lastCommitDate": "2026-07-28T01:34:04.000Z",
+        "lastCommitMessage": "fix: Slack/Discord 채널에 요청 timeout을 전달해 블로킹 스레드를 실제로 회수",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 30,
+        "daysSinceLastCommit": 67,
         "recentCommitDays": {
-          "2026-05-04": 1,
-          "2026-05-03": 1,
-          "2026-05-02": 1,
-          "2026-04-25": 1,
-          "2026-04-09": 3,
-          "2026-04-05": 1,
-          "2026-04-02": 7,
-          "2026-04-01": 1,
-          "2026-03-31": 1,
-          "2026-03-27": 1
+          "2026-07-28": 3,
+          "2026-07-27": 1,
+          "2026-07-20": 1
         }
       },
       "metadata": {
@@ -176,293 +237,24 @@
         "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 88,
-      "readiness": 98,
+      "baseReadiness": 82,
+      "readiness": 82,
       "nextActions": [
-        "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정",
-        "Swagger 예시 응답 추가 정리",
         "Grafana 운영 스크린샷과 장애 진단 runbook 보강",
-        "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정",
-        "운영 배포 자동화와 배포 타깃별 secret 주입 방식 확정"
+        "Grafana 대시보드 기준 장애 진단 runbook 보강",
+        "한국은행 금 시세 소스 검토",
+        "소스별 장애/지연 메트릭 문서화",
+        "소스별 API rate limit과 유료/무료 플랜 차이 문서화"
       ],
-      "issues": [],
-      "scannedAt": "2026-06-04T02:25:56.350Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "asset-radar",
-          "total": 8,
-          "active": 8,
-          "completed": 0,
-          "representative": {
-            "title": "어떤 작업을 더 하면 좋을까?",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "문서 동기화 → 환경 분리 → 데모 모드까지 처리했습니다.\n\n주요 변경:\n- [README.md](/Users/jean325/portfolio/projects/asset-radar/README.md)에 현재 구현 상태, 실행 프로파일, 데모 실행법, 남은 작업을 갱신했습니다.\n- `local`, `docker`, `demo`, `prod` 프로파일을 추가했습니다: [application-demo.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-demo.yml), [application-docker.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-docker.yml), [application-local.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-local.yml), [application-prod.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-prod.yml)\n- API 키 없이 데이터가 흐르는 [DemoAssetCollector.java](/Users/jean325/portfolio/projects/asset-radar/src/main/java/com/jean202/assetradar/collector/DemoAssetCollector.java)를 추가했습니다.\n- 전체 컨테이너 데모용 [docker-compose.demo.yml](/Users/jean325/portfolio/projects/asset-radar/docker-compose.demo.yml)을 추가했고, 데모 실행 시 외부 API 키/웹훅 값은 빈 값으로 덮어쓰게 했습니다.\n- [docs/data-sources.md](/Users/jean325/portfolio/projects/asset-radar/docs/data-sources.md), [docs/architecture.md](/Users/jean325/portfolio/projects/asset-radar/docs/architecture.md), [PROJECT_PLAN.md](/Users/jean325/portfolio/projects/asset-radar/PROJECT_PLAN.md), [QUICK_START.md](/Users/jean325/portfolio/projects/asset-radar/QUICK_START.md), [VERIFICATION_GUIDE.md](/Users/jean325/portfolio/projects/asset-radar/VERIFICATION_GUIDE.md), [AGENTS.md](/Users/jean325/portfolio/projects/asset-radar/AGENTS.md), [CLAUDE.md](/Users/jean325/portfolio/projects/asset-radar/CLAUDE.md)의 stale TODO를 정리했습니다.\n\n검증:\n- `./gradlew test` 통과\n- `./gradlew test --tests \"*DemoAssetCollectorTest\"` 통과\n- `docker compose -f docker-compose.yml -f docker-compose.demo.yml config` 확인\n- `git diff --check` 통과\n\n참고로 기존 untracked인 `.claude/worktrees/`는 건드리지 않았습니다. 다음으로는 문서에 적어둔 대로 Swagger 예시 응답 정리가 가장 자연스럽습니다.",
-            "lastActivityAt": "2026-05-16T22:01:28.262Z"
-          },
-          "activeThreads": [
-            {
-              "title": "어떤 작업을 더 하면 좋을까?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "문서 동기화 → 환경 분리 → 데모 모드까지 처리했습니다.\n\n주요 변경:\n- [README.md](/Users/jean325/portfolio/projects/asset-radar/README.md)에 현재 구현 상태, 실행 프로파일, 데모 실행법, 남은 작업을 갱신했습니다.\n- `local`, `docker`, `demo`, `prod` 프로파일을 추가했습니다: [application-demo.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-demo.yml), [application-docker.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-docker.yml), [application-local.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-local.yml), [application-prod.yml](/Users/jean325/portfolio/projects/asset-radar/src/main/resources/application-prod.yml)\n- API 키 없이 데이터가 흐르는 [DemoAssetCollector.java](/Users/jean325/portfolio/projects/asset-radar/src/main/java/com/jean202/assetradar/collector/DemoAssetCollector.java)를 추가했습니다.\n- 전체 컨테이너 데모용 [docker-compose.demo.yml](/Users/jean325/portfolio/projects/asset-radar/docker-compose.demo.yml)을 추가했고, 데모 실행 시 외부 API 키/웹훅 값은 빈 값으로 덮어쓰게 했습니다.\n- [docs/data-sources.md](/Users/jean325/portfolio/projects/asset-radar/docs/data-sources.md), [docs/architecture.md](/Users/jean325/portfolio/projects/asset-radar/docs/architecture.md), [PROJECT_PLAN.md](/Users/jean325/portfolio/projects/asset-radar/PROJECT_PLAN.md), [QUICK_START.md](/Users/jean325/portfolio/projects/asset-radar/QUICK_START.md), [VERIFICATION_GUIDE.md](/Users/jean325/portfolio/projects/asset-radar/VERIFICATION_GUIDE.md), [AGENTS.md](/Users/jean325/portfolio/projects/asset-radar/AGENTS.md), [CLAUDE.md](/Users/jean325/portfolio/projects/asset-radar/CLAUDE.md)의 stale TODO를 정리했습니다.\n\n검증:\n- `./gradlew test` 통과\n- `./gradlew test --tests \"*DemoAssetCollectorTest\"` 통과\n- `docker compose -f docker-compose.yml -f docker-compose.demo.yml config` 확인\n- `git diff --check` 통과\n\n참고로 기존 untracked인 `.claude/worktrees/`는 건드리지 않았습니다. 다음으로는 문서에 적어둔 대로 Swagger 예시 응답 정리가 가장 자연스럽습니다.",
-              "lastActivityAt": "2026-05-16T22:01:28.262Z"
-            },
-            {
-              "title": "저장 빈도: 가격 이벤트 1건마다 추천 1건이 쌓입니다. 분당 자산 수만큼 row 증가. 데모는 충분하지만 장기 운영 시 dedupe(actio",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "작업 완료했습니다. 실제 추천 히스토리 구현이 있는 worktree 기준으로 수정했습니다.\n\n[AssetRecommendationHistoryRepository.java](/Users/jean325/portfolio/projects/asset-radar/.claude/worktrees/elegant-kilby-7ec4a3/src/main/java/com/jean202/assetradar/infra/AssetRecommendationHistoryRepository.java:31)에서 저장 SQL을 바꿔, 같은 `source + quoteCurrency + symbol`의 최신 추천 `action`과 새 추천 `action`이 같으면 insert하지 않도록 했습니다. 최초 추천이거나 action이 바뀐 경우만 `asset_recommendation_history`에 쌓입니다.\n\n테스트도 추가했습니다: [AssetRecommendationHistoryRepositoryTest.java](/Users/jean325/portfolio/projects/asset-radar/.claude/worktrees/elegant-kilby-7ec4a3/src/test/java/com/jean202/assetradar/infra/AssetRecommendationHistoryRepositoryTest.java:26)\n\n검증:\n`./gradlew test` 통과했습니다.\n\n참고로 worktree의 기존 변경인 `.claude/settings.local.json`은 건드리지 않았습니다.",
-              "lastActivityAt": "2026-05-08T11:14:51.177Z"
-            },
-            {
-              "title": "asset-radar에 있는 Loki/Tempo/Alertmanager compose 구현해보자",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "`docker-compose` 레벨 observability 스택을 붙였습니다. [docker-compose.yml](/Users/jean325/IdeaProjects/study/asset-radar/docker-compose.yml:1)에 `loki`, `promtail`, `tempo`, `alertmanager`를 추가했고, [prometheus.yml](/Users/jean325/IdeaProjects/study/asset-radar/prometheus.yml:1)에는 Alertmanager 연동, rule 로딩, `asset-radar` 로컬/컨테이너 scrape 타깃, observability 컴포넌트 scrape를 넣었습니다. Grafana 쪽도 [grafana/provisioning/datasources/prometheus.yml](/Users/jean325/IdeaProjects/study/asset-radar/grafana/provisioning/datasources/prometheus.yml:1)에서 `Prometheus + Loki + Tempo + Alertmanager` datasource가 자동 등록되게 바꿨습니다.\n\n설정 파일은 [loki/config.yml](/Users/jean325/IdeaProjects/study/asset-radar/loki/config.yml:1), [promtail/config.yml](/Users/jean325/IdeaProjects/study/asset-radar/promtail/config.yml:1), [tempo/config.yml](/Users/jean325/IdeaProjects/study/asset-radar/tempo/config.yml:1), [alertmanager/alertmanager.yml](/Users/jean325/IdeaProjects/study/asset-radar/alertmanager/alertmanager.yml:1), [prometheus/rules/asset-radar-alerts.yml](/Users/jean325/IdeaProjects/study/asset-radar/prometheus/rules/asset-radar-alerts.yml:1)에 나눠 넣었고, README도 새 포트/실행 명령/아키텍처 설명으로 맞췄습니다 ([README.md](/Users/jean325/IdeaProjects/study/asset-radar/README.md:5), [README.md](/Users/jean325/IdeaProjects/study/asset-radar/README.md:176)).\n\n검증은 `docker compose config` 통과와 YAML 파싱까지 했습니다. 다만 이 세션에서는 Docker 데몬이 내려가 있어서 실제 컨테이너 기동 검증은 못 했습니다: `Cannot connect to the Docker daemon at unix:///var/run/docker.sock`. 또 Tempo는 백엔드와 OTLP 포트까지만 준비된 상태라, 실제 trace가 보이려면 다음 단계로 Spring 앱에 OTLP exporter를 붙여야 합니다. 원하면 바로 그 단계까지 이어서 넣겠습니다.",
-              "lastActivityAt": "2026-04-18T16:58:39.393Z"
-            },
-            {
-              "title": "어디까지 진행되었는지 분석해봐",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "프론트 품질 이슈는 정리됐습니다. [App.jsx](/Users/admin/IdeaProjects/asset-radar/frontend/src/App.jsx), [vite.config.js](/Users/admin/IdeaProjects/asset-radar/frontend/vite.config.js), [package.json](/Users/admin/IdeaProjects/asset-radar/frontend/package.json), [.github/workflows/ci.yml](/Users/admin/IdeaProjects/asset-radar/.github/workflows/ci.yml)에 페이지 lazy loading, vendor chunk 분리, Vitest 도입, 프론트 CI 단계를 반영했습니다. 테스트는 [Dashboard.test.jsx](/Users/admin/IdeaProjects/asset-radar/frontend/src/pages/Dashboard.test.jsx)와 [Analytics.test.jsx](/Users/admin/IdeaProjects/asset-radar/frontend/src/pages/Analytics.test.jsx)를 추가했고, 문서 상태도 [README.md](/Users/admin/IdeaProjects/asset-radar/README.md) 등에서 현재 기준으로 갱신했습니다.\n\n검증은 모두 통과했습니다.\n- `cd frontend && npm run lint`\n- `cd frontend && npm run test`\n- `cd frontend && npm run build`\n- `./gradlew test`\n\n번들 경고도 없어졌고, 빌드 결과는 `charts-vendor` 378 KB 수준으로 분리됐습니다. 남아 있는 건 품질 이슈라기보다 범위 문제입니다. 프론트 테스트는 현재 2개 스모크 테스트 중심이라 차트 세부 렌더링과 통계 훅 단위 검증은 아직 더 늘릴 여지가 있습니다.",
-              "lastActivityAt": "2026-04-04T04:33:42.987Z"
-            },
-            {
-              "title": "다음으로 어떤 작업 하는게 좋을까?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "`/api/dashboard/stream` SSE까지 `WebTestClient`로 검증했습니다.\n\n추가한 테스트는 [DashboardControllerWebTest.java](/Users/admin/IdeaProjects/asset-radar/src/test/java/com/jean202/assetradar/api/DashboardControllerWebTest.java) 안의 `streamsSnapshotThenLiveUpdateOverSse()`입니다. `AssetPriceStore`에 먼저 스냅샷 가격을 넣고 `/api/dashboard/stream`을 `text/event-stream`으로 구독한 뒤, 첫 번째 SSE가 스냅샷 `BTC`인지 확인하고, 그 다음 `assetPriceStore.update(...)`로 `ETH`를 넣어서 두 번째 SSE가 실시간 업데이트인지 검증합니다. 이벤트 타입도 `asset-price`로 확인합니다.\n\n지금 웹 계층 테스트 범위는 이렇습니다.\n- `/api/dashboard` JSON 응답 검증\n- `/api/dashboard/stream` SSE 응답 검증\n- `/api/compare` 성공 응답 검증\n- `/api/compare` 에러 응답 검증\n\n검증은 `./gradlew test --tests com.jean202.assetradar.api.DashboardControllerWebTest`와 전체 `./gradlew test` 둘 다 통과했습니다.\n\n다음으로는 실제 저장소 연동까지 포함한 `@SpringBootTest` + Redis/Postgres 통합 테스트로 한 단계 더 올리거나, 반대로 지금 수준에서 커밋 정리로 넘어가면 됩니다.",
-              "lastActivityAt": "2026-04-01T06:59:06.031Z"
-            },
-            {
-              "title": "다음 작업을 이어서 진행해줘. 프로젝트 경로: - /Users/admin/IdeaProjects/asset-radar 현재 상태: - Upbit",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "지금 상태라면 기다릴 이유가 크지 않습니다. 현재 워크트리는 `clean`이고, 모든 기존 변경은 이미 브랜치 `codex/wip-alert-notifier-20260331`의 커밋 `ecac932`에 들어가 있습니다. 즉 “다른 변경들도 같이 커밋”할 대상이 지금은 없습니다.\n\n그래서 제 권장은 지금 바로 이 브랜치를 push해서 원격 백업 지점을 만드는 겁니다. 이후 추가 작업이 생기면 같은 브랜치에 커밋을 더 쌓아 다시 push하면 됩니다. 첫 push를 나중으로 미룰 장점은 거의 없고, 백업 관점에서는 지금 올리는 편이 낫습니다.\n\n원하면 지금 바로 `origin`으로 다시 push하겠습니다.",
-              "lastActivityAt": "2026-03-31T02:35:38.561Z"
-            },
-            {
-              "title": "이 프로젝트 내부에 초안 같은거 있어?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "아래 프롬프트 그대로 다음 세션에 넣으면 됩니다.\n\n```text\n다음 작업을 이어서 진행해줘.\n\n프로젝트 경로:\n- /Users/admin/IdeaProjects/asset-radar\n\n현재 상태:\n- Upbit 실시간 시세 수집 완료\n- price pipeline: Upbit -> Kafka(asset.coin.realtime) -> Redis/PostgreSQL 적재 완료\n- analysis pipeline: Kafka consumer가 price를 읽어 분석 생성, Kafka(asset.coin.analysis) 발행, Redis/PostgreSQL 적재 완료\n- alert pipeline: Kafka consumer가 analysis를 읽어 alert 생성, Redis 최신 알림 + PostgreSQL 알림 이력 적재 완료\n- alert API 완료:\n  - /api/alerts\n  - /api/alerts/history\n- alert 규칙은 이제 직전 틱 기준이 아니라 시간 윈도우 기준임\n  - 기본 설정: 1분 window\n  - 설정 위치: src/main/resources/application.yml\n  - 핵심 로직:\n    - src/main/java/com/jean202/assetradar/alert/AssetAlertRuleEngine.java\n    - src/main/java/com/jean202/assetradar/alert/AssetAlertConsumer.java\n- alert payload에는 baselineAt, windowSeconds 포함됨\n- Redis/PostgreSQL alert 적재와 조회도 이 구조에 맞춰 반영됨\n- 테스트는 마지막 기준 ./gradlew --no-daemon test 통과 상태\n\n이번 세션 목표:\n1. Slack/Webhook 외부 전송 추가\n2. severity 기준 전송 정책 정의\n3. 외부 전송 실패가 메인 alert 파이프라인을 막지 않게 설계\n4. 설정으로 on/off 가능하게 만들기\n5. 테스트와 실제 검증까지 마무리\n\n구현 방향:\n- Slack, generic webhook 둘 다 지원\n- alert 생성 이후 후단에서 notifier로 fan-out 하는 구조로 구현\n- 권장:\n  - AssetAlertNotifier 같은 인터페이스 추가\n  - Slack notifier, Webhook notifier 분리\n  - 설정 클래스 추가\n  - severity별 최소 전송 레벨 설정\n  - enabled=false면 전송 안 하도록 처리\n- 운영 안정성 우선:\n  - 외부 전송 실패 시 로그 남기고 삼키기\n  - alert Redis/PostgreSQL 적재는 계속 성공해야 함\n  - 민감정보(URL, token)는 application.yml에 기본 placeholder만 두고 override 가능하게\n- 가능하면 message 포맷은 너무 장황하지 않게:\n  - source\n  - symbol/quote\n  - movement\n  - percent\n  - window\n  - severity\n  - alertedAt\n\n검증 요구:\n- 단위 테스트 추가\n- ./gradlew --no-daemon test 실행\n- 가능하면 로컬 실행 후 최소 1회 실제 webhook 또는 mock 가능한 방식으로 전송 검증\n- 최종 응답에는 무엇을 구현했고 무엇을 검증했는지 간단히 정리\n\n주의:\n- 이미 구현된 alert Redis/PostgreSQL/API를 다시 바꾸기보다 그 뒤에 외부 전송만 자연스럽게 붙여줘\n- 기존 저장 경로를 깨지 말 것\n- Docker Desktop은 Kafka/Redis/PostgreSQL 검증이 필요할 때만 켜면 됨. 지금 단계에서는 필요 없으면 꺼도 됨.\n```\n\n원하면 제가 이걸 더 짧은 버전이나, “다음 에이전트가 바로 실행만 하게 하는 작업 지시형”으로도 줄여드릴게요.",
-              "lastActivityAt": "2026-03-31T02:02:01.683Z"
-            },
-            {
-              "title": "/Users/admin/IdeaProjects/asset-radar/build.gradle.kts 이런게 있던데 코틀린 기반이야?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "핵심은 `build.gradle.kts`가 앱 언어를 뜻하는 게 아니라, **Gradle 설정을 더 안전하고 편하게 쓰려는 선택**이라는 점입니다.\n\n주로 이런 이유로 씁니다.\n\n- **IDE 지원이 좋음**: 자동완성, 타입 체크, 리팩터링이 Groovy DSL보다 낫습니다.\n- **오타를 빨리 잡음**: 문자열 기반 설정보다 컴파일 시점에 깨지는 경우가 많아서 덜 불안합니다.\n- **팀이 Kotlin에 익숙하면 일관적임**: 앱이 Java여도 빌드 설정만 Kotlin DSL로 쓰는 경우가 흔합니다.\n- **템플릿/생성기 기본값인 경우도 많음**: 처음 만들 때 그냥 그 옵션으로 생성됐을 수 있습니다.\n\n대신 단점도 있습니다.\n\n- **문법이 더 장황할 수 있음**\n- **인터넷 예제는 아직 Groovy DSL이 많음**\n- **처음 보는 사람에겐 낯설 수 있음**\n\n즉, “꼭 필요해서”라기보다 **빌드 스크립트를 더 타입 안전하게 관리하려고** 쓰는 경우가 많습니다.  \n이 프로젝트도 실제 코드는 Java인데, 빌드 파일만 Kotlin DSL로 쓴 케이스입니다.\n\n원하면 제가 `build.gradle.kts`를 `build.gradle`(Groovy DSL)로 바꾸면 어떻게 보이는지도 바로 예시로 보여드릴게요.",
-              "lastActivityAt": "2026-03-31T01:59:29.789Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-05-16T22:01:28.262Z"
-        },
-        "threadAdjustment": 10,
-        "signals": [
-          "thread: 활성 8개 중 8개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 8개 (+4)"
-        ]
-      }
-    },
-    {
-      "id": "users-jean325-portfolio-projects-slotops",
-      "name": "slotops",
-      "path": "/Users/jean325/portfolio/projects/slotops",
-      "type": "unknown",
-      "progress": {
-        "percentage": 45,
-        "source": "heuristic",
-        "confidence": "low",
-        "signals": [
-          "Early-stage wording found",
-          "In-progress wording found"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.347Z"
-      },
-      "priority": "CRITICAL",
-      "activity": {
-        "lastCommitDate": "2026-05-18T11:53:50.000Z",
-        "lastCommitMessage": "chore: adopt jackson-datatype-jsr310, ErrorResponse @JsonFormat, guest count validation",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 16,
-        "recentCommitDays": {
-          "2026-05-18": 13,
-          "2026-05-17": 1,
-          "2026-05-03": 2,
-          "2026-04-28": 1
-        }
-      },
-      "metadata": {
-        "description": "SlotOps",
-        "stack": [
-          "Spring"
-        ],
-        "hasReadme": true,
-        "hasClaude": true,
-        "hasGit": true
-      },
-      "baseReadiness": 49,
-      "readiness": 49,
-      "nextActions": [],
-      "issues": [],
-      "scannedAt": "2026-06-04T02:25:56.348Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "slotops",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-portfolio-projects-cleanera",
-      "name": "Cleanera",
-      "path": "/Users/jean325/portfolio/projects/Cleanera",
-      "type": "dart",
-      "progress": {
-        "percentage": 70,
-        "source": "readme",
-        "confidence": "high",
-        "signals": [
-          "README.md: explicit 70% progress"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.382Z"
-      },
-      "priority": "CRITICAL",
-      "activity": {
-        "lastCommitDate": "2026-05-29T07:50:35.000Z",
-        "lastCommitMessage": "Merge pull request #116 from ZayaMK/database-read-standardization",
-        "commitsInLastWeek": 24,
-        "isActive": true,
-        "daysSinceLastCommit": 5,
-        "recentCommitDays": {
-          "2026-05-29": 15,
-          "2026-05-28": 12,
-          "2026-05-27": 6,
-          "2026-05-26": 13,
-          "2026-05-25": 8,
-          "2026-05-24": 8,
-          "2026-05-23": 9,
-          "2026-05-22": 14,
-          "2026-05-21": 10,
-          "2026-05-20": 15,
-          "2026-05-19": 10,
-          "2026-05-18": 9,
-          "2026-05-17": 12,
-          "2026-05-16": 7,
-          "2026-05-15": 16,
-          "2026-05-14": 12,
-          "2026-05-13": 11,
-          "2026-05-12": 18,
-          "2026-05-11": 16,
-          "2026-05-10": 9,
-          "2026-05-09": 2,
-          "2026-05-08": 1,
-          "2026-05-07": 8,
-          "2026-05-06": 18,
-          "2026-05-05": 16,
-          "2026-05-04": 23,
-          "2026-05-03": 13,
-          "2026-05-02": 2,
-          "2026-05-01": 9,
-          "2026-04-30": 17,
-          "2026-04-29": 23,
-          "2026-04-28": 22,
-          "2026-04-27": 18,
-          "2026-04-26": 14,
-          "2026-04-25": 1,
-          "2026-04-24": 19,
-          "2026-04-23": 14,
-          "2026-04-22": 17,
-          "2026-04-21": 13,
-          "2026-04-20": 24,
-          "2026-04-19": 18,
-          "2026-04-18": 22,
-          "2026-04-17": 19,
-          "2026-04-16": 2,
-          "2026-04-15": 1,
-          "2026-04-14": 1,
-          "2026-04-13": 3,
-          "2026-04-04": 24,
-          "2026-04-03": 11,
-          "2026-04-02": 16,
-          "2026-04-01": 16,
-          "2026-03-31": 15,
-          "2026-03-30": 12,
-          "2026-03-29": 7,
-          "2026-03-28": 6,
-          "2026-03-27": 14,
-          "2026-03-26": 16,
-          "2026-03-25": 27,
-          "2026-03-23": 4,
-          "2026-03-21": 1,
-          "2026-03-20": 4,
-          "2026-03-19": 5,
-          "2026-03-18": 1,
-          "2026-03-17": 2,
-          "2026-03-16": 9,
-          "2026-03-15": 1,
-          "2026-03-13": 3,
-          "2026-03-12": 7,
-          "2026-03-11": 1,
-          "2026-03-10": 6,
-          "2026-03-09": 6,
-          "2026-03-08": 3,
-          "2026-03-07": 10,
-          "2026-03-06": 8,
-          "2026-03-05": 4
-        }
-      },
-      "metadata": {
-        "description": "Cleanera",
-        "stack": [
-          "dart",
-          "Flutter"
-        ],
-        "hasReadme": true,
-        "hasClaude": true,
-        "hasGit": true
-      },
-      "baseReadiness": 94,
-      "readiness": 94,
-      "nextActions": [
-        "End-to-end usage screenshots or demo flow",
-        "Test coverage summary for portfolio review",
-        "Deployment/setup notes for reviewers",
-        "포트폴리오에서 검토할 수 있도록 데모 화면, 테스트 범위, Supabase 설정 흐름을 정리하기",
-        "End-to-end usage screenshots or demo flow"
+      "issues": [
+        "30일 이상 커밋 없음"
       ],
-      "issues": [],
-      "scannedAt": "2026-06-04T02:25:56.382Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "Cleanera",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
+      "scannedAt": "2026-10-03T16:41:47.271Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-threadkeeper",
+      "id": "users-jean325-work-src-portfolio-projects-threadkeeper",
       "name": "threadkeeper",
-      "path": "/Users/jean325/portfolio/projects/threadkeeper",
+      "path": "/Users/jean325/work-src/portfolio/projects/threadkeeper",
       "type": "unknown",
       "progress": {
         "percentage": 20,
@@ -471,22 +263,25 @@
         "signals": [
           "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.362Z"
+        "lastUpdated": "2026-10-03T16:41:47.272Z"
       },
       "priority": "CRITICAL",
       "activity": {
-        "lastCommitDate": "2026-06-03T14:13:18.000Z",
-        "lastCommitMessage": "Merge feature/auto-import-scheduler: scheduled automatic import (staleness catch-up)",
-        "commitsInLastWeek": 50,
+        "lastCommitDate": "2026-10-03T15:05:27.000Z",
+        "lastCommitMessage": "Fold automated runs of the same prompt into one thread",
+        "commitsInLastWeek": 6,
         "isActive": true,
         "daysSinceLastCommit": 0,
         "recentCommitDays": {
-          "2026-06-03": 24,
-          "2026-06-02": 13,
-          "2026-06-01": 18,
-          "2026-05-30": 8,
-          "2026-05-22": 5,
-          "2026-05-19": 1
+          "2026-10-04": 2,
+          "2026-09-27": 4,
+          "2026-09-04": 14,
+          "2026-09-03": 2,
+          "2026-08-23": 1,
+          "2026-08-21": 1,
+          "2026-08-07": 1,
+          "2026-08-05": 1,
+          "2026-08-04": 6
         }
       },
       "metadata": {
@@ -498,148 +293,281 @@
           "Docker"
         ],
         "hasReadme": true,
-        "hasClaude": false,
+        "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 44,
-      "readiness": 55,
+      "baseReadiness": 54,
+      "readiness": 54,
       "nextActions": [],
       "issues": [],
-      "scannedAt": "2026-06-04T02:25:56.362Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "threadkeeper",
-          "total": 1,
-          "active": 1,
-          "completed": 0,
-          "representative": {
-            "title": "클로드가 [완료된 task (13/26 + 곁다리 1) Phase 1 (안전 디코딩) T1–T3 ✅ — sanitize.js: truncateC",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "맞아요. 저 로그는 진행 상황을 아는 사람에게나 의미 있고, 지금 뭘 고치는지 거의 안 보입니다.\n\n핵심은 이겁니다: ThreadKeeper가 Codex 세션을 가져올 때 실제 대화 하나하나가 아니라 `~/.codex/sessions` 폴더 묶음을 29개 정도의 큰 thread로 잘못 가져오고 있었습니다. 지금 작업은 그걸 “Codex rollout `.jsonl` 파일 하나 = ThreadKeeper thread 하나”로 바꾸는 작업입니다.\n\n현재 상태는:\n\n- 완료됨: Node bridge가 Codex 세션 파일을 하나씩 읽고, 제목/첫 요청/마지막 응답/프로젝트/시간을 뽑는 구조\n- 완료됨: Java DTO/domain/service가 그 rich field들을 받아서 `Thread`와 `SourceSession`에 저장하는 기본 배선\n- 현재 위치: T20까지 커밋됨, HEAD는 `190ed09`\n- 아직 미완성: 같은 제목의 서로 다른 Codex 세션이 아직 하나의 thread로 합쳐질 수 있음\n- 다음 핵심 작업: T21에서 그 title-merge를 session import에는 끄고, 진짜 1:1을 강제\n- 이후: refresh 동작 테스트, 기존 잘못 들어간 29개 CODEX import만 지우는 reset endpoint, 마지막 수동 E2E\n\n중요한 안전선도 있습니다. 마지막 T26의 reset/import는 실제 DB에서 기존 CODEX import를 지우는 동작이라, 제가 임의로 실행하면 안 됩니다. 코드는 계속 구현할 수 있지만, 실제 `DELETE /provider-connections/{id}/imports` 실행은 명시적으로 확인받고 해야 합니다.\n\n제가 이어서 한다면 이제부터는 subagent 로그식으로 안 하고, 직접 이렇게 진행하겠습니다: T21 구현 → 테스트 → T22 refresh 테스트 → reset endpoint 구현 → 전체 테스트. 각 단계마다 “이게 앱 동작상 무슨 의미인지”만 짧게 보고하겠습니다.",
-            "lastActivityAt": "2026-06-01T02:10:47.339Z"
-          },
-          "activeThreads": [
-            {
-              "title": "클로드가 [완료된 task (13/26 + 곁다리 1) Phase 1 (안전 디코딩) T1–T3 ✅ — sanitize.js: truncateC",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "맞아요. 저 로그는 진행 상황을 아는 사람에게나 의미 있고, 지금 뭘 고치는지 거의 안 보입니다.\n\n핵심은 이겁니다: ThreadKeeper가 Codex 세션을 가져올 때 실제 대화 하나하나가 아니라 `~/.codex/sessions` 폴더 묶음을 29개 정도의 큰 thread로 잘못 가져오고 있었습니다. 지금 작업은 그걸 “Codex rollout `.jsonl` 파일 하나 = ThreadKeeper thread 하나”로 바꾸는 작업입니다.\n\n현재 상태는:\n\n- 완료됨: Node bridge가 Codex 세션 파일을 하나씩 읽고, 제목/첫 요청/마지막 응답/프로젝트/시간을 뽑는 구조\n- 완료됨: Java DTO/domain/service가 그 rich field들을 받아서 `Thread`와 `SourceSession`에 저장하는 기본 배선\n- 현재 위치: T20까지 커밋됨, HEAD는 `190ed09`\n- 아직 미완성: 같은 제목의 서로 다른 Codex 세션이 아직 하나의 thread로 합쳐질 수 있음\n- 다음 핵심 작업: T21에서 그 title-merge를 session import에는 끄고, 진짜 1:1을 강제\n- 이후: refresh 동작 테스트, 기존 잘못 들어간 29개 CODEX import만 지우는 reset endpoint, 마지막 수동 E2E\n\n중요한 안전선도 있습니다. 마지막 T26의 reset/import는 실제 DB에서 기존 CODEX import를 지우는 동작이라, 제가 임의로 실행하면 안 됩니다. 코드는 계속 구현할 수 있지만, 실제 `DELETE /provider-connections/{id}/imports` 실행은 명시적으로 확인받고 해야 합니다.\n\n제가 이어서 한다면 이제부터는 subagent 로그식으로 안 하고, 직접 이렇게 진행하겠습니다: T21 구현 → 테스트 → T22 refresh 테스트 → reset endpoint 구현 → 전체 테스트. 각 단계마다 “이게 앱 동작상 무슨 의미인지”만 짧게 보고하겠습니다.",
-              "lastActivityAt": "2026-06-01T02:10:47.339Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-06-01T02:10:47.339Z"
-        },
-        "threadAdjustment": 11,
-        "signals": [
-          "thread: 활성 1개 중 1개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 1개 (+5)"
-        ]
-      }
+      "scannedAt": "2026-10-03T16:41:47.273Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-heic-jpg",
-      "name": "heic-jpg",
-      "path": "/Users/jean325/portfolio/projects/heic-jpg",
-      "type": "unknown",
+      "id": "users-jean325-work-src-portfolio-projects-video-trans",
+      "name": "video-trans",
+      "path": "/Users/jean325/work-src/portfolio/projects/video-trans",
+      "type": "python",
       "progress": {
-        "percentage": 80,
-        "source": "readme",
-        "confidence": "high",
+        "percentage": 20,
+        "source": "heuristic",
+        "confidence": "low",
         "signals": [
-          "README.md: explicit 80% progress"
+          "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.340Z"
+        "lastUpdated": "2026-10-03T16:41:47.297Z"
       },
       "priority": "HIGH",
       "activity": {
-        "lastCommitDate": "2026-04-09T10:00:49.000Z",
-        "lastCommitMessage": "Initial commit: macOS HEIC-to-JPEG CLI tool",
+        "lastCommitDate": "2026-04-25T01:24:10.000Z",
+        "lastCommitMessage": "docs: 포트폴리오용 README 업그레이드 및 .gitignore 보강",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 55,
-        "recentCommitDays": {
-          "2026-04-09": 1
-        }
+        "daysSinceLastCommit": 161,
+        "recentCommitDays": {}
+      },
+      "metadata": {
+        "description": "videoTrans",
+        "stack": [
+          "python"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 57,
+      "readiness": 57,
+      "nextActions": [],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.297Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-heic-jpg",
+      "name": "heic-jpg",
+      "path": "/Users/jean325/work-src/portfolio/projects/heic-jpg",
+      "type": "unknown",
+      "progress": {
+        "percentage": 100,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 100% progress"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.268Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-06-28T17:19:51.000Z",
+        "lastCommitMessage": "Merge pull request #2 from jean202/feat/rename-different",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 96,
+        "recentCommitDays": {}
       },
       "metadata": {
         "description": "heic-jpg",
         "stack": [],
         "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 63,
+      "readiness": 63,
+      "nextActions": [],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.268Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-signalmate",
+      "name": "signalmate",
+      "path": "/Users/jean325/work-src/portfolio/projects/signalmate",
+      "type": "unknown",
+      "progress": {
+        "percentage": 20,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Early-stage wording found"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.297Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-07-24T15:21:39.000Z",
+        "lastCommitMessage": "test: cover baseline scoring for slow-cadence scheduling-only conversation",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 71,
+        "recentCommitDays": {
+          "2026-07-25": 1,
+          "2026-07-24": 3,
+          "2026-07-11": 29,
+          "2026-07-10": 8,
+          "2026-07-08": 20,
+          "2026-07-06": 2,
+          "2026-07-05": 32
+        }
+      },
+      "metadata": {
+        "description": "SignalMate",
+        "stack": [
+          "Next.js",
+          "TypeScript",
+          "Docker"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 37,
+      "readiness": 37,
+      "nextActions": [],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.297Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-photo-to-blog",
+      "name": "photo-to-blog",
+      "path": "/Users/jean325/work-src/portfolio/projects/photo-to-blog",
+      "type": "unknown",
+      "progress": {
+        "percentage": 60,
+        "source": "heuristic",
+        "confidence": "low",
+        "signals": [
+          "Testing remains"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.253Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-08-04T13:59:19.000Z",
+        "lastCommitMessage": "Add length control, number grounding check, and duplicate photo handling",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 60,
+        "recentCommitDays": {
+          "2026-08-04": 2,
+          "2026-08-03": 1
+        }
+      },
+      "metadata": {
+        "description": "photo-to-blog",
+        "stack": [
+          "FastAPI"
+        ],
+        "hasReadme": true,
         "hasClaude": false,
         "hasGit": true
       },
-      "baseReadiness": 56,
-      "readiness": 70,
+      "baseReadiness": 35,
+      "readiness": 35,
+      "nextActions": [],
+      "issues": [
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.253Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-cleanera",
+      "name": "Cleanera",
+      "path": "/Users/jean325/work-src/portfolio/projects/Cleanera",
+      "type": "dart",
+      "progress": {
+        "percentage": 70,
+        "source": "readme",
+        "confidence": "high",
+        "signals": [
+          "README.md: explicit 70% progress"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.266Z"
+      },
+      "priority": "HIGH",
+      "activity": {
+        "lastCommitDate": "2026-08-19T01:09:31.000Z",
+        "lastCommitMessage": "Merge pull request #210 from ZayaMK:dev",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 45,
+        "recentCommitDays": {
+          "2026-08-19": 11,
+          "2026-08-18": 28,
+          "2026-08-17": 14,
+          "2026-08-16": 14,
+          "2026-08-15": 27,
+          "2026-08-14": 3,
+          "2026-08-13": 14,
+          "2026-08-11": 9,
+          "2026-08-10": 22,
+          "2026-08-09": 16,
+          "2026-08-08": 13,
+          "2026-08-07": 10,
+          "2026-08-06": 8,
+          "2026-08-05": 20,
+          "2026-08-04": 14,
+          "2026-08-03": 5,
+          "2026-08-02": 7,
+          "2026-08-01": 15,
+          "2026-07-31": 10,
+          "2026-07-30": 7,
+          "2026-07-29": 26,
+          "2026-07-28": 10,
+          "2026-07-27": 16,
+          "2026-07-26": 13,
+          "2026-07-25": 16,
+          "2026-07-24": 14,
+          "2026-07-21": 12,
+          "2026-07-20": 26,
+          "2026-07-19": 17,
+          "2026-07-18": 15,
+          "2026-07-17": 10,
+          "2026-07-16": 6,
+          "2026-07-15": 24,
+          "2026-07-14": 14,
+          "2026-07-13": 24,
+          "2026-07-12": 16,
+          "2026-07-11": 15,
+          "2026-07-10": 16,
+          "2026-07-09": 6,
+          "2026-07-08": 17,
+          "2026-07-07": 15,
+          "2026-07-06": 10,
+          "2026-07-05": 22
+        }
+      },
+      "metadata": {
+        "description": "Cleanera",
+        "stack": [
+          "dart",
+          "Flutter"
+        ],
+        "hasReadme": true,
+        "hasClaude": false,
+        "hasGit": true
+      },
+      "baseReadiness": 74,
+      "readiness": 74,
       "nextActions": [
-        "Homebrew 또는 설치 스크립트 정리",
-        "SwiftUI macOS/iOS 앱 확장",
-        "변환 전후 스크린샷 추가",
-        "Java CLI를 설치 가능한 형태로 정리한 뒤 SwiftUI 앱 확장 범위를 별도 문서로 분리하기",
-        "Homebrew 또는 설치 스크립트 정리"
+        "End-to-end usage screenshots or demo flow",
+        "Test coverage summary for portfolio review",
+        "Deployment/setup notes for reviewers",
+        "포트폴리오에서 검토할 수 있도록 데모 화면, 테스트 범위, Supabase 설정 흐름을 정리하기",
+        "End-to-end usage screenshots or demo flow"
       ],
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-04T02:25:56.340Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "heic-jpg",
-          "total": 4,
-          "active": 4,
-          "completed": 0,
-          "representative": {
-            "title": "(base) ➜ projects cd heic-jpg (base) ➜ heic-jpg git:(main) ✗ ls build docs heic-",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "네가 실제로 실행하는 스크립트는 [heic-jpg](/Users/jean325/portfolio/projects/heic-jpg/heic-jpg:1) 입니다.\n\n```bash\n#!/usr/bin/env bash\n```\n\n이 파일을 `bash`로 실행하라는 뜻입니다. `env`를 쓰면 현재 시스템 PATH에서 `bash`를 찾아 실행합니다.\n\n```bash\nset -euo pipefail\n```\n\n스크립트를 엄격하게 실행하는 옵션입니다.\n\n- `-e`: 명령어가 실패하면 바로 종료\n- `-u`: 정의되지 않은 변수를 쓰면 에러\n- `-o pipefail`: 파이프라인 중간 명령이 실패해도 실패로 처리\n\n```bash\nROOT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n```\n\n`heic-jpg` 스크립트가 있는 디렉터리의 절대경로를 구해서 `ROOT_DIR`에 저장합니다.\n\n예를 들면 지금은:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg\n```\n\n이 됩니다. 네가 어느 폴더에서 실행해도 프로젝트 루트를 정확히 찾기 위한 코드입니다.\n\n```bash\n\"$ROOT_DIR/scripts/build.sh\" >/dev/null\n```\n\n실행할 때마다 먼저 Java 코드를 빌드합니다.  \n`>/dev/null`은 빌드 출력 메시지를 숨기는 뜻입니다.\n\n즉 내부적으로는 이걸 실행하는 셈입니다:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg/scripts/build.sh\n```\n\n```bash\nexec java -cp \"$ROOT_DIR/build/classes\" io.github.jean202.heicjpg.Main \"$@\"\n```\n\n빌드된 Java 클래스를 실행합니다.\n\n- `java`: Java 프로그램 실행\n- `-cp \"$ROOT_DIR/build/classes\"`: 컴파일된 클래스 위치 지정\n- `io.github.jean202.heicjpg.Main`: 실행할 Java 메인 클래스\n- `\"$@\"`: 네가 `./heic-jpg` 뒤에 입력한 모든 인자를 그대로 Java 프로그램에 전달\n\n그래서 이 명령을 입력하면:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```\n\n마지막 줄의 `\"$@\"` 자리에 저 경로가 들어갑니다.\n\n`.mov`를 건너뛰는 조건은 shell script가 아니라 Java 코드 쪽에 이미 들어가 있습니다. 디렉터리를 받으면 내부에서 `.heic`, `.heif`만 골라서 변환하고 `.mov`는 무시합니다. 그래서 실제 변환 명령은 그대로 이거면 됩니다:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```",
-            "lastActivityAt": "2026-06-02T13:44:24.278Z"
-          },
-          "activeThreads": [
-            {
-              "title": "(base) ➜ projects cd heic-jpg (base) ➜ heic-jpg git:(main) ✗ ls build docs heic-",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "네가 실제로 실행하는 스크립트는 [heic-jpg](/Users/jean325/portfolio/projects/heic-jpg/heic-jpg:1) 입니다.\n\n```bash\n#!/usr/bin/env bash\n```\n\n이 파일을 `bash`로 실행하라는 뜻입니다. `env`를 쓰면 현재 시스템 PATH에서 `bash`를 찾아 실행합니다.\n\n```bash\nset -euo pipefail\n```\n\n스크립트를 엄격하게 실행하는 옵션입니다.\n\n- `-e`: 명령어가 실패하면 바로 종료\n- `-u`: 정의되지 않은 변수를 쓰면 에러\n- `-o pipefail`: 파이프라인 중간 명령이 실패해도 실패로 처리\n\n```bash\nROOT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n```\n\n`heic-jpg` 스크립트가 있는 디렉터리의 절대경로를 구해서 `ROOT_DIR`에 저장합니다.\n\n예를 들면 지금은:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg\n```\n\n이 됩니다. 네가 어느 폴더에서 실행해도 프로젝트 루트를 정확히 찾기 위한 코드입니다.\n\n```bash\n\"$ROOT_DIR/scripts/build.sh\" >/dev/null\n```\n\n실행할 때마다 먼저 Java 코드를 빌드합니다.  \n`>/dev/null`은 빌드 출력 메시지를 숨기는 뜻입니다.\n\n즉 내부적으로는 이걸 실행하는 셈입니다:\n\n```bash\n/Users/jean325/portfolio/projects/heic-jpg/scripts/build.sh\n```\n\n```bash\nexec java -cp \"$ROOT_DIR/build/classes\" io.github.jean202.heicjpg.Main \"$@\"\n```\n\n빌드된 Java 클래스를 실행합니다.\n\n- `java`: Java 프로그램 실행\n- `-cp \"$ROOT_DIR/build/classes\"`: 컴파일된 클래스 위치 지정\n- `io.github.jean202.heicjpg.Main`: 실행할 Java 메인 클래스\n- `\"$@\"`: 네가 `./heic-jpg` 뒤에 입력한 모든 인자를 그대로 Java 프로그램에 전달\n\n그래서 이 명령을 입력하면:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```\n\n마지막 줄의 `\"$@\"` 자리에 저 경로가 들어갑니다.\n\n`.mov`를 건너뛰는 조건은 shell script가 아니라 Java 코드 쪽에 이미 들어가 있습니다. 디렉터리를 받으면 내부에서 `.heic`, `.heif`만 골라서 변환하고 `.mov`는 무시합니다. 그래서 실제 변환 명령은 그대로 이거면 됩니다:\n\n```bash\n./heic-jpg \"/Users/jean325/Desktop/jhkim2/콘텐츠/블로그/르덴헤어\"\n```",
-              "lastActivityAt": "2026-06-02T13:44:24.278Z"
-            },
-            {
-              "title": "사용자 홈 디렉터리 내에 /.agentic-coding-toolkit 폴더를 생성하고(/.claude 폴더 옆에 위치), 이 ZIP 파일의 압축",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "이 채팅에서 제가 세션을 직접 종료할 수는 없습니다. 터미널에서 `exit` 입력하시면 됩니다.",
-              "lastActivityAt": "2026-04-06T06:11:49.602Z"
-            },
-            {
-              "title": "cd ~/.agentic-coding-toolkit scripts/install.sh --tool claude Creating Claude Co",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "설치는 정상이고, 잘못된 건 실행 방식입니다.\n\n`act:workflow:spec`는 `zsh`에서 실행하는 일반 셸 명령이 아닙니다. Claude Code가 읽는 slash command라서, Claude Code 세션 안에서 `/act:workflow:spec \"버튼 생성\"`처럼 써야 합니다. 이 점은 [README](/Users/admin/.agentic-coding-toolkit/README.md#L49)와 [README](/Users/admin/.agentic-coding-toolkit/README.md#L141), 그리고 명령 정의 파일 [spec.md](/Users/admin/.agentic-coding-toolkit/commands/act/workflow/spec.md#L2)에 그대로 나와 있습니다.\n\n지금은 두 가지가 어긋난 상태였습니다.\n1. `zsh`에서 실행했다.\n2. 명령 앞의 `/`도 빠졌다.\n\n올바른 사용 순서는 이렇습니다.\n1. Claude Code를 프로젝트 폴더에서 엽니다.\n2. 이미 켜져 있었다면 한 번 재시작합니다.\n3. Claude Code 안에서 `/act:help`로 설치 인식 여부를 확인합니다.\n4. 그다음 `/act:workflow:spec \"버튼 생성\"`처럼 실행합니다.\n\n추가로, 이번 설치는 `./scripts/install.sh --tool claude`라서 `~/.claude/commands`에만 연결되었습니다. 즉 Claude Code용입니다. Codex나 일반 터미널에서는 그대로 인식되지 않습니다. 원하시면 제가 Claude Code 기준으로 실제 실행 예시를 더 구체적으로 적어드리겠습니다.",
-              "lastActivityAt": "2026-04-02T14:53:20.836Z"
-            },
-            {
-              "title": "gpt에 아이폰에서 찍은 사진 업로드 하려고 하니까 자꾸 heic파일 처리 못한다고 해서 프로그램 하나 만들려고. 어떤 언어로 만들어야 내 포트",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "원인은 `쇼폼` 오타였습니다. 실제 폴더명은 `쇼폼`이 아니라 `숏폼`입니다. 방금 `--dry-run`으로 확인해 보니 이 경로는 정상 인식됩니다.\n\n파일별로 바로 변환하려면 이 명령을 쓰면 됩니다.\n\n```bash\n./heic-jpg \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_7261.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_7262.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_7263.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_7264.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_7476.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_8761.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_8762.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_8763.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_8764.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_8765.HEIC\" \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼/IMG_8766.HEIC\" \\\n  --output-dir \"/Users/admin/Desktop/Jinha/personal/숏폼/converted\"\n```\n\n폴더째 넘기고 싶으면 더 짧게도 됩니다.\n\n```bash\n./heic-jpg \\\n  \"/Users/admin/Desktop/Jinha/personal/숏폼\" \\\n  --output-dir \"/Users/admin/Desktop/Jinha/personal/숏폼/converted\"\n```\n\n이 두 번째 명령은 결과가 `converted/숏폼/*.jpg`로 들어갑니다. 바로 `converted/*.jpg`로 받고 싶으면 첫 번째 명령을 쓰면 됩니다.",
-              "lastActivityAt": "2026-04-01T16:08:37.393Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-06-02T13:44:24.278Z"
-        },
-        "threadAdjustment": 14,
-        "signals": [
-          "thread: 활성 4개 중 4개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 4개 (+8)"
-        ]
-      }
+      "scannedAt": "2026-10-03T16:41:47.266Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-webhook-notify",
+      "id": "users-jean325-work-src-portfolio-projects-webhook-notify",
       "name": "webhook-notify",
-      "path": "/Users/jean325/portfolio/projects/webhook-notify",
+      "path": "/Users/jean325/work-src/portfolio/projects/webhook-notify",
       "type": "kotlin",
       "progress": {
         "percentage": 85,
@@ -649,20 +577,17 @@
           "Deployment/release completion mentioned",
           "Early-stage wording found"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.339Z"
+        "lastUpdated": "2026-10-03T16:41:47.269Z"
       },
       "priority": "HIGH",
       "activity": {
-        "lastCommitDate": "2026-04-09T12:02:31.000Z",
-        "lastCommitMessage": "docs: update README with Discord channel and Spring AOP status",
+        "lastCommitDate": "2026-08-23T15:35:58.000Z",
+        "lastCommitMessage": "build: maven-publish 추가하고 0.1.0을 GitHub Packages에 발행",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 55,
+        "daysSinceLastCommit": 41,
         "recentCommitDays": {
-          "2026-04-09": 3,
-          "2026-04-05": 1,
-          "2026-03-31": 1,
-          "2026-03-27": 1
+          "2026-08-24": 1
         }
       },
       "metadata": {
@@ -672,52 +597,21 @@
           "Spring"
         ],
         "hasReadme": true,
-        "hasClaude": false,
+        "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 67,
-      "readiness": 75,
+      "baseReadiness": 77,
+      "readiness": 77,
       "nextActions": [],
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-04T02:25:56.339Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "webhook-notify",
-          "total": 1,
-          "active": 1,
-          "completed": 0,
-          "representative": {
-            "title": "문서나 자료들 보고 다음 작업 뭐가 좋을지 분석해봐",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "코어 API에 조건부 발송을 실제로 연결했습니다. [WebhookNotifier.java](/Users/admin/IdeaProjects/webhook-notify/webhook-notify-core/src/main/java/com/jean202/webhooknotify/core/WebhookNotifier.java#L8) 에 `when(boolean)`, `when(BooleanSupplier)`, `when(NotifyCondition, Map)`, `when(String, Map)`를 추가했고, 반환 객체에서 `send(...)`를 호출하면 조건이 참일 때만 기존 전송 경로를 탑니다. false면 no-op이고 `boolean` 결과로 실제 발송 여부를 돌려줍니다.\n\n조건식/템플릿 해석은 [ValueResolver.java](/Users/admin/IdeaProjects/webhook-notify/webhook-notify-core/src/main/java/com/jean202/webhooknotify/core/ValueResolver.java#L10) 로 공통화했고, [README.md](/Users/admin/IdeaProjects/webhook-notify/README.md#L27) 와 [getting-started.md](/Users/admin/IdeaProjects/webhook-notify/docs/getting-started.md#L32) 도 `notifier.when(...).send(...)` 기준으로 갱신했습니다. 테스트는 [WebhookNotifierTest.java](/Users/admin/IdeaProjects/webhook-notify/webhook-notify-core/src/test/java/com/jean202/webhooknotify/core/WebhookNotifierTest.java#L10) 에 조건부 발송 케이스를 추가했고, 전체 25개 테스트가 모두 통과했습니다.\n\n검증은 `javac` 컴파일과 로컬 JUnit 실행으로 했습니다. 로컬 `gradle` 설치는 여전히 네이티브 라이브러리 문제로 못 썼습니다.",
-            "lastActivityAt": "2026-03-30T11:58:59.259Z"
-          },
-          "activeThreads": [
-            {
-              "title": "문서나 자료들 보고 다음 작업 뭐가 좋을지 분석해봐",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "코어 API에 조건부 발송을 실제로 연결했습니다. [WebhookNotifier.java](/Users/admin/IdeaProjects/webhook-notify/webhook-notify-core/src/main/java/com/jean202/webhooknotify/core/WebhookNotifier.java#L8) 에 `when(boolean)`, `when(BooleanSupplier)`, `when(NotifyCondition, Map)`, `when(String, Map)`를 추가했고, 반환 객체에서 `send(...)`를 호출하면 조건이 참일 때만 기존 전송 경로를 탑니다. false면 no-op이고 `boolean` 결과로 실제 발송 여부를 돌려줍니다.\n\n조건식/템플릿 해석은 [ValueResolver.java](/Users/admin/IdeaProjects/webhook-notify/webhook-notify-core/src/main/java/com/jean202/webhooknotify/core/ValueResolver.java#L10) 로 공통화했고, [README.md](/Users/admin/IdeaProjects/webhook-notify/README.md#L27) 와 [getting-started.md](/Users/admin/IdeaProjects/webhook-notify/docs/getting-started.md#L32) 도 `notifier.when(...).send(...)` 기준으로 갱신했습니다. 테스트는 [WebhookNotifierTest.java](/Users/admin/IdeaProjects/webhook-notify/webhook-notify-core/src/test/java/com/jean202/webhooknotify/core/WebhookNotifierTest.java#L10) 에 조건부 발송 케이스를 추가했고, 전체 25개 테스트가 모두 통과했습니다.\n\n검증은 `javac` 컴파일과 로컬 JUnit 실행으로 했습니다. 로컬 `gradle` 설치는 여전히 네이티브 라이브러리 문제로 못 썼습니다.",
-              "lastActivityAt": "2026-03-30T11:58:59.259Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-03-30T11:58:59.259Z"
-        },
-        "threadAdjustment": 8,
-        "signals": [
-          "thread: 활성 1개 중 1개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 1개 (+2)"
-        ]
-      }
+      "scannedAt": "2026-10-03T16:41:47.269Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-card-mizer",
+      "id": "users-jean325-work-src-portfolio-projects-card-mizer",
       "name": "card-mizer",
-      "path": "/Users/jean325/portfolio/projects/card-mizer",
+      "path": "/Users/jean325/work-src/portfolio/projects/card-mizer",
       "type": "kotlin",
       "progress": {
         "percentage": 60,
@@ -728,23 +622,17 @@
           "Early-stage wording found",
           "In-progress wording found"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.342Z"
+        "lastUpdated": "2026-10-03T16:41:47.275Z"
       },
       "priority": "HIGH",
       "activity": {
-        "lastCommitDate": "2026-04-18T12:46:16.000Z",
-        "lastCommitMessage": "build: add CI and harden validation coverage",
+        "lastCommitDate": "2026-09-08T09:26:14.000Z",
+        "lastCommitMessage": "feat: add card profitability and missed-benefit analytics",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 46,
+        "daysSinceLastCommit": 25,
         "recentCommitDays": {
-          "2026-04-18": 2,
-          "2026-04-09": 1,
-          "2026-04-05": 4,
-          "2026-04-04": 2,
-          "2026-04-01": 1,
-          "2026-03-31": 2,
-          "2026-03-27": 1
+          "2026-09-08": 1
         }
       },
       "metadata": {
@@ -755,451 +643,28 @@
           "Docker"
         ],
         "hasReadme": true,
-        "hasClaude": false,
+        "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 62,
+      "baseReadiness": 72,
       "readiness": 72,
       "nextActions": [],
-      "issues": [
-        "30일 이상 커밋 없음"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.344Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "card-mizer",
-          "total": 5,
-          "active": 5,
-          "completed": 0,
-          "representative": {
-            "title": "기존 앱/웹 혹은 앱 웹의 부가 기능(예: 카카오페이에서 제공해 주는 이번달 ㅇㅇ카드 실적이 모자라요 와 같은 알림)이 내가 개발하고자 하는 이",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "구현했습니다. 새 엔드포인트는:\n\n`GET /api/missed-benefits?yearMonth=2026-03`\n\n응답은 월간 요약과 거래별 비교를 같이 내려줍니다:\n- `totalMissedBenefitAmount`\n- `missedTransactionCount`\n- `totalActualBenefitAmount`\n- `totalBestBenefitAmount`\n- `items[]`: 실제 카드, 실제 혜택, 최적 카드, 최적 혜택, 놓친 금액\n\n핵심 로직은 [GetMissedBenefitsService.kt](/Users/jean325/portfolio/projects/card-mizer/card-core/src/main/kotlin/com/jean202/cardmizer/core/application/GetMissedBenefitsService.kt)에 넣었습니다. 후보 카드 비교는 “월말 기준”이 아니라 **해당 거래가 발생한 시점까지의 카드 사용 이력**만 반영해서 월/연 한도 계산이 덜 왜곡되게 했습니다.\n\nAPI 컨트롤러는 [MissedBenefitsController.kt](/Users/jean325/portfolio/projects/card-mizer/card-api/src/main/kotlin/com/jean202/cardmizer/api/missedbenefits/MissedBenefitsController.kt)에 추가했고, 데모 UI에도 “놓친 혜택 리포트” 섹션을 붙였습니다.\n\n검증 완료:\n- `./gradlew test`\n- `./gradlew :card-api:postgresIntegrationTest`\n- 로컬에서 `/api/missed-benefits?yearMonth=2026-03` 응답 확인\n- 인앱 브라우저에서 데모 UI 렌더링 확인\n\n검증 후 서버 프로세스는 종료해둔 상태입니다. UI는 다시 `./gradlew :card-api:bootRun`으로 띄우면 `http://localhost:8080`에서 볼 수 있습니다.",
-            "lastActivityAt": "2026-05-09T10:06:47.654Z"
-          },
-          "activeThreads": [
-            {
-              "title": "기존 앱/웹 혹은 앱 웹의 부가 기능(예: 카카오페이에서 제공해 주는 이번달 ㅇㅇ카드 실적이 모자라요 와 같은 알림)이 내가 개발하고자 하는 이",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "구현했습니다. 새 엔드포인트는:\n\n`GET /api/missed-benefits?yearMonth=2026-03`\n\n응답은 월간 요약과 거래별 비교를 같이 내려줍니다:\n- `totalMissedBenefitAmount`\n- `missedTransactionCount`\n- `totalActualBenefitAmount`\n- `totalBestBenefitAmount`\n- `items[]`: 실제 카드, 실제 혜택, 최적 카드, 최적 혜택, 놓친 금액\n\n핵심 로직은 [GetMissedBenefitsService.kt](/Users/jean325/portfolio/projects/card-mizer/card-core/src/main/kotlin/com/jean202/cardmizer/core/application/GetMissedBenefitsService.kt)에 넣었습니다. 후보 카드 비교는 “월말 기준”이 아니라 **해당 거래가 발생한 시점까지의 카드 사용 이력**만 반영해서 월/연 한도 계산이 덜 왜곡되게 했습니다.\n\nAPI 컨트롤러는 [MissedBenefitsController.kt](/Users/jean325/portfolio/projects/card-mizer/card-api/src/main/kotlin/com/jean202/cardmizer/api/missedbenefits/MissedBenefitsController.kt)에 추가했고, 데모 UI에도 “놓친 혜택 리포트” 섹션을 붙였습니다.\n\n검증 완료:\n- `./gradlew test`\n- `./gradlew :card-api:postgresIntegrationTest`\n- 로컬에서 `/api/missed-benefits?yearMonth=2026-03` 응답 확인\n- 인앱 브라우저에서 데모 UI 렌더링 확인\n\n검증 후 서버 프로세스는 종료해둔 상태입니다. UI는 다시 `./gradlew :card-api:bootRun`으로 띄우면 `http://localhost:8080`에서 볼 수 있습니다.",
-              "lastActivityAt": "2026-05-09T10:06:47.654Z"
-            },
-            {
-              "title": "# card-mizer 프로젝트 인계 프롬프트 ## 프로젝트 개요 - 위치: /Users/jean325/IdeaProjects/study/car",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "커밋하고 `origin/main`에 푸시했습니다.\n\n커밋:\n`5f77a3e build: add CI and harden validation coverage`\n\n현재 워크트리에는 커밋 대상에서 제외한 `.agents/`만 untracked로 남아 있습니다.\n\n::git-stage{cwd=\"/Users/jean325/IdeaProjects/study/card-mizer\"}\n::git-commit{cwd=\"/Users/jean325/IdeaProjects/study/card-mizer\"}\n::git-push{cwd=\"/Users/jean325/IdeaProjects/study/card-mizer\" branch=\"main\"}",
-              "lastActivityAt": "2026-04-18T12:46:35.597Z"
-            },
-            {
-              "title": "아까 여기서 하던 작업 있는데 기억나?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "종료합니다.",
-              "lastActivityAt": "2026-03-31T08:00:54.783Z"
-            },
-            {
-              "title": "지금 프로젝트 상황 분석해봐",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "`8080`에서 떠 있던 건 이 앱이 아니었습니다. 데모 서버를 다른 포트로 띄워서 그 화면을 직접 캡처하겠습니다.",
-              "lastActivityAt": "2026-03-31T03:43:39.729Z"
-            },
-            {
-              "title": "먼저 /Users/admin/IdeaProjects/jean202.github.io/docs/CARD_SERVICE_NEXT_SESSION_PR",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "데모 UI를 붙였습니다. 루트 화면은 [index.html](/Users/admin/IdeaProjects/card-mizer/card-api/src/main/resources/static/index.html#L1), 스타일은 [app.css](/Users/admin/IdeaProjects/card-mizer/card-api/src/main/resources/static/app.css#L1), 동작은 [app.js](/Users/admin/IdeaProjects/card-mizer/card-api/src/main/resources/static/app.js#L1)에 있습니다. 첫 로드 시 데모 시나리오를 불러오고, 선택한 시나리오의 요청값을 폼에 채운 뒤 `POST /api/recommendations`와 `GET /api/performance-overview`를 같이 호출해서 추천 결과와 실적 현황을 한 화면에 보여줍니다.\n\n데모 데이터는 이미 넣어둔 [recommendation-scenarios.yml](/Users/admin/IdeaProjects/card-mizer/card-api/src/main/resources/demo/recommendation-scenarios.yml#L1)을 그대로 쓰고, 목록 조회는 [DemoScenarioController.java](/Users/admin/IdeaProjects/card-mizer/card-api/src/main/java/com/jean202/cardmizer/api/demo/DemoScenarioController.java#L1)에서 제공합니다. 검증은 `./gradlew test --no-daemon -g .gradle`로 통과했고, 실제 앱도 `8081` 포트에서 띄워 `/`와 `/api/demo-scenarios/recommendations` 응답을 확인했습니다. 참고로 제 확인 시점에는 `8080`이 이미 사용 중이라 `8081`로 띄웠습니다.\n\n실행은 보통 이렇게 하면 됩니다.\n\n```bash\ncd /Users/admin/IdeaProjects/card-mizer\n./gradlew bootRun --args='--server.port=8081'\n```\n\n그다음 브라우저에서 [http://127.0.0.1:8081/](http://127.0.0.1:8081/)로 들어가면 됩니다.",
-              "lastActivityAt": "2026-03-30T06:40:06.258Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-05-09T10:06:47.654Z"
-        },
-        "threadAdjustment": 10,
-        "signals": [
-          "thread: 활성 5개 중 5개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 5개 (+4)"
-        ]
-      }
+      "issues": [],
+      "scannedAt": "2026-10-03T16:41:47.275Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-video-trans",
-      "name": "video-trans",
-      "path": "/Users/jean325/portfolio/projects/video-trans",
-      "type": "python",
-      "progress": {
-        "percentage": 20,
-        "source": "heuristic",
-        "confidence": "low",
-        "signals": [
-          "Early-stage wording found"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.338Z"
-      },
-      "priority": "HIGH",
-      "activity": {
-        "lastCommitDate": "2026-04-25T01:24:10.000Z",
-        "lastCommitMessage": "docs: 포트폴리오용 README 업그레이드 및 .gitignore 보강",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 40,
-        "recentCommitDays": {
-          "2026-04-25": 1,
-          "2026-04-09": 1,
-          "2026-04-05": 1,
-          "2026-03-31": 1,
-          "2026-03-22": 1
-        }
-      },
-      "metadata": {
-        "description": "videoTrans",
-        "stack": [
-          "python"
-        ],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 54,
-      "readiness": 54,
-      "nextActions": [],
-      "issues": [
-        "30일 이상 커밋 없음"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.338Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "video-trans",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-portfolio-projects-signalmate",
-      "name": "signalmate",
-      "path": "/Users/jean325/portfolio/projects/signalmate",
+      "id": "users-jean325-work-src-portfolio-projects-threadkeeper-stub",
+      "name": "threadkeeper.stub",
+      "path": "/Users/jean325/work-src/portfolio/projects/threadkeeper.stub",
       "type": "unknown",
       "progress": {
-        "percentage": 20,
-        "source": "heuristic",
-        "confidence": "low",
-        "signals": [
-          "Early-stage wording found"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.355Z"
-      },
-      "priority": "HIGH",
-      "activity": {
-        "lastCommitDate": "2026-05-17T10:12:34.000Z",
-        "lastCommitMessage": "fix: make warm_tone and emoji_engagement mutually exclusive to avoid inflated positive count",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 17,
-        "recentCommitDays": {
-          "2026-05-17": 22,
-          "2026-05-15": 1,
-          "2026-05-14": 4,
-          "2026-05-08": 1,
-          "2026-05-07": 3,
-          "2026-05-04": 1,
-          "2026-05-03": 3,
-          "2026-04-13": 1,
-          "2026-04-10": 1,
-          "2026-04-09": 3
-        }
-      },
-      "metadata": {
-        "description": "SignalMate",
-        "stack": [
-          "Next.js",
-          "TypeScript"
-        ],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 34,
-      "readiness": 44,
-      "nextActions": [],
-      "issues": [],
-      "scannedAt": "2026-06-04T02:25:56.355Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "signalmate",
-          "total": 5,
-          "active": 5,
-          "completed": 0,
-          "representative": {
-            "title": "로그아웃 리다이렉트 URI 뭘로 설정해야 해?",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "있습니다.\n\n`git status --short` 기준 미커밋 변경사항은 추적되지 않은 폴더 하나입니다.\n\n```txt\n?? landing-page-nextjs/lib/ai/agent/__tests__/\n```\n\n방금 수정한 `.env.local`은 Git에서 ignore 중입니다.\n\n```txt\n!! landing-page-nextjs/.env.local\n```\n\n그래서 커밋 대상 변경으로는 안 잡히고, `git diff --stat`도 비어 있습니다.",
-            "lastActivityAt": "2026-05-17T09:28:54.160Z"
-          },
-          "activeThreads": [
-            {
-              "title": "로그아웃 리다이렉트 URI 뭘로 설정해야 해?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "있습니다.\n\n`git status --short` 기준 미커밋 변경사항은 추적되지 않은 폴더 하나입니다.\n\n```txt\n?? landing-page-nextjs/lib/ai/agent/__tests__/\n```\n\n방금 수정한 `.env.local`은 Git에서 ignore 중입니다.\n\n```txt\n!! landing-page-nextjs/.env.local\n```\n\n그래서 커밋 대상 변경으로는 안 잡히고, `git diff --stat`도 비어 있습니다.",
-              "lastActivityAt": "2026-05-17T09:28:54.160Z"
-            },
-            {
-              "title": "뭘 할 차례?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "진행했습니다.\n\n이번 변경으로 규칙 엔진에 4개 기준선 점수가 생겼습니다: `otherInitiative`, `responseCadence`, `questionReciprocity`, `schedulingCommitment`, 그리고 종합 `overall`. 시간 정보가 있는 카카오톡/OCR 로그에서는 내 메시지 이후 상대 답장까지의 평균 지연도 계산합니다.\n\n반영된 동작:\n- 평균 답장 지연이 하루를 넘고 응답쌍이 2회 이상이면 `slow_response_cadence` 주의 시그널 추가\n- `match_patterns` 에이전트 도구가 규칙 기반 시그널뿐 아니라 기준선 점수도 반환\n- `agent-v1` 도구 설명도 응답 지연/일정 확정도 기준을 보도록 갱신\n- 시간 있는 대화 fixture와 기준선 점수 테스트 추가\n\n검증 완료:\n\n```bash\nnpm test\n# 13 files, 84 tests passed\n\nnpm run build\n# production build passed\n```\n\n주요 파일:\n- [rule-based-analysis.ts](/Users/jean325/portfolio/projects/signalmate/landing-page-nextjs/lib/rule-based-analysis.ts)\n- [pattern-matcher.ts](/Users/jean325/portfolio/projects/signalmate/landing-page-nextjs/lib/ai/agent/tools/pattern-matcher.ts)\n- [rule-analysis-cases.ts](/Users/jean325/portfolio/projects/signalmate/landing-page-nextjs/test/fixtures/rule-analysis-cases.ts)\n- [rule-based-analysis.test.ts](/Users/jean325/portfolio/projects/signalmate/landing-page-nextjs/test/rule-based-analysis.test.ts)",
-              "lastActivityAt": "2026-05-16T10:07:34.108Z"
-            },
-            {
-              "title": "이어서 작업할만한거?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "happy-path API 테스트 보강했고 PR 브랜치에 push했습니다.\n\n추가한 성공 케이스:\n- OCR route\n  - JSON base64 payload 성공 응답\n  - multipart image upload 성공 및 base64 변환 검증\n- Payment routes\n  - checkout 성공: pending payment 생성 + Toss checkout metadata 응답\n  - confirm 성공: Toss 승인 성공 + `confirmPayment` 호출\n- SSE stream route\n  - inline conversation에서 `rule_complete` → `complete` 이벤트 스트리밍 검증\n\n검증:\n- targeted route tests: 3 files, 19 tests passed\n- `npm test`: 12 files, 81 tests passed\n- `npm run build`: passed\n\n커밋/푸시:\n- `92de1bb test: cover API route success paths`\n- PR #1 업데이트됨: https://github.com/jean202/signalmate/pull/1\n\n::git-stage{cwd=\"/Users/jean325/portfolio/projects/signalmate\"}\n::git-commit{cwd=\"/Users/jean325/portfolio/projects/signalmate\"}\n::git-push{cwd=\"/Users/jean325/portfolio/projects/signalmate\" branch=\"codex/ocr-upload-api-hardening\"}",
-              "lastActivityAt": "2026-05-15T04:20:44.553Z"
-            },
-            {
-              "title": "llm 추론 부분 보강해",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "3번, 중복 코드 정리까지 반영했습니다.\n\n`hybrid-analysis-runner.ts`로 rule/RAG/시그널 강화/추천 생성/품질 게이트/fallback 기록을 모으고, 호출부는 얇게 줄였습니다.\n\n변경 요약:\n- `analysis-engine.ts`: 29줄짜리 라우터로 축소\n- SSE `stream/route.ts`: 이벤트 emit, 저장, 최종 complete 처리만 담당\n- 기존 fallback/품질 게이트/관측성 기록은 runner에서 공통 처리\n- SSE 에러는 계속 사용자에게 일반 메시지만 노출\n\n검증:\n- `npx tsc --noEmit` 통과\n- `npm test` 통과: 6 files, 43 tests\n- `git diff --check` 통과",
-              "lastActivityAt": "2026-05-04T14:34:05.263Z"
-            },
-            {
-              "title": "어떤 작업을 해야 할까?",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "가장 실용적인 방식은 `API`부터 테스트하지 말고, 순수 함수인 `buildRuleBasedAnalysis()`를 직접 때리는 `fixture corpus + regression test`를 먼저 만드는 겁니다. 지금 테스트 러너는 없고 [package.json](/Users/admin/IdeaProjects/signalmate/landing-page-nextjs/package.json)에도 `test` 스크립트가 없습니다. 규칙 핵심도 [rule-based-analysis.ts](/Users/admin/IdeaProjects/signalmate/landing-page-nextjs/lib/rule-based-analysis.ts#L160) 하나에 모여 있어서, 여기부터 고정하는 게 맞습니다.\n\n**구조**\n- `landing-page-nextjs/test/fixtures/rule-analysis-cases.ts`\n- `landing-page-nextjs/test/helpers/make-conversation.ts`\n- `landing-page-nextjs/test/rule-based-analysis.test.ts`\n\n`fixture`는 JSON보다 TS가 낫습니다. 이유는 enum 비슷한 값, 설명 주석, 기대값 타입을 같이 들고 갈 수 있어서입니다.\n\n```ts\ntype AnalysisCase = {\n  name: string;\n  input: {\n    relationshipStage: string;\n    meetingChannel: string;\n    userGoal: string;\n    rawText: string;\n    messages: Array<{ senderRole: \"self\" | \"other\" | \"unknown\"; messageText: string }>;\n  };\n  expect: {\n    recommendedAction: \"keep_light\" | \"suggest_date\" | \"wait_for_response\" | \"slow_down\" | \"consider_stopping\";\n    counts: { positive: number; ambiguous: number; caution: number };\n    includeSignalKeys: string[];\n    excludeSignalKeys?: string[];\n    summaryIncludes?: string[];\n  };\n};\n```\n\n**테스트 원칙**\n- `exact`로 고정할 것: `recommendedAction`, 신호 카운트, 포함/제외되어야 하는 `signalKey`\n- `partial`로 볼 것: `overallSummary`, 추천 문구 본문\n- 무시할 것: `id`, `createdAt`, `displayOrder` 전체 스냅샷\n- 추천 문구는 전체 문자열 일치보다 “주제 키워드 포함”, “recommendationType 3개 생성” 정도로 보는 편이 덜 brittle 합니다\n\n테스트 본문은 이런 식이면 충분합니다.\n\n```ts\nconst result = buildRuleBasedAnalysis(makeConversation(fixture.input));\n\nexpect(result.recommendedAction).toBe(fixture.expect.recommendedAction);\nexpect(result.positiveSignalCount).toBe(fixture.expect.counts.positive);\nexpect(result.ambiguousSignalCount).toBe(fixture.expect.counts.ambiguous);\nexpect(result.cautionSignalCount).toBe(fixture.expect.counts.caution);\nexpect(result.signals.map((s) => s.signalKey)).toEqual(\n  expect.arrayContaining(fixture.expect.includeSignalKeys),\n);\n```\n\n**처음 넣을 샘플 케이스**\n- 애프터 가능성은 있지만 일정 확정은 약한 대화\n  기대: `keep_light`, `date_specificity` 포함\n- 미래 지향 표현이 분명하고 대화도 잘 이어지는 대화\n  기대: `suggest_date`, `future_reference` 포함\n- 내가 마지막으로 보냈고 아직 답이 없는 대화\n  기대: `wait_for_response`, `awaiting_reply` 포함\n- 상대가 계속 답은 하지만 질문을 안 돌려주는 대화\n  기대: `question_balance` 포함\n- 메시지가 너무 짧은 초기 대화\n  기대: `sample_size` 또는 낮은 confidence\n- 명확한 날짜/시간이 이미 나온 대화\n  기대: `date_specificity` 제외\n- 완곡한 회피 표현이 여러 번 나오는 대화\n  기대: `hedged_replies` 포함\n\n**중요한 점**\n지금 코드에는 `consider_stopping` 분기가 사실상 안 닿을 가능성이 큽니다. 액션 조건은 `cautionCount >= 2`인데 [rule-based-analysis.ts](/Users/admin/IdeaProjects/signalmate/landing-page-nextjs/lib/rule-based-analysis.ts#L193), 경고 신호 생성은 `if / else if / else if` 체인이라 최대 1개만 쌓입니다 [rule-based-analysis.ts](/Users/admin/IdeaProjects/signalmate/landing-page-nextjs/lib/rule-based-analysis.ts#L427). 샘플 대화 세트를 만들면 이런 죽은 분기가 바로 드러납니다.\n\n실행 순서는 이게 좋습니다.\n1. `Vitest` 추가\n2. fixture 6~8개 작성\n3. `buildRuleBasedAnalysis()` 단위 테스트 작성\n4. 마지막에 `POST /conversations/:id/analyses` API smoke test 1개만 추가\n\n원하면 다음 턴에 제가 바로 `Vitest + fixture + 첫 회귀 테스트 세트`까지 깔아드릴 수 있습니다.",
-              "lastActivityAt": "2026-04-01T14:45:31.671Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-05-17T09:28:54.160Z"
-        },
-        "threadAdjustment": 10,
-        "signals": [
-          "thread: 활성 5개 중 5개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 5개 (+4)"
-        ]
-      }
-    },
-    {
-      "id": "users-jean325-pycharmprojects-ramen-demand-forecast",
-      "name": "ramen-demand-forecast",
-      "path": "/Users/jean325/PycharmProjects/ramen-demand-forecast",
-      "type": "python",
-      "progress": {
-        "percentage": 95,
-        "source": "readme",
-        "confidence": "high",
-        "signals": [
-          "README.md: explicit 95% progress"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.345Z"
-      },
-      "priority": "MEDIUM",
-      "activity": {
-        "lastCommitDate": "2026-04-26T02:03:16.000Z",
-        "lastCommitMessage": "feat: Claude API 기반 AI 해설 생성 기능 추가",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 39,
-        "recentCommitDays": {
-          "2026-04-26": 3,
-          "2026-04-18": 1
-        }
-      },
-      "metadata": {
-        "description": "라면류 수요예측 파이프라인",
-        "stack": [
-          "python"
-        ],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 79,
-      "readiness": 79,
-      "nextActions": [
-        "공개 샘플 데이터셋 추가",
-        "원본 거래 데이터 없이도 파이프라인 구조를 실행해볼 수 있는 작은 샘플 데이터셋 추가하기",
-        "공개 샘플 데이터셋 추가",
-        "원본 거래 데이터 없이도 파이프라인 구조를 실행해볼 수 있는 작은 샘플 데이터셋 추가하기"
-      ],
-      "issues": [
-        "30일 이상 커밋 없음"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.345Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "ramen-demand-forecast",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-portfolio-projects-booking-reservation-sync-monitor",
-      "name": "booking-reservation-sync-monitor",
-      "path": "/Users/jean325/portfolio/projects/booking-reservation-sync-monitor",
-      "type": "java",
-      "progress": {
         "percentage": null,
         "source": "unknown",
         "confidence": "low",
         "signals": [
           "No reliable progress signal found"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.348Z"
-      },
-      "priority": "MEDIUM",
-      "activity": {
-        "lastCommitDate": "2026-06-01T16:14:58.000Z",
-        "lastCommitMessage": "Build Night Auditor shift-helper UI",
-        "commitsInLastWeek": 6,
-        "isActive": true,
-        "daysSinceLastCommit": 2,
-        "recentCommitDays": {
-          "2026-06-02": 3,
-          "2026-06-01": 3,
-          "2026-05-19": 1
-        }
-      },
-      "metadata": {
-        "description": "Booking Reservation Sync Monitor",
-        "stack": [
-          "java",
-          "Spring"
-        ],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 60,
-      "readiness": 69,
-      "nextActions": [],
-      "issues": [
-        "진행률 판단 불가"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.349Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "booking-reservation-sync-monitor",
-          "total": 1,
-          "active": 1,
-          "completed": 0,
-          "representative": {
-            "title": "Review this repository for an interview MVP. Project: booking-reservation-sync-m",
-            "status": "ACTIVE",
-            "priority": "MEDIUM",
-            "currentNextAction": "## Project Name\n\nBooking Reservation Sync Monitor\n\n## Tech Stack\n\nJava 17, Spring Boot 3.2, Spring Web, Spring Data JPA, H2 in-memory database, Maven, SpringDoc OpenAPI / Swagger UI, JUnit 5.\n\n## Why I Created This Project\n\nI built this as an interview MVP for a Java backend developer role. The idea is based on a real hotel operations problem: OTA reservations may arrive by email before they appear in the PMS, which can create sync delays, missed preparation, or double-booking risk.\n\nThe project demonstrates Java/Spring backend development, REST API design, RDBMS/JPA modeling, external API connector design, and monitoring/dashboard logic.\n\n## Implemented Features\n\n- Mock Booking.com-style reservation import\n- Reservation deduplication by `channel + externalReservationId`\n- PMS sync status tracking\n- PMS sync delay calculation\n- Room assignment recommendation\n- Room assignment overlap prevention\n- Overbooking risk detection\n- Dashboard metrics API\n- Acknowledge simulation\n- H2 persistence with MySQL-friendly JPA mapping\n- Swagger UI\n- Focused tests for import, assignment, and dashboard behavior\n\n## APIs\n\n- `POST /api/mock/booking/reservations/import`\n- `GET /api/reservations`\n- `GET /api/reservations/{id}`\n- `GET /api/reservations/{id}/room-candidates`\n- `POST /api/reservations/{id}/assign-room/{roomId}`\n- `POST /api/reservations/{id}/acknowledge`\n- `GET /api/dashboard`\n\n## Database / Entities\n\nMain entities:\n\n- `Reservation`\n- `Room`\n- `RoomAssignment`\n- `ReservationSyncLog`\n\nImportant fields include:\n\n- `Reservation.channel`\n- `Reservation.externalReservationId`\n- `Reservation.pmsSyncStatus`\n- `Reservation.emailReceivedAt`\n- `Reservation.pmsImportedAt`\n- `Room.roomType`\n- `Room.capacity`\n- `RoomAssignment.assignedCheckIn`\n- `RoomAssignment.assignedCheckOut`\n\nThe reservation table has a unique constraint on `(channel, externalReservationId)`.\n\n## External API Design\n\nThe project uses a `BookingReservationConnector` interface to separate external OTA integration from business logic.\n\nCurrent implementation:\n\n- `MockBookingReservationConnector`\n\nFuture possible implementation:\n\n- `HttpBookingReservationConnector`\n\nThe service layer depends on the interface, not on a real HTTP client. This makes the mock connector replaceable if real partner API access is available later.\n\n## Mock Booking.com Connector Explanation\n\nThe real Booking.com API is not called.\n\nThe project only simulates a Booking.com-style retrieve/acknowledge flow using hardcoded mock reservation data. The mock data uses anonymous guest names like `Guest A`, `Guest B`, and `Guest C`.\n\nNo real customer data, real reservation numbers, hotel credentials, payment data, or API keys are included.\n\n## PMS Sync Delay Monitoring Explanation\n\nEach reservation stores:\n\n- `emailReceivedAt`\n- `pmsImportedAt`\n- `pmsSyncStatus`\n\nThe dashboard calculates average PMS sync delay from the time difference between email receipt and PMS import. Reservations still marked `PENDING_IMPORT` are counted as not yet imported to PMS.\n\nThis models the operational issue of detecting invisible reservation sync delays.\n\n## Room Assignment Logic\n\nRoom candidates are filtered by:\n\n- active room status\n- matching room type\n- enough capacity\n- no overlapping active assignment\n\nOverlap rule:\n\n```text\nnewCheckIn < existingCheckOut\nAND existingCheckIn < newCheckOut\n```\n\nThis allows back-to-back reservations where one guest checks out on the same date another checks in.\n\n## Deduplication Logic\n\nReservations are deduplicated by:\n\n```text\nchannel + externalReservationId\n```\n\nThis matters because an external reservation ID may only be unique inside a specific OTA channel. For example, Booking.com and another OTA could theoretically use similar external IDs.\n\nThe import endpoint can be called multiple times safely. Existing reservations are skipped unless status or PMS import timestamp changes.\n\n## Dashboard Metrics\n\nThe dashboard returns:\n\n- total reservation count\n- unassigned reservation count\n- not imported ",
-            "lastActivityAt": "2026-05-18T17:04:02.995Z"
-          },
-          "activeThreads": [
-            {
-              "title": "Review this repository for an interview MVP. Project: booking-reservation-sync-m",
-              "status": "ACTIVE",
-              "priority": "MEDIUM",
-              "currentNextAction": "## Project Name\n\nBooking Reservation Sync Monitor\n\n## Tech Stack\n\nJava 17, Spring Boot 3.2, Spring Web, Spring Data JPA, H2 in-memory database, Maven, SpringDoc OpenAPI / Swagger UI, JUnit 5.\n\n## Why I Created This Project\n\nI built this as an interview MVP for a Java backend developer role. The idea is based on a real hotel operations problem: OTA reservations may arrive by email before they appear in the PMS, which can create sync delays, missed preparation, or double-booking risk.\n\nThe project demonstrates Java/Spring backend development, REST API design, RDBMS/JPA modeling, external API connector design, and monitoring/dashboard logic.\n\n## Implemented Features\n\n- Mock Booking.com-style reservation import\n- Reservation deduplication by `channel + externalReservationId`\n- PMS sync status tracking\n- PMS sync delay calculation\n- Room assignment recommendation\n- Room assignment overlap prevention\n- Overbooking risk detection\n- Dashboard metrics API\n- Acknowledge simulation\n- H2 persistence with MySQL-friendly JPA mapping\n- Swagger UI\n- Focused tests for import, assignment, and dashboard behavior\n\n## APIs\n\n- `POST /api/mock/booking/reservations/import`\n- `GET /api/reservations`\n- `GET /api/reservations/{id}`\n- `GET /api/reservations/{id}/room-candidates`\n- `POST /api/reservations/{id}/assign-room/{roomId}`\n- `POST /api/reservations/{id}/acknowledge`\n- `GET /api/dashboard`\n\n## Database / Entities\n\nMain entities:\n\n- `Reservation`\n- `Room`\n- `RoomAssignment`\n- `ReservationSyncLog`\n\nImportant fields include:\n\n- `Reservation.channel`\n- `Reservation.externalReservationId`\n- `Reservation.pmsSyncStatus`\n- `Reservation.emailReceivedAt`\n- `Reservation.pmsImportedAt`\n- `Room.roomType`\n- `Room.capacity`\n- `RoomAssignment.assignedCheckIn`\n- `RoomAssignment.assignedCheckOut`\n\nThe reservation table has a unique constraint on `(channel, externalReservationId)`.\n\n## External API Design\n\nThe project uses a `BookingReservationConnector` interface to separate external OTA integration from business logic.\n\nCurrent implementation:\n\n- `MockBookingReservationConnector`\n\nFuture possible implementation:\n\n- `HttpBookingReservationConnector`\n\nThe service layer depends on the interface, not on a real HTTP client. This makes the mock connector replaceable if real partner API access is available later.\n\n## Mock Booking.com Connector Explanation\n\nThe real Booking.com API is not called.\n\nThe project only simulates a Booking.com-style retrieve/acknowledge flow using hardcoded mock reservation data. The mock data uses anonymous guest names like `Guest A`, `Guest B`, and `Guest C`.\n\nNo real customer data, real reservation numbers, hotel credentials, payment data, or API keys are included.\n\n## PMS Sync Delay Monitoring Explanation\n\nEach reservation stores:\n\n- `emailReceivedAt`\n- `pmsImportedAt`\n- `pmsSyncStatus`\n\nThe dashboard calculates average PMS sync delay from the time difference between email receipt and PMS import. Reservations still marked `PENDING_IMPORT` are counted as not yet imported to PMS.\n\nThis models the operational issue of detecting invisible reservation sync delays.\n\n## Room Assignment Logic\n\nRoom candidates are filtered by:\n\n- active room status\n- matching room type\n- enough capacity\n- no overlapping active assignment\n\nOverlap rule:\n\n```text\nnewCheckIn < existingCheckOut\nAND existingCheckIn < newCheckOut\n```\n\nThis allows back-to-back reservations where one guest checks out on the same date another checks in.\n\n## Deduplication Logic\n\nReservations are deduplicated by:\n\n```text\nchannel + externalReservationId\n```\n\nThis matters because an external reservation ID may only be unique inside a specific OTA channel. For example, Booking.com and another OTA could theoretically use similar external IDs.\n\nThe import endpoint can be called multiple times safely. Existing reservations are skipped unless status or PMS import timestamp changes.\n\n## Dashboard Metrics\n\nThe dashboard returns:\n\n- total reservation count\n- unassigned reservation count\n- not imported ",
-              "lastActivityAt": "2026-05-18T17:04:02.995Z"
-            }
-          ],
-          "mostRecentActivityAt": "2026-05-18T17:04:02.995Z"
-        },
-        "threadAdjustment": 9,
-        "signals": [
-          "thread: 활성 1개 중 1개에 다음 액션 핀됨 (+6)",
-          "thread: 최근 활동/활성 세션 1개 (+3)"
-        ]
-      }
-    },
-    {
-      "id": "users-jean325-portfolio-projects-pt-mobile",
-      "name": "pt-mobile",
-      "path": "/Users/jean325/portfolio/projects/pt-mobile",
-      "type": "dart",
-      "progress": {
-        "percentage": null,
-        "source": "unknown",
-        "confidence": "low",
-        "signals": [
-          "No reliable progress signal found"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.352Z"
-      },
-      "priority": "MEDIUM",
-      "activity": {
-        "lastCommitDate": "2026-06-04T02:25:40.000Z",
-        "lastCommitMessage": "feat: activity heatmap on Trends, replacing the active-count line",
-        "commitsInLastWeek": 42,
-        "isActive": true,
-        "daysSinceLastCommit": 0,
-        "recentCommitDays": {
-          "2026-06-04": 5,
-          "2026-06-03": 37
-        }
-      },
-      "metadata": {
-        "description": "pt_mobile",
-        "stack": [
-          "dart",
-          "Flutter"
-        ],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 60,
-      "readiness": 60,
-      "nextActions": [],
-      "issues": [
-        "진행률 판단 불가"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.352Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "pt-mobile",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-pycharmprojects-google-drive-api-controller",
-      "name": "google-drive-api-controller",
-      "path": "/Users/jean325/PycharmProjects/google-drive-api-controller",
-      "type": "python",
-      "progress": {
-        "percentage": 20,
-        "source": "readme",
-        "confidence": "high",
-        "signals": [
-          "README.md: explicit 20% progress"
-        ],
-        "lastUpdated": "2026-06-04T02:25:55.608Z"
+        "lastUpdated": "2026-10-03T16:41:47.254Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1209,109 +674,36 @@
         "daysSinceLastCommit": 9007199254740991
       },
       "metadata": {
-        "description": "google-drive-api-controller",
+        "description": "<!-- AGENTS.md 와 CLAUDE.md 는 동일하게 유지됩니다. 한쪽을 수정하면 다른 쪽도 같이 수정하세요. -->",
         "stack": [
-          "python"
+          "Docker"
         ],
-        "hasReadme": true,
-        "hasClaude": false,
+        "hasReadme": false,
+        "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 49,
-      "readiness": 49,
-      "nextActions": [
-        "실제 서비스 계정 설정 문서화",
-        "폴더 ID/인증 파일 경로를 환경변수 또는 CLI 인자로 분리",
-        "하위 폴더 재귀 집계",
-        "에러 처리와 테스트 추가",
-        "포트폴리오용 사용 사례 정리"
-      ],
-      "issues": [],
-      "scannedAt": "2026-06-04T02:25:55.609Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "google-drive-api-controller",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-pycharmprojects-til",
-      "name": "til",
-      "path": "/Users/jean325/PycharmProjects/til",
-      "type": "unknown",
-      "progress": {
-        "percentage": 35,
-        "source": "readme",
-        "confidence": "high",
-        "signals": [
-          "README.md: explicit 35% progress"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.386Z"
-      },
-      "priority": "LOW",
-      "activity": {
-        "lastCommitDate": "2024-10-27T00:20:35.000Z",
-        "lastCommitMessage": "add x-ray data",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 585,
-        "recentCommitDays": {}
-      },
-      "metadata": {
-        "description": "til",
-        "stack": [],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 32,
-      "readiness": 32,
-      "nextActions": [
-        "주제별 목차 정리",
-        "오래된 외부 링크 확인",
-        "포트폴리오에 연결할 대표 학습 기록 선별",
-        "이미지 경로와 문서 렌더링 상태 점검",
-        "학습 노트 저장소로 유지하되, 포트폴리오에는 대표 문서만 선별해서 연결하기"
-      ],
+      "baseReadiness": 15,
+      "readiness": 15,
+      "nextActions": [],
       "issues": [
-        "30일 이상 커밋 없음"
+        "README 없음",
+        "진행률 판단 불가"
       ],
-      "scannedAt": "2026-06-04T02:25:56.386Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "til",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
+      "scannedAt": "2026-10-03T16:41:47.254Z"
     },
     {
-      "id": "users-jean325-portfolio-projects-blog-to-shorts",
+      "id": "users-jean325-work-src-portfolio-projects-blog-to-shorts",
       "name": "blog-to-shorts",
-      "path": "/Users/jean325/portfolio/projects/blog-to-shorts",
+      "path": "/Users/jean325/work-src/portfolio/projects/blog-to-shorts",
       "type": "unknown",
       "progress": {
         "percentage": 75,
-        "source": "readme",
+        "source": "claude_md",
         "confidence": "high",
         "signals": [
-          "README.md: explicit 75% progress"
+          "CLAUDE.md: explicit 75% progress"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.228Z"
+        "lastUpdated": "2026-10-03T16:41:47.257Z"
       },
       "priority": "LOW",
       "activity": {
@@ -1319,10 +711,8 @@
         "lastCommitMessage": "Initial commit: Naver blog to YouTube Shorts pipeline",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 55,
-        "recentCommitDays": {
-          "2026-04-09": 1
-        }
+        "daysSinceLastCommit": 177,
+        "recentCommitDays": {}
       },
       "metadata": {
         "description": "blog-to-shorts",
@@ -1330,247 +720,173 @@
           "FastAPI"
         ],
         "hasReadme": true,
-        "hasClaude": false,
+        "hasClaude": true,
         "hasGit": true
       },
-      "baseReadiness": 55,
-      "readiness": 55,
+      "baseReadiness": 58,
+      "readiness": 58,
       "nextActions": [
+        "실제 블로그 글로 엔드투엔드 검증 + 샘플 결과 정리",
         "OAuth 설정 절차 검증 문서 보강",
-        "샘플 입력/출력 영상 정리",
         "실패 케이스 재시도와 운영 로그 정리",
-        "테스트 자동화 보강",
-        "실제 샘플 블로그 글에서 생성된 영상과 업로드 결과를 정리하고, OAuth/환경변수 설정 과정을 검증 가능한 체크리스트로 보강하기"
+        "실제 블로그 글로 크롤링 → 영상 → 업로드까지 한 번 돌려 크롤링 셀렉터와 Gemini 응답 포맷을 실전 검증하기",
+        "실제 블로그 글로 엔드투엔드 검증 + 샘플 결과 정리"
       ],
       "issues": [
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-04T02:25:56.228Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "blog-to-shorts",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
+      "scannedAt": "2026-10-03T16:41:47.257Z"
     },
     {
-      "id": "users-jean325-jsprojects-haera",
-      "name": "haera",
-      "path": "/Users/jean325/JsProjects/haera",
-      "type": "unknown",
+      "id": "users-jean325-work-src-portfolio-projects-booking-reservation-sync-monitor",
+      "name": "booking-reservation-sync-monitor",
+      "path": "/Users/jean325/work-src/portfolio/projects/booking-reservation-sync-monitor",
+      "type": "java",
       "progress": {
-        "percentage": 45,
-        "source": "heuristic",
+        "percentage": null,
+        "source": "unknown",
         "confidence": "low",
         "signals": [
-          "In-progress wording found"
+          "No reliable progress signal found"
         ],
-        "lastUpdated": "2026-06-04T02:25:56.326Z"
+        "lastUpdated": "2026-10-03T16:41:47.257Z"
       },
       "priority": "LOW",
       "activity": {
-        "lastCommitDate": "2026-04-28T19:57:42.000Z",
-        "lastCommitMessage": ".",
+        "lastCommitDate": "2026-06-01T16:14:58.000Z",
+        "lastCommitMessage": "Build Night Auditor shift-helper UI",
         "commitsInLastWeek": 0,
         "isActive": false,
-        "daysSinceLastCommit": 36,
+        "daysSinceLastCommit": 124,
+        "recentCommitDays": {}
+      },
+      "metadata": {
+        "description": "Booking Reservation Sync Monitor",
+        "stack": [
+          "java",
+          "Spring"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 53,
+      "readiness": 53,
+      "nextActions": [],
+      "issues": [
+        "진행률 판단 불가",
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.258Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-pt-mobile",
+      "name": "pt-mobile",
+      "path": "/Users/jean325/work-src/portfolio/projects/pt-mobile",
+      "type": "dart",
+      "progress": {
+        "percentage": null,
+        "source": "unknown",
+        "confidence": "low",
+        "signals": [
+          "No reliable progress signal found"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.259Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": "2026-07-20T13:59:13.000Z",
+        "lastCommitMessage": "chore: sync Flutter platform integrations",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 75,
         "recentCommitDays": {
-          "2026-04-29": 1,
-          "2026-04-28": 19,
-          "2026-04-26": 6,
-          "2026-04-24": 1
+          "2026-07-20": 6,
+          "2026-07-11": 6
         }
       },
       "metadata": {
-        "description": "Haera",
+        "description": "pt_mobile",
+        "stack": [
+          "dart",
+          "Flutter"
+        ],
+        "hasReadme": true,
+        "hasClaude": true,
+        "hasGit": true
+      },
+      "baseReadiness": 53,
+      "readiness": 53,
+      "nextActions": [],
+      "issues": [
+        "진행률 판단 불가",
+        "30일 이상 커밋 없음"
+      ],
+      "scannedAt": "2026-10-03T16:41:47.259Z"
+    },
+    {
+      "id": "users-jean325-work-src-portfolio-projects-discord-video-fit",
+      "name": "discord-video-fit",
+      "path": "/Users/jean325/work-src/portfolio/projects/discord-video-fit",
+      "type": "unknown",
+      "progress": {
+        "percentage": null,
+        "source": "unknown",
+        "confidence": "low",
+        "signals": [
+          "No reliable progress signal found"
+        ],
+        "lastUpdated": "2026-10-03T16:41:47.252Z"
+      },
+      "priority": "LOW",
+      "activity": {
+        "lastCommitDate": "2026-08-23T13:34:53.000Z",
+        "lastCommitMessage": "discord-video-fit: fit iPhone video under Discord's limit without Nitro",
+        "commitsInLastWeek": 0,
+        "isActive": false,
+        "daysSinceLastCommit": 41,
+        "recentCommitDays": {
+          "2026-08-23": 1
+        }
+      },
+      "metadata": {
+        "description": "discord-video-fit",
         "stack": [],
         "hasReadme": true,
         "hasClaude": false,
         "hasGit": true
       },
-      "baseReadiness": 39,
-      "readiness": 39,
+      "baseReadiness": 30,
+      "readiness": 30,
       "nextActions": [],
       "issues": [
+        "진행률 판단 불가",
         "30일 이상 커밋 없음"
       ],
-      "scannedAt": "2026-06-04T02:25:56.326Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "haera",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-jsprojects-nest-seed",
-      "name": "nest-seed",
-      "path": "/Users/jean325/JsProjects/nest-seed",
-      "type": "node",
-      "progress": {
-        "percentage": null,
-        "source": "unknown",
-        "confidence": "low",
-        "signals": [
-          "No reliable progress signal found"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.354Z"
-      },
-      "priority": "LOW",
-      "activity": {
-        "lastCommitDate": "2026-05-05T09:18:11.000Z",
-        "lastCommitMessage": "test(overlap-race): cut INNER_ITERATIONS 500 -> 300 for headroom",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 29,
-        "recentCommitDays": {
-          "2026-05-05": 30,
-          "2026-05-04": 49,
-          "2026-05-03": 7,
-          "2026-04-29": 3,
-          "2026-04-26": 2,
-          "2026-04-24": 4,
-          "2026-04-22": 13,
-          "2026-04-21": 15,
-          "2026-04-20": 8,
-          "2026-04-19": 11,
-          "2026-04-18": 25,
-          "2026-04-15": 1,
-          "2026-04-14": 2,
-          "2026-04-13": 18,
-          "2026-04-12": 16,
-          "2026-04-11": 2,
-          "2026-04-10": 2,
-          "2026-04-09": 5,
-          "2026-04-08": 2,
-          "2026-04-07": 15,
-          "2026-04-06": 23,
-          "2026-04-05": 22
-        }
-      },
-      "metadata": {
-        "description": "nest-seed",
-        "stack": [
-          "node",
-          "Docker"
-        ],
-        "hasReadme": true,
-        "hasClaude": false,
-        "hasGit": true
-      },
-      "baseReadiness": 50,
-      "readiness": 50,
-      "nextActions": [],
-      "issues": [
-        "진행률 판단 불가"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.355Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "nest-seed",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
-    },
-    {
-      "id": "users-jean325-portfolio-projects-signalmate-app",
-      "name": "signalmate-app",
-      "path": "/Users/jean325/portfolio/projects/signalmate-app",
-      "type": "node",
-      "progress": {
-        "percentage": null,
-        "source": "unknown",
-        "confidence": "low",
-        "signals": [
-          "No reliable progress signal found"
-        ],
-        "lastUpdated": "2026-06-04T02:25:56.351Z"
-      },
-      "priority": "LOW",
-      "activity": {
-        "lastCommitDate": "2026-05-17T12:54:59.000Z",
-        "lastCommitMessage": "Initial commit",
-        "commitsInLastWeek": 0,
-        "isActive": false,
-        "daysSinceLastCommit": 17,
-        "recentCommitDays": {
-          "2026-05-17": 1
-        }
-      },
-      "metadata": {
-        "description": "@AGENTS.md",
-        "stack": [
-          "node"
-        ],
-        "hasReadme": false,
-        "hasClaude": true,
-        "hasGit": true
-      },
-      "baseReadiness": 50,
-      "readiness": 50,
-      "nextActions": [],
-      "issues": [
-        "README 없음",
-        "진행률 판단 불가"
-      ],
-      "scannedAt": "2026-06-04T02:25:56.351Z",
-      "continuity": {
-        "coverage": "live",
-        "summary": {
-          "projectKey": "signalmate-app",
-          "total": 0,
-          "active": 0,
-          "completed": 0,
-          "activeThreads": [],
-          "mostRecentActivityAt": null
-        },
-        "threadAdjustment": 0,
-        "signals": []
-      }
+      "scannedAt": "2026-10-03T16:41:47.253Z"
     }
   ],
-  "scannedAt": "2026-06-04T02:25:56.633Z",
+  "scannedAt": "2026-10-03T16:41:47.297Z",
   "summary": {
-    "total": 19,
-    "active": 4,
-    "avgProgress": 56,
-    "avgReadiness": 62,
+    "total": 18,
+    "active": 1,
+    "avgProgress": 63,
+    "avgReadiness": 55,
     "byPriority": {
-      "CRITICAL": 5,
-      "HIGH": 5,
-      "MEDIUM": 3,
-      "LOW": 6
+      "CRITICAL": 6,
+      "HIGH": 7,
+      "MEDIUM": 0,
+      "LOW": 5
     },
     "byType": {
-      "node": 3,
-      "python": 3,
+      "node": 1,
+      "python": 1,
       "dart": 2,
       "java": 1,
-      "kotlin": 3,
+      "kotlin": 4,
       "go": 0,
       "rust": 0,
-      "unknown": 7
+      "unknown": 9
     }
   }
 }
